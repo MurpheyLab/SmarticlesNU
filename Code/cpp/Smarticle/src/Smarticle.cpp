@@ -52,13 +52,9 @@ void Smarticle::led_on(int stat)
   }
   return;
 }
-
-void Smarticle::inactive(void)
-{
-  return;
-}
 void Smarticle::_plankf(void)
 {
+  //sets servos to plank position
   ServoL.write(90);
   ServoR.write(90);
   disable_t2_interrupts();
@@ -103,6 +99,7 @@ void Smarticle:: stream_servo(void)
 
 int Smarticle::set_mode(int mode)
 {
+  //sets mode given input
   // Xbee.printf("Mode input: %d\n", mode);
   switch(mode){
     case 0: _mode = IDLE;break;
@@ -118,6 +115,9 @@ int Smarticle::set_mode(int mode)
 
 int Smarticle::init_mode()
 {
+  //initializes
+  _run_servos=0;
+  _transmit = 0;
   if (_mode==STREAM ){
     attach_servos();
   }else if (_mode==INTERP){
@@ -139,6 +139,8 @@ enum STATES Smarticle::get_mode(void)
 
 int Smarticle::interp_msg(void)
 {
+  //interpret received message
+
   // Xbee.printf("DEBUG: MESSAGE RECEIVED!!\n");
   // Xbee.printf("Received message: %s\n",_input_msg);
   disable_t2_interrupts();
