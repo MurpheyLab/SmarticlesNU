@@ -92,8 +92,8 @@ class Smarticle
     int _debug;
     int _run_servos;
     int _transmit;
-    volatile char  _input_string[108];
-    volatile char _input_msg[108];
+    char  _input_string[108];
+    char _input_msg[108];
     int _sample_time_ms;
     uint8_t _gaitL[MAX_GAIT_SIZE];
     uint8_t _gaitR[MAX_GAIT_SIZE];
