@@ -1,6 +1,6 @@
 #SmarticleTest.py
 
-from SmarticleSwarm import SmarticleSwarm
+from modules.SmarticleSwarm import SmarticleSwarm
 from random import randint
 import time
 import numpy as np
@@ -61,3 +61,6 @@ random_gaits(15)
 time.sleep(0.1)
 #make smarticle 2 pseudo inactive
 # pseudo_inactive_smart2(15)
+time.sleep(0.1)
+#has smarticles perform gait for 10 seconds
+# use this command after running the above code to start smarticles: timed_go(1/6)

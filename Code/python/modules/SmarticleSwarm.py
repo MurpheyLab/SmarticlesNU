@@ -4,7 +4,7 @@
 # Module for communicating with smarticle swarm over Xbee3s
 
 import time
-from XbeeComm import XbeeComm
+from modules.XbeeComm import XbeeComm
 import threading
 
 
