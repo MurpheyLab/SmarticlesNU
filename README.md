@@ -3,7 +3,6 @@
 Installating Dependencies
 ------------
 
-You can install XBee Python library using `pip
-<https://pip.pypa.io/en/stable/>`_::
+You can install XBee Python library using pip
 
     $ pip install digi-xbee
