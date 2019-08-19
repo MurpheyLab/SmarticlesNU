@@ -7,7 +7,8 @@ You can install XBee Python library using pip
 
     $ pip install digi-xbee
     
-You will also need to instal MiniCore into your Arduino IDE and an SI Labs driver for the CP2104 chip to program the smarticles themselves.  
+To modify the code on the smarticles themselves, you will also need to instal MiniCore into your Arduino IDE and an SI Labs driver for the CP2104 chip.  
+  <br> 
     [MiniCore Link](https://github.com/MCUdude/MiniCore)  
     [SI Labs Drivers Link](https://www.silabs.com/products/interface/usb-bridges/classic-usb-bridges/device.cp2104?q=cp2104;page=1;x6=searchHeader;q6=Software)
     
@@ -20,6 +21,6 @@ Run the the following command the execute the code and keep the python script op
     
     $ python3 -i SmarticleRandomGait.py
     
-Then you can run this command to run the smarticles for 10 seconds:  
+Then you can run this command to run the smarticles for 10 seconds  
 
     >>> timed_go(1/6)
