@@ -5,6 +5,9 @@ from random import randint
 import time
 import numpy as np
 
+# TO DO: change to your port
+PORT_NAME = '/dev/tty.usbserial-DN050I6Q'
+
 
 def rx_callback(xbee_message):
     '''Simple call_back function to print received packets'''
@@ -49,7 +52,7 @@ def timed_go(min):
 
 #instantiate SmarticleSwarm object with default args
 #change/specify USB port!!
-swarm = SmarticleSwarm(port='/dev/tty.usbserial-DN050I6Q')
+swarm = SmarticleSwarm(port=PORT_NAME)
 swarm.xb.add_rx_callback(rx_callback)
 #discover smarticles on network; by default has 15s timeout
 swarm.build_network(5)
