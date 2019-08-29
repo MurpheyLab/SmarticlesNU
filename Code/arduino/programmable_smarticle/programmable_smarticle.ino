@@ -14,15 +14,15 @@ Serial.begin(9600);
 }
 
 void loop() {
-  int t0 = millis();
-  if (smart.get_mode()!=0){
-    smart.read_sensors();
-    smart.transmit_data();
-  }
+//  int t0 = millis();
+//  if (smart.get_mode()!=0){
+//    smart.read_sensors();
+//    smart.transmit_data();
+//  }
   if (smart.msg_flag==1){
     smart.interp_msg();
   }
-  while (millis()-t0<CYCLE_MS){}
+//  while (millis()-t0<CYCLE_MS){}
 }
 
 

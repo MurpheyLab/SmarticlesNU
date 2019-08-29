@@ -2,7 +2,7 @@
   Smarticle.h - Arduino Library for NU-Smarticle
   header file for
   Alex Samland, created Aug 7, 2019
-  Last Updated: Aug 7, 2019
+  Last Updated: Aug 29, 2019
   v1.0
 
   NU-Smarticle v1 Pins:
@@ -35,24 +35,26 @@
 #include "PWMServo.h"
 #include "NeoSWSerial.h"
 
-
+//max microsecond pulse sent to servos; adjust to change 180 deg position
 #define MAX_US 2500
+//min microsecond pulse sent to servos; adjust to change 0 deg position
 #define MIN_US 600
 #define RX_PIN 2
 #define TX_PIN 3
 #define LED 13
 #define SERVO_L 10
 #define SERVO_R 9
-#define PRF A2
-#define PRB A0
-#define MIC A3
+#define PRF A2 //photoresistor front
+#define PRB A0 //photoresistor back
+#define MIC A3 //microphone
+//max number of gait points that can be sent to smarticle in gait interpolation mode
 #define MAX_GAIT_SIZE 15
-#define GI_OFFSET 12
+//offsets for gait interpolation message interpretation
+#define DELAY_OFFSET 7
+#define GAIT_OFFSET 10
 #define ASCII_OFFSET 32
+//max data that can be sent in an xbee message
 #define MAX_DATA_PAYLOAD 108
-
-
-
 
 
 enum STATES{IDLE = 0, STREAM=1, INTERP=2};
@@ -61,45 +63,61 @@ class Smarticle
 {
   public:
     Smarticle(int debug=0, int run_servos=0, int transmit=0, int sample_time_ms = 15, int cycle_period_ms = 33);
-    void led_on(int stat);
-    void inactive(void);
-    void timer_interrupt(void);
-    void gait_interpolate(int delay, int len, uint8_t* servoL_arr, uint8_t* servoR_arr);
-    void stream_servo(void);
-    int set_mode(int mode);
-    int init_mode(void);
-    enum STATES get_mode(void);
-    int * read_sensors(void);
-    int transmit_data(void);
-    int interp_msg(void);
-    int attach_servos(void);
-    int detach_servos(void);
-    int run_servos(int);
-    int transmit(int);
-    int enable_t2_interrupts(void);
-    int disable_t2_interrupts(void);
+
+    void set_led(int state);
+    void set_transmit(int state);
+    void set_read(int state);
+    void set_plank(int state);
+    void set_mode(int mode);
+    void set_pose(int angL, int angR);
+
+    void init_t4(void);
+    void init_mode(void);
+    void init_gait(char* msg);
+
     void rx_interrupt(uint8_t c);
+    int interp_msg(void);
+    void interp_mode(char* msg);
+    void interp_pose(char* msg);
+
+    int * read_sensors(void);
+    void transmit_data(void);
+
+
+    void t4_interrupt(void);
+    void enable_t4_interrupts(void);
+    void disable_t4_interrupts(void);
+
+    void stream_servo(void);
+    void gait_interpolate(int len, uint8_t* servoL_arr, uint8_t* servoR_arr);
+
+    void attach_servos(void);
+    void detach_servos(void);
+    void run_servos(int);
     PWMServo ServoL;
     PWMServo ServoR;
     NeoSWSerial Xbee;
     int cycle_time_ms;
-    int sensor_dat[3];
+    int sensor_dat[3]={0,0,0};
     volatile int msg_flag = 0;
   private:
-    void _plankf(void);
     enum STATES _mode;
-    float _t = 0;
-    int _debug;
-    int _run_servos;
-    int _transmit;
-    char  _input_string[108];
-    char _input_msg[108];
-    int _sample_time_ms;
+    char _input_string[MAX_DATA_PAYLOAD];
+    char _input_msg[MAX_DATA_PAYLOAD];
+    //flags
+    int _debug=0;
+    int _run_servos=0;
+    int _read_sensors=0;
+    int _transmit=0;
+    int _plank=0;
+    int _sample_time_ms=15;
+    void _plankf(void);
     uint8_t _gaitL[MAX_GAIT_SIZE];
     uint8_t _gaitR[MAX_GAIT_SIZE];
-    int _gait_period=500;
+    uint16_t _t4_TOP = 3906; //500ms
+    uint16_t _half_t4_TOP = 1953;
     int _gait_pts=1;
-    int _plank;
+    uint16_t _index = 0;
 
 };
 
