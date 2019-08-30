@@ -241,6 +241,7 @@ int Smarticle::interp_msg(void)
 
 void Smarticle::interp_mode(char* msg)
 {
+  //interpret mode change command
   _run_servos = 0;
   int m=0;
   if (strlen(msg)==4){
@@ -252,6 +253,7 @@ void Smarticle::interp_mode(char* msg)
 
 void Smarticle::interp_pose(char* msg)
 {
+  //interpret set pose commands
   run_servos(0);
   int angL=90,angR=90;
   sscanf(msg,":SP:%d,%d",&angL, &angR);
@@ -264,7 +266,8 @@ int * Smarticle::read_sensors(void)
   if (_read_sensors ==1){
     unsigned long startTime= millis();  // Start of sample window
     int dat[3]={0,0,0};
-    while(millis() - startTime < 30) {
+    //get maximum value from specified sample window
+    while(millis() - startTime < _sample_time_ms) {
         dat[0] = max(dat[0],analogRead(PRF));
         dat[1] = max(dat[1],analogRead(PRB));
         dat[2] = max(dat[2],analogRead(MIC));
@@ -279,6 +282,7 @@ int * Smarticle::read_sensors(void)
 
 void Smarticle::transmit_data(void)
 {
+  //send data: sensor_dat[0]= photo_front, sensor_dat[1]= photo_back, sensor_dat[2]= mic
   if (_transmit && _mode!=IDLE){
     Xbee.printf("%d,%d,%d\n",sensor_dat[0], sensor_dat[1], sensor_dat[2]);
   }
@@ -289,6 +293,7 @@ void Smarticle::t4_interrupt(void)
 {
   //runs when TCNT4 = OCR4A
   if (_mode!=IDLE){
+    //if plank flag is set, plank!
     if (_plank==1){
       ServoL.write(90);
       ServoR.write(90);
