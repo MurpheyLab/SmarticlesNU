@@ -182,8 +182,13 @@ void Smarticle::rx_interrupt(uint8_t c)
 {
   //runs on every received byte
   static int len;
-  //if sync character 0x11
-  if (c==0x11){
+  //if stream servo command
+  if (c=0x12){
+    stream_servo(_input_string[0],_input_string[1]);
+    _input_string[0]='\0';
+    len = 0;
+
+  } else if (c==0x11){  //if sync character 0x11
     //set timer counter to half of its TOP value that triggers the interrupt
     TCNT4 = _half_t4_TOP;
 
@@ -300,7 +305,6 @@ void Smarticle::t4_interrupt(void)
     }else if (_run_servos==1){
       switch (_mode) {
         case INTERP: gait_interpolate(_gait_pts, _gaitL, _gaitR);break;
-        case STREAM: stream_servo();break;
         default: return;
       }
     }
@@ -326,9 +330,9 @@ void Smarticle::disable_t4_interrupts(void)
 }
 
 
-void Smarticle:: stream_servo(void)
+void Smarticle:: stream_servo(uint8_t angL, uint8_t angR)
 {
-  return;
+  set_pose(angL-ASCII_OFFSET,angR-ASCII_OFFSET);
 }
 
 
