@@ -4,22 +4,11 @@
 Smarticle smart(1);
 
 void setup() {
-<<<<<<< Updated upstream
-smart.set_led(1);
-delay(3000);
-smart.set_led(0);
-smart.Xbee.attachInterrupt(handleRxChar);
-smart.Xbee.begin(9600);
-Serial.begin(9600);
-=======
 smart.Xbee.attachInterrupt(handleRxChar);
 smart.Xbee.begin(9600);
 smart.set_led(1);
 delay(3000);
-smart.attach_servos();
 smart.set_led(0);
-smart.set_mode(2);
->>>>>>> Stashed changes
 }
 
 void loop() {
@@ -31,7 +20,7 @@ void loop() {
 }
 
 
-ISR(TIMER2_OVF_vect){
+ISR(TIMER4_COMPA_vect){
   smart.t4_interrupt();
 }
 
