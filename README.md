@@ -3,8 +3,9 @@
 Installating Dependencies
 ------------
 
-You can install XBee Python library using pip
+You can install pyserial and XBee Python library using pip
 
+    $ pip install pyserial
     $ pip install digi-xbee
     
 To modify the code on the smarticles themselves, you will also need to instal MiniCore into your Arduino IDE and an SI Labs driver for the CP2104 chip.  
@@ -15,12 +16,12 @@ To modify the code on the smarticles themselves, you will also need to instal Mi
     
 Running Your First Program
 -----------
-Use the included `SmarticleRandomGait.py` to test your setup. You will have to modify `PORT_NAME` to match the USB port name of the local XBee connected to your computer.  
+Use the included `SmarticleSyncGait.py` to test your setup. You will have to modify `PORT_NAME` to match the USB port name of the local XBee connected to your computer.  
 
 Run the the following command the execute the code and keep the python script open  
     
-    $ python3 -i SmarticleRandomGait.py
+    $ python3 -i SmarticleSyncGait.py
     
-Then you can run this command to run the smarticles for 10 seconds  
+Then you can run this command to run the smarticles for 1 minute  
 
-    >>> timed_go(1/6)
+    >>> timed_sync(1)
