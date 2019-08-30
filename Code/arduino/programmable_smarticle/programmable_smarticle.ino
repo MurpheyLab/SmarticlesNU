@@ -1,8 +1,7 @@
 #include <Smarticle.h>
 
-#define CYCLE_MS 50
 
-Smarticle smart(1);
+Smarticle smart(0);
 
 void setup() {
 smart.set_led(1);
@@ -23,7 +22,7 @@ void loop() {
 
 
 ISR(TIMER2_OVF_vect){
-  smart.timer_interrupt();
+  smart.t4_interrupt();
 }
 
 static void handleRxChar( uint8_t c)
