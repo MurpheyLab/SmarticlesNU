@@ -40,9 +40,9 @@ You will have to restart the Arduino IDE and then you should be able to open the
 
 To upload the program to the smarticle, use the follow board configuration under the tools file menu:  
 
-
-| Board        | ATmega328p                      |  
-|:------------:|:-------------------------------:|  
+  | Field | Value|
+|:------------:|:-------------------------------:| 
+| Board        | ATmega328                      | 
 | Clock        | 8MHz External                   |  
 | BOD          | BOD 2.7V                        |  
 | Compiler LTO | LTO Enabled                     |  
