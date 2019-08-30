@@ -4,11 +4,11 @@
 Smarticle smart(1);
 
 void setup() {
-smart.Xbee.attachInterrupt(handleRxChar);
-smart.Xbee.begin(9600);
-smart.set_led(1);
-delay(3000);
-smart.set_led(0);
+  smart.Xbee.attachInterrupt(handleRxChar);
+  smart.Xbee.begin(9600);
+  smart.set_led(1);
+  delay(3000);
+  smart.set_led(0);
 }
 
 void loop() {
