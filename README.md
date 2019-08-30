@@ -3,7 +3,7 @@
 Installating Python Dependencies
 ------------
 
-You can install pyserial and XBee Python library using pip
+You can install pyserial and the XBee Python library using pip
 
     $ pip install pyserial
     $ pip install digi-xbee
@@ -14,7 +14,7 @@ Running Your First Program
 -----------
 Use the included `SmarticleSyncGait.py` to test your setup. You will have to modify `PORT_NAME` to match the USB port name of the local XBee connected to your computer.  
 
-Run the the following command the execute the code and keep the python script open  
+Run the the following command to execute the code and keep the python script open  
     
     $ python3 -i SmarticleSyncGait.py
     
