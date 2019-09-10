@@ -55,9 +55,9 @@ swarm.set_mode(2)
 
 #send all smarticles the same random gait
 n=15
-L = [randint(30,60) for x in range(n)]
-R = [randint(70,110) for x in range(n)]
-swarm.gi([L,R],200) #gaits, delay between poitns in ms; I wouldnt go faster than 200ms
+L = [0,180,180,0]
+R = [0,0,180,180]
+swarm.gi([L,R],400) #gaits, delay between poitns in ms; I wouldnt go faster than 200ms
 
 #or if I want to send them each a unique random gait
 # random_gaits(15, 200)
