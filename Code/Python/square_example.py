@@ -6,7 +6,7 @@ import time
 import numpy as np
 
 # TO DO: change to your port
-PORT_NAME = 'COM5'
+PORT_NAME = '/dev/tty.usbserial-DN050I6Q'
 
 
 def rx_callback(xbee_message):
@@ -50,3 +50,7 @@ swarm = SmarticleSwarm(port=PORT_NAME)
 swarm.xb.add_rx_callback(rx_callback)
 #discover smarticles on network; by default has 15s timeout
 swarm.build_network(1)
+L = [0,180,180,0]
+R = [0,0,180,180]
+gait=[L,R]
+swarm.gi(gait,400)
