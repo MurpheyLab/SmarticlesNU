@@ -94,7 +94,7 @@ void Smarticle::set_plank(int state)
 void Smarticle::set_mode(int m)
 {
   //sets mode given input
-  // Xbee.printf("Mode input: %d\n", mode);
+  Xbee.printf("Mode input: %d\n", m);
   switch(m){
     case 0: _mode = IDLE;break;
     case 1: _mode = STREAM;break;
@@ -165,7 +165,7 @@ void Smarticle::init_gait(char* msg)
   for (int ii=0; ii<_gait_pts; ii++){
     _gaitL[ii]=msg[GAIT_OFFSET+ii]-ASCII_OFFSET;
     _gaitR[ii]=msg[GAIT_OFFSET+MAX_GAIT_SIZE+ii]-ASCII_OFFSET;
-    // Xbee.printf("Index:\t%d\tL:%d\tR:%d\n",ii,_gaitL[ii],_gaitR[ii]);
+    Xbee.printf("Index:\t%d\tL:%d\tR:%d\n",ii,_gaitL[ii],_gaitR[ii]);
   }
   //set compare match value to delay counts
   OCR4A = _t4_TOP;
@@ -174,7 +174,7 @@ void Smarticle::init_gait(char* msg)
   //resent array index back at zero to start gait sequence at the beginning
   _index = 0;
 
-  // Xbee.printf("DEBUG: GI %d ms period, %d points\n",_t4_counter,_gait_pts);
+  Xbee.printf("DEBUG: GI %d ms period, %d points\n",_t4_TOP,_gait_pts);
 }
 
 
@@ -191,7 +191,7 @@ void Smarticle::rx_interrupt(uint8_t c)
   } else if (c=='\n'){
     //block until msg has finished being interpreted
     // rudimentary 2 message buffer until we implement something more robust
-    while (msg_flag==1){}
+    // while (msg_flag==1){}
     //set flag that message has ben received
     msg_flag=1;
     //copy over to input_msg and clear input_string so that incoming bytes can still be stored
@@ -209,13 +209,13 @@ void Smarticle::rx_interrupt(uint8_t c)
 int Smarticle::interp_msg(void)
 {
   //interpret received message
-  // Xbee.printf("Received message"); // %s\n",_input_msg);
+  Xbee.printf("Received message"); // %s\n",_input_msg);
   disable_t4_interrupts();
   msg_flag = 0;
   //ensure message matches command structure of leading with a colon ':'
   // typical message structure example '':M:0' set to mode 0
   if (_input_msg[0]!=':'){
-    // Xbee.printf("DEBUG: no match :(\n");
+    Xbee.printf("DEBUG: no match :(\n");
     return 0;
   //determine which command to exectue
   } else if (_mode==INTERP&& _input_msg[1]=='G'&& _input_msg[2]=='I'){ init_gait(_input_msg);
@@ -227,11 +227,11 @@ int Smarticle::interp_msg(void)
   } else if(_input_msg[1]=='T'&&_input_msg[3]=='0'){ set_transmit(0);
   } else if(_input_msg[1]=='R'&&_input_msg[3]=='1'){ set_read(1);
   } else if(_input_msg[1]=='R'&&_input_msg[3]=='0'){ set_read(0);
-  } else if(_input_msg[1]=='P'&&_input_msg[3]=='1'){ set_plank(1); //Xbee.printf("DEBUG: START PLANK!\n");
-  } else if(_input_msg[1]=='P'&&_input_msg[3]=='0'){ set_plank(0); //Xbee.printf("DEBUG: STOP PLANK!\n");
+  } else if(_input_msg[1]=='P'&&_input_msg[3]=='1'){ set_plank(1); Xbee.printf("DEBUG: START PLANK!\n");
+  } else if(_input_msg[1]=='P'&&_input_msg[3]=='0'){ set_plank(0); Xbee.printf("DEBUG: STOP PLANK!\n");
   } else if (_input_msg[1]=='S'&&_input_msg[2]=='P'){ interp_pose(_input_msg);
   } else {
-    // Xbee.printf("DEBUG: no match :(\n");
+    Xbee.printf("DEBUG: no match :(\n");
     return 0;
   }
   enable_t4_interrupts();
@@ -314,7 +314,7 @@ void Smarticle::enable_t4_interrupts(void)
     //enable timer4 compare match A interrupt
     TIMSK4 = 1<<OCIE4A;
   }
-  // Xbee.printf("DEBUG: T2 interrupt enabled!\n");
+  Xbee.printf("DEBUG: T2 interrupt enabled!\n");
 }
 
 
@@ -322,7 +322,7 @@ void Smarticle::disable_t4_interrupts(void)
 {
   //disable all timer4 interrupts
   TIMSK4 = 0;
-  // Xbee.printf("DEBUG: T2 interrupt disabled!\n");
+  Xbee.printf("DEBUG: T2 interrupt disabled!\n");
 }
 
 
@@ -349,7 +349,7 @@ void Smarticle::attach_servos(void)
     ServoL.write(90);
     ServoR.write(90);
   }
-  // Xbee.printf("DEBUG: Servos Attached!\n");
+  Xbee.printf("DEBUG: Servos Attached!\n");
 }
 
 
@@ -358,13 +358,13 @@ void Smarticle::detach_servos(void)
   //detach servos
   ServoL.detach();
   ServoR.detach();
-  // Xbee.printf("DEBUG: Servos Detached!\n");
+  Xbee.printf("DEBUG: Servos Detached!\n");
 }
 
 
 void Smarticle::run_servos(int run)
 {
-   // Xbee.printf("DEBUG: TOGGLE SERVOS!\n");
+   Xbee.printf("DEBUG: TOGGLE SERVOS!\n");
   _run_servos = run;
   _index = 0;
   TCNT4 = 0;
