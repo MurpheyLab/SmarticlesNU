@@ -5,6 +5,7 @@
 
 import time
 from modules.XbeeComm import XbeeComm
+from modules.StreamServo import StreamServo
 import threading
 
 
