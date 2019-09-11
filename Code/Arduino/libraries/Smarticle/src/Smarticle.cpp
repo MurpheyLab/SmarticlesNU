@@ -191,9 +191,6 @@ void Smarticle::rx_interrupt(uint8_t c)
 
   //else if end of message character '\n'
   } else if (c=='\n'){
-    //block until msg has finished being interpreted
-    // rudimentary 2 message buffer until we implement something more robust
-    while (msg_flag==1){}
     //set flag that message has ben received
     msg_flag=1;
     //copy over to input_msg and clear input_string so that incoming bytes can still be stored
