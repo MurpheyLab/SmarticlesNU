@@ -94,7 +94,7 @@ void Smarticle::set_plank(int state)
 void Smarticle::set_mode(int m)
 {
   //sets mode given input
-  // Xbee.printf("Mode input: %d\n", mode);
+  Xbee.printf("Mode input: %d\n", m);
   switch(m){
     case 0: _mode = IDLE;break;
     case 1: _mode = STREAM;break;
@@ -208,7 +208,7 @@ void Smarticle::rx_interrupt(uint8_t c)
 int Smarticle::interp_msg(void)
 {
   //interpret received message
-  // Xbee.printf("Received message"); // %s\n",_input_msg);
+  Xbee.printf("Received message"); // %s\n",_input_msg);
   disable_t4_interrupts();
   msg_flag = 0;
   //ensure message matches command structure of leading with a colon ':'
@@ -347,7 +347,7 @@ void Smarticle::attach_servos(void)
     ServoL.write(90);
     ServoR.write(90);
   }
-  // Xbee.printf("DEBUG: Servos Attached!\n");
+  Xbee.printf("DEBUG: Servos Attached!\n");
 }
 
 
