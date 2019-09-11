@@ -180,7 +180,7 @@ void Smarticle::rx_interrupt(uint8_t c)
   //runs on every received byte
   static int len;
   //if stream servo command
-  if (c=0x12){
+  if (c==0x12){
     stream_servo(_input_string[0],_input_string[1]);
     _input_string[0]='\0';
     len = 0;
