@@ -8,16 +8,16 @@ import time
 
 class StreamServo(object):
 
-    def __init__(self,xbee,gait_f, frequency = 30, remote_device= None, time_noise= None):
+    def __init__(self,xbee,gait_f, period_ms, remote_device= None, time_noise= None):
         if time_noise == None:
             self.time_noise = lambda: 0
         self.xb=xbee
         self.thread_flag = threading.Event()
         self.exit_flag = threading.Event()
         self.exit_flag.clear()
-        self.initialize(gait_f,frequency,remote_device)
-        self.period_s = round(1/frequency,3)
+        self.period_s = round(period_ms/1000,3)
         self.gait=gait_f
+        self.dev = remote_device
         self.thread=threading.Thread(target=self.target_function, args=(self.gait, self.period_s, self.dev, self.xb, self.time_noise), daemon = True)
 
     def exit(self):
