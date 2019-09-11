@@ -130,27 +130,24 @@ void Smarticle::init_mode()
 {
   //clear all flags on mode change
   _index = 0;
-  TCNT4 = 0;
-  _run_servos=0;
-  _transmit = 0;
-  _plank = 0;
-  _read_sensors = 0;
-  if (_mode==STREAM ){
+  if (_mode==IDLE){
+    detach_servos();
+    _run_servos=0;
+    _transmit = 0;
+    _plank = 0;
+    _read_sensors = 0;
+    //reset gait se maintains plank position
+    _gait_pts=1;
+    _t4_TOP = 3906; //delay of 500ms
+    _gaitL[0]=90;
+    _gaitR[0]=90;
+  }else{
     attach_servos();
     enable_t4_interrupts();
-  }else if (_mode==INTERP){
-      attach_servos();
-      //initialize so that gait sequence maintains plank position
-      _gait_pts=1;
-      _t4_TOP = 3906; //delay of 500ms
-      _gaitL[0]=90;
-      _gaitR[0]=90;
-      enable_t4_interrupts();
-  }else{
-    detach_servos();
   }
   //clear pending t4 interrupts
   TIFR4  = 0;
+  TCNT4 = 0;
 }
 
 
