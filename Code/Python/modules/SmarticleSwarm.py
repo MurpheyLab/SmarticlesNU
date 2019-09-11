@@ -294,7 +294,7 @@ class SmarticleSwarm(object):
         '''
         time_adjust_s=sync_period_s-0.035 #subtract 35ms based on results from timing experiments
         msg = bytearray(b'\x11')
-        #threading.event.wait() blocks until it is a) set and then returns True or b) the specified timeout elapses i nwhich it retrusn nothing
+        #threading.event.wait() blocks until it is a) set and then returns True or b) the specified timeout elapses in which it retrusn nothing
         while self.sync_flag.wait() and not self.timer_counts.wait(timeout=(time_adjust_s)):
                 self.xb.broadcast(msg)
 
