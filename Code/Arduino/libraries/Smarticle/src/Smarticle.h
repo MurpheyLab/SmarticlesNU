@@ -88,7 +88,7 @@ class Smarticle
     void enable_t4_interrupts(void);
     void disable_t4_interrupts(void);
 
-    void stream_servo(void);
+    void stream_servo(uint8_t angL, uint8_t angR);
     void gait_interpolate(int len, uint8_t* servoL_arr, uint8_t* servoR_arr);
 
     void attach_servos(void);
