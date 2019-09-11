@@ -5,6 +5,7 @@ from modules.StreamServo import StreamServo
 from random import randint
 import time
 import numpy as np
+import math
 
 # TO DO: change to your port
 PORT_NAME = '/dev/tty.usbserial-DN050I6Q'
@@ -49,8 +50,10 @@ def timed_go(min):
 # change/specify USB port!!
 swarm = SmarticleSwarm(port=PORT_NAME)
 swarm.xb.add_rx_callback(rx_callback)
+gaitf = lambda t: round(90+45*math.sin(math.pi/5*t))
 # discover smarticles on network; by default has 15s timeout
-# swarm.build_network(5)
+swarm.build_network(5)
+stream = StreamServo(swarm.xb,gaitf,400)
 # #change all smarticles to gait interpolate mode
 # swarm.set_mode(2)
 #
@@ -65,7 +68,7 @@ swarm.xb.add_rx_callback(rx_callback)
 
 
 # always call this after updating gait in swarm.gi()
-swarm.init_sync_thread()
+# swarm.init_sync_thread()
 
 ## to start sync:
 # swarm.start_sync()
