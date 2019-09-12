@@ -1,4 +1,4 @@
-#  StreamServo.py
+#  StreamThread.py
 # Alex Samland
 # August 30, 2019
 # Module built for SmarticleSwarm class for streaming servo commands
@@ -6,7 +6,7 @@
 import threading
 import time
 
-class StreamServo(object):
+class StreamThread(threading.Thread):
 
     def __init__(self,xbee,gait_f, period_ms, remote_device= None, time_noise= None):
         if time_noise == None:
@@ -18,16 +18,10 @@ class StreamServo(object):
         self.period_s = round(period_ms/1000,3)
         self.gait=gait_f
         self.dev = remote_device
-        self.thread=threading.Thread(target=self.target_function, args=(self.gait, self.period_s, self.dev, self.xb, self.time_noise), daemon = True)
+        super().__init__(target=self.target_function, args=(self.gait, self.period_s, self.dev, self.xb, self.time_noise), daemon = True)
 
-    def exit(self):
+    def kill(self):
         self.exit_flag.set()
-
-    def initialize_thread(self):
-        self.thread=threading.Thread(target=self.target_function, args=(self.gait, self.period_s, self.dev, self.xb, self.time_noise), daemon = True)
-
-
-
 
     def target_function(self,gaitf,period_s,dev,xb,time_noise):
         t=0
