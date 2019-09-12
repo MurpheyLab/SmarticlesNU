@@ -1,7 +1,7 @@
 #SmarticleSyncExample.py
 
 from modules.SmarticleSwarm import SmarticleSwarm
-from modules.StreamServo import StreamServo
+from modules.StreamThread import StreamThread
 from random import randint
 import time
 import numpy as np
