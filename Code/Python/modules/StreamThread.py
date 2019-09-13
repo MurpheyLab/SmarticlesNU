@@ -12,7 +12,8 @@ class StreamThread(threading.Thread):
         if time_noise == None:
             self.time_noise = lambda: 0
         self.xb=xbee
-        self.thread_flag = threading.Event()
+        self.run_flag = threading.Event()
+        self.run_flag.set()
         self.exit_flag = threading.Event()
         self.exit_flag.clear()
         self.period_s = round(period_ms/1000,3)
@@ -25,12 +26,15 @@ class StreamThread(threading.Thread):
 
     def target_function(self,gaitf,period_s,dev,xb,time_noise):
         t=0
-        while self.exit_flag.is_set() and self.thread_flag.wait():
+        b_stream = bytearray([18]) # Decimal 18, hex 0x12 is stream character
+        print('in target function!')
+        while not self.exit_flag.is_set() and self.run_flag.wait():
             t0 = time.time()
             t_noise = time_noise()
-            gait = gaitf(t)-[32,32] #subtract ASCII_OFFSET
-            msg = bytearray(gait)+bytearray(0x12)
+            gait = [gaitf(t)[0]+32,gaitf(t)[1]+32] #subtract ASCII_OFFSET
+            msg = bytearray(gait)+b_stream
             while ((time.time()-t0<period_s+t_noise)):
                 pass
-            xb.broadcast(msg,remote_device=dev)
+            xb.command(msg,remote_device=dev)
+            # print(gait)
             t+=period_s
