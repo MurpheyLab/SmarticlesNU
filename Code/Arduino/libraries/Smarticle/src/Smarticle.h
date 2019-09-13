@@ -72,6 +72,7 @@ class Smarticle
     void set_plank(int state);
     void set_mode(int mode);
     void set_pose(int angL, int angR);
+    void set_servos(int state);
 
     void init_t4(void);
     void init_mode(void);
@@ -97,7 +98,6 @@ class Smarticle
 
     void attach_servos(void);
     void detach_servos(void);
-    void run_servos(int);
     PWMServo ServoL;
     PWMServo ServoR;
     NeoSWSerial Xbee;
