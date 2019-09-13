@@ -55,6 +55,8 @@
 #define ASCII_OFFSET 32
 //max data that can be sent in an xbee message
 #define MAX_DATA_PAYLOAD 108
+#define MAX_MSG_SIZE 50
+#define MSG_BUFF_SIZE 3
 
 
 enum STATES{IDLE = 0, STREAM=1, INTERP=2};
@@ -76,7 +78,9 @@ class Smarticle
     void init_gait(char* msg);
 
     void rx_interrupt(uint8_t c);
-    int interp_msg(void);
+    void manage_msg(void);
+
+    int interp_msg(char* msg);
     void interp_mode(char* msg);
     void interp_pose(char* msg);
 
@@ -99,12 +103,13 @@ class Smarticle
     NeoSWSerial Xbee;
     int cycle_time_ms;
     int sensor_dat[3]={0,0,0};
-    volatile int msg_flag = 0;
   private:
     enum STATES _mode;
-    char _input_string[MAX_DATA_PAYLOAD];
-    char _input_msg[MAX_DATA_PAYLOAD];
+    char _input_string[MAX_MSG_SIZE];
+    char _input_msg[MSG_BUFF_SIZE][MAX_MSG_SIZE];
     //flags
+    volatile uint32_t _msg_rx = 0;
+    uint32_t _msg_rd=0;
     int _debug=0;
     int _run_servos=0;
     int _read_sensors=0;

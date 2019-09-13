@@ -15,9 +15,7 @@ void setup() {
 void loop() {
  smart.read_sensors();
  smart.transmit_data();
- if (smart.msg_flag==1){
-    smart.interp_msg();
-  }
+  smart.manage_msg();
 }
 
 
