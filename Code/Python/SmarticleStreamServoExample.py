@@ -8,7 +8,7 @@ import numpy as np
 import math
 
 # TO DO: change to your port
-PORT_NAME = '/dev/tty.usbserial-DN050I6Q'
+PORT_NAME = '/dev/tty.usbserial-DN05LNW6'
 
 
 def rx_callback(xbee_message):
@@ -45,30 +45,48 @@ def timed_go(min):
     time.sleep(s)
     swarm.set_servos(0)
 
+def go_to_stream():
+    swarm.stop_sync()
+    swarm.set_mode(1)
+    stream.run_flag.set()
+
+def go_to_gi():
+    stream.run_flag.clear()
+    swarm.set_mode(2)
+    swarm.start_sync()
+
+
+
+
+
 
 # instantiate SmarticleSwarm object with default args
 # change/specify USB port!!
 swarm = SmarticleSwarm(port=PORT_NAME)
 swarm.xb.add_rx_callback(rx_callback)
-gaitf = lambda t: round(90+45*math.sin(math.pi/5*t))
+gaitf = lambda t: list(np.random.choice([0,180],2))
 # discover smarticles on network; by default has 15s timeout
-swarm.build_network(5)
-stream = StreamServo(swarm.xb,gaitf,400)
+swarm.build_network(1)
+# time.sleep(1)
+swarm.set_mode(2)
+stream = StreamThread(swarm.xb,gaitf,450)
+stream.run_flag.clear()
+stream.start()
 # #change all smarticles to gait interpolate mode
 # swarm.set_mode(2)
 #
 # #send all smarticles the same random gait
 # n=15
-# L = [randint(30,60) for x in range(n)]
-# R = [randint(70,110) for x in range(n)]
-# swarm.gi([L,R],200) #gaits, delay between poitns in ms; I wouldnt go faster than 200ms
-
+L = [0,0,180,180]
+R = [0,180,180,0]
+swarm.gi([L,R],450) #gaits, delay between poitns in ms; I wouldnt go faster than 200ms
+swarm.init_sync_thread()
 # or if I want to send them each a unique random gait
 # random_gaits(15, 200)
 
 
 # always call this after updating gait in swarm.gi()
-# swarm.init_sync_thread()
+
 
 ## to start sync:
 # swarm.start_sync()
