@@ -15,7 +15,7 @@ def rx_callback(xbee_message):
     '''Simple call_back function to print received packets'''
 
     print("From {} >> {}".format(xbee_message.remote_device.get_node_id(),
-                             xbee_message.data.decode(errors='ignore')))
+                             xbee_message.data))
 
 def random_gaits(num_pts, delay_ms):
     '''Generates and sends unique random gaits of x points to all smarticles in network'''
@@ -67,7 +67,6 @@ swarm.xb.add_rx_callback(rx_callback)
 gaitf = lambda t: list(np.random.choice([0,180],2))
 # discover smarticles on network; by default has 15s timeout
 swarm.build_network(1)
-time.sleep(2)
 swarm.set_mode(2)
 stream = StreamThread(swarm.xb,gaitf,450)
 stream.run_flag.clear()
