@@ -223,7 +223,7 @@ int Smarticle::interp_msg(char* msg)
   } else if (msg[1]=='R'&& msg[3]=='0'){ set_read(0); if(_debug==1){Xbee.printf("DEBUG: stop read");}
   } else if (msg[1]=='P'&& msg[3]=='1'){ set_plank(1); if(_debug==1){Xbee.printf("DEBUG: START PLANK!");}
   } else if (msg[1]=='P'&& msg[3]=='0'){ set_plank(0); if(_debug==1){Xbee.printf("DEBUG: STOP PLANK!");}
-  } else if (msg[1]=='S'&& msg[2]=='P'){ interp_pose(msg); if(_debug==1){Xbee.printf("DEBUG: set mode");}
+} else if (msg[1]=='S'&& msg[2]=='P'){ interp_pose(msg); if(_debug==1){Xbee.printf("DEBUG: set pose");}
   } else {
     if(_debug==1){Xbee.printf("DEBUG: no match :(\n");}
     return 0;
@@ -283,7 +283,7 @@ void Smarticle::transmit_data(void)
 
 void Smarticle::t4_interrupt(void)
 {
-  if (_mode==INTERP && _plank!=0){
+  if (_mode==INTERP && _plank==0){
         gait_interpolate(_gait_pts, _gaitL, _gaitR);
   }
 }
@@ -312,8 +312,10 @@ void Smarticle:: stream_servo(uint8_t angL, uint8_t angR)
   if (_mode==STREAM){
     if (angL==200+ASCII_OFFSET && angR==200+ASCII_OFFSET){
       set_pose(random(180),random(180));
-    }
-    set_pose(angL-ASCII_OFFSET,angR-ASCII_OFFSET);
+      //  sXbee.printf("DEBUG; rand");
+    }else if(angL==190+ASCII_OFFSET && angR==190+ASCII_OFFSET) {
+      set_pose(180*random(1),180*random(1));
+    }else{set_pose(angL-ASCII_OFFSET,angR-ASCII_OFFSET);}
   }
 
 }
