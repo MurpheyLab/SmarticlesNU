@@ -60,6 +60,10 @@ class SmarticleSwarm(object):
                 if inp[0].upper()=='Y':
                     self.build_network(exp_no_smarticles)
                 else:
+                    #purge Smarticle Xbee buffer
+                    time.sleep(0.5)
+                    swarm.xb.broadcast('\n')
+                    time.sleep(0.5)
                     print('Network Discovery Ended\n')
 
 
