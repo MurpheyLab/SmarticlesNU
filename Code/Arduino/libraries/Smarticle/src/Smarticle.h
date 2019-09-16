@@ -56,7 +56,7 @@
 //max data that can be sent in an xbee message
 #define MAX_DATA_PAYLOAD 108
 #define MAX_MSG_SIZE 50
-#define MSG_BUFF_SIZE 3
+#define MSG_BUFF_SIZE 4
 
 
 enum STATES{IDLE = 0, STREAM=1, INTERP=2};
@@ -105,7 +105,6 @@ class Smarticle
     int sensor_dat[3]={0,0,0};
   private:
     enum STATES _mode;
-    char _input_string[MAX_MSG_SIZE];
     char _input_msg[MSG_BUFF_SIZE][MAX_MSG_SIZE];
     //flags
     volatile uint32_t _msg_rx = 0;
