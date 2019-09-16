@@ -65,9 +65,9 @@ def go_to_gi():
 swarm = SmarticleSwarm(port=PORT_NAME)
 swarm.xb.add_rx_callback(rx_callback)
 # gaitf = lambda t: list(np.random.choice([0,180],2))
-gaitf = lambda t: [190,190]
+gaitf = lambda t: [190,190] #[190,190] signifies unique random corners
 # discover smarticles on network; by default has 15s timeout
-swarm.build_network(1)
+swarm.build_network(3)
 swarm.set_mode(2)
 stream = StreamThread(swarm.xb,gaitf,450)
 stream.run_flag.clear()
