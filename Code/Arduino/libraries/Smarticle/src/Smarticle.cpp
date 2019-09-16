@@ -35,6 +35,7 @@ Smarticle:: Smarticle(int debug, int sample_time_ms):Xbee(RX_PIN,TX_PIN)
 {
   pinMode(LED,OUTPUT);
   //debug currently not implemented; just uncomment print statements for debug help
+  randomSeed(analogRead(A7));
   _debug = debug;
   _mode = IDLE;
   _sample_time_ms = sample_time_ms;
@@ -196,7 +197,7 @@ void Smarticle::manage_msg(void)
 {
   if ((_msg_rx-_msg_rd)>0){
     int ind = (_msg_rd++)%MSG_BUFF_SIZE;
-    Xbee.printf("msg!>>");
+    if(_debug==1){Xbee.printf("msg!>>");}
     //ensure message matches command structure of leading with a colon ':'
     // typical message structure example '':M:0' set to mode 0
     if (_input_msg[ind][0]==':'){
