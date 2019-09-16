@@ -77,8 +77,8 @@ stream.start()
 #
 # #send all smarticles the same random gait
 # n=15
-L = [0,0,180,180]
-R = [0,180,180,0]
+L = [0,180,180,0]
+R = [0,0,180,180]
 swarm.gi([L,R],450) #gaits, delay between poitns in ms; I wouldnt go faster than 200ms
 swarm.init_sync_thread()
 # or if I want to send them each a unique random gait

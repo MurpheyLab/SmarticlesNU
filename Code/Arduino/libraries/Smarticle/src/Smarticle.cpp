@@ -311,10 +311,10 @@ void Smarticle:: stream_servo(uint8_t angL, uint8_t angR)
 {
   if (_mode==STREAM){
     if (angL==200+ASCII_OFFSET && angR==200+ASCII_OFFSET){
-      set_pose(random(180),random(180));
+      set_pose(random(181),random(181));
       //  sXbee.printf("DEBUG; rand");
     }else if(angL==190+ASCII_OFFSET && angR==190+ASCII_OFFSET) {
-      set_pose(180*random(1),180*random(1));
+      set_pose(180*random(2),180*random(2));
     }else{set_pose(angL-ASCII_OFFSET,angR-ASCII_OFFSET);}
   }
 
@@ -324,7 +324,8 @@ void Smarticle:: stream_servo(uint8_t angL, uint8_t angR)
 void Smarticle::gait_interpolate(int len, uint8_t *servoL_arr, uint8_t *servoR_arr)
 {
     //move servos to next position specified in gait array
-    set_pose(servoL_arr[_index%len],servoR_arr[(_index++)%len]);
+    set_pose(servoL_arr[_index%len],servoR_arr[(_index)%len]);
+    _index++;
 }
 
 
