@@ -1,7 +1,7 @@
 #include <Smarticle.h>
 
 
-Smarticle smart(1);
+Smarticle smart(0);
 
 void setup() {
   smart.Xbee.attachInterrupt(handleRxChar);
