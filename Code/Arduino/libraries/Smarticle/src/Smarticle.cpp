@@ -31,16 +31,13 @@
 
 #include <Smarticle.h>
 
-Smarticle:: Smarticle(int debug, int run_servos, int transmit, int sample_time_ms, int cycle_period_ms):Xbee(RX_PIN,TX_PIN)
+Smarticle:: Smarticle(int debug, int sample_time_ms):Xbee(RX_PIN,TX_PIN)
 {
   pinMode(LED,OUTPUT);
   //debug currently not implemented; just uncomment print statements for debug help
   _debug = debug;
   _mode = IDLE;
-  _run_servos = run_servos;
-  _transmit = transmit;
   _sample_time_ms = sample_time_ms;
-  cycle_time_ms = cycle_period_ms;
 }
 
 
@@ -81,7 +78,6 @@ void Smarticle::set_plank(int state)
   //sets servos to plank position
   if (state ==1)
   {
-    //flag so that t4 interrupt doesnt write to servos
     _plank=1;
     ServoL.write(90);
     ServoR.write(90);
@@ -131,11 +127,10 @@ void Smarticle::init_mode()
   _index = 0;
   if (_mode==IDLE){
     detach_servos();
-    _run_servos=0;
     _transmit = 0;
-    _plank = 0;
     _read_sensors = 0;
-    //reset gait se maintains plank position
+    _plank = 0;
+    //reset gait so that it maintains plank position
     _gait_pts=1;
     _t4_TOP = 3906; //delay of 500ms
     _gaitL[0]=90;
@@ -251,7 +246,7 @@ void Smarticle::interp_mode(char* msg)
 void Smarticle::interp_pose(char* msg)
 {
   //interpret set pose commands
-  set_servos(0);
+  disable_t4_interrupts();
   int angL=90,angR=90;
   sscanf(msg,":SP:%d,%d",&angL, &angR);
   set_pose(angL,angR);
@@ -288,17 +283,9 @@ void Smarticle::transmit_data(void)
 
 void Smarticle::t4_interrupt(void)
 {
-  //runs when TCNT4 = OCR4A
-  // if (_mode!=IDLE){
-  //   //if plank flag is set, plank!
-  //   if (_plank==1){
-  //     ServoL.write(90);
-  //     ServoR.write(90);
-  //   }else if (_run_servos==1 && _mode==INTERP){
-  if (_mode==INTERP){
-      gait_interpolate(_gait_pts, _gaitL, _gaitR);
-    }
-  // }
+  if (_mode==INTERP && _plank!=0){
+        gait_interpolate(_gait_pts, _gaitL, _gaitR);
+  }
 }
 
 
@@ -323,6 +310,9 @@ void Smarticle::disable_t4_interrupts(void)
 void Smarticle:: stream_servo(uint8_t angL, uint8_t angR)
 {
   if (_mode==STREAM){
+    if (angL==200+ASCII_OFFSET && angR==200+ASCII_OFFSET){
+      set_pose(random(180),random(180));
+    }
     set_pose(angL-ASCII_OFFSET,angR-ASCII_OFFSET);
   }
 
@@ -352,12 +342,4 @@ void Smarticle::detach_servos(void)
   //detach servos
   ServoL.detach();
   ServoR.detach();
-}
-
-
-void Smarticle::set_servos(int run)
-{
-  _run_servos = run;
-  _index = 0;
-  TCNT4 = 0;
 }

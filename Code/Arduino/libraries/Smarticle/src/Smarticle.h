@@ -64,7 +64,7 @@ enum STATES{IDLE = 0, STREAM=1, INTERP=2};
 class Smarticle
 {
   public:
-    Smarticle(int debug=0, int run_servos=0, int transmit=0, int sample_time_ms = 15, int cycle_period_ms = 33);
+    Smarticle(int debug=0, int sample_time_ms = 15);
 
     void set_led(int state);
     void set_transmit(int state);
@@ -72,7 +72,6 @@ class Smarticle
     void set_plank(int state);
     void set_mode(int mode);
     void set_pose(int angL, int angR);
-    void set_servos(int state);
 
     void init_t4(void);
     void init_mode(void);
@@ -110,10 +109,9 @@ class Smarticle
     volatile uint32_t _msg_rx = 0;
     uint32_t _msg_rd=0;
     int _debug=0;
-    int _run_servos=0;
     int _read_sensors=0;
     int _transmit=0;
-    int _plank=0;
+    int _plank =0;
     int _sample_time_ms=15;
     void _plankf(void);
     uint8_t _gaitL[MAX_GAIT_SIZE];
