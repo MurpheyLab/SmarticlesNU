@@ -1,19 +1,21 @@
 #SmarticleSyncExample.py
 
 from modules.SmarticleSwarm import SmarticleSwarm
+from modules.StreamThread import StreamThread
 from random import randint
 import time
 import numpy as np
+import math
 
 # TO DO: change to your port
-PORT_NAME = '/dev/tty.usbserial-DN050I6Q'
+PORT_NAME = '/dev/tty.usbserial-DN05LNW6'
 
 
 def rx_callback(xbee_message):
     '''Simple call_back function to print received packets'''
 
     print("From {} >> {}".format(xbee_message.remote_device.get_node_id(),
-                             xbee_message.data.decode()))
+                             xbee_message.data))
 
 def random_gaits(num_pts, delay_ms):
     '''Generates and sends unique random gaits of x points to all smarticles in network'''
@@ -43,15 +45,31 @@ def timed_go(min):
     time.sleep(s)
     swarm.set_servos(0)
 
+def go_to_stream():
+    swarm.stop_sync()
+    swarm.set_mode(1)
+    stream.run_flag.set()
 
-#instantiate SmarticleSwarm object with default args
-#change/specify USB port!!
+def go_to_gi():
+    stream.run_flag.clear()
+    swarm.set_mode(2)
+    swarm.start_sync()
+
+
+
+
+
+
+# instantiate SmarticleSwarm object with default args
+# change/specify USB port!!
 swarm = SmarticleSwarm(port=PORT_NAME)
 swarm.xb.add_rx_callback(rx_callback)
-#discover smarticles on network; by default has 15s timeout
-swarm.build_network(5)
-#change all smarticles to gait interpolate mode
+# gaitf = lambda t: list(np.random.choice([0,180],2))
+gaitf = lambda t: [190,190] #[190,190] signifies unique random corners
+# discover smarticles on network; by default has 15s timeout
+swarm.build_network(3)
 swarm.set_mode(2)
+<<<<<<< HEAD:Code/Python/SmarticleSyncExample.py
 
 #send all smarticles the same random gait
 n=15
@@ -60,16 +78,31 @@ R = [0,0,180,180]
 swarm.gi([L,R],400) #gaits, delay between poitns in ms; I wouldnt go faster than 200ms
 
 #or if I want to send them each a unique random gait
+=======
+stream = StreamThread(swarm.xb,gaitf,450)
+stream.run_flag.clear()
+stream.start()
+# #change all smarticles to gait interpolate mode
+# swarm.set_mode(2)
+#
+# #send all smarticles the same random gait
+# n=15
+L = [0,180,180,0]
+R = [0,0,180,180]
+swarm.gi([L,R],450) #gaits, delay between poitns in ms; I wouldnt go faster than 200ms
+swarm.init_sync_thread()
+# or if I want to send them each a unique random gait
+>>>>>>> 8bd9bc4315ace1b6bcfba5d84d986f75e31bb73d:Code/Python/SmarticleStreamServoExample.py
 # random_gaits(15, 200)
 
 
-#always call this after updating gait in swarm.gi()
-swarm.init_sync_thread()
+# always call this after updating gait in swarm.gi()
 
-##to start sync:
-#swarm.start_sync()
-##or use
-#timed_sync(minutes)
+
+## to start sync:
+# swarm.start_sync()
+## or use
+# timed_sync(minutes)
 
 #if you dont want them to be synchronized:
 #swarm.set_servos(1) or timed_go(minutes)

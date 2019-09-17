@@ -55,6 +55,8 @@
 #define ASCII_OFFSET 32
 //max data that can be sent in an xbee message
 #define MAX_DATA_PAYLOAD 108
+#define MAX_MSG_SIZE 50
+#define MSG_BUFF_SIZE 4
 
 
 enum STATES{IDLE = 0, STREAM=1, INTERP=2};
@@ -62,7 +64,7 @@ enum STATES{IDLE = 0, STREAM=1, INTERP=2};
 class Smarticle
 {
   public:
-    Smarticle(int debug=0, int run_servos=0, int transmit=0, int sample_time_ms = 15, int cycle_period_ms = 33);
+    Smarticle(int debug=0, int sample_time_ms = 15);
 
     void set_led(int state);
     void set_transmit(int state);
@@ -76,7 +78,9 @@ class Smarticle
     void init_gait(char* msg);
 
     void rx_interrupt(uint8_t c);
-    int interp_msg(void);
+    void manage_msg(void);
+
+    int interp_msg(char* msg);
     void interp_mode(char* msg);
     void interp_pose(char* msg);
 
@@ -88,28 +92,26 @@ class Smarticle
     void enable_t4_interrupts(void);
     void disable_t4_interrupts(void);
 
-    void stream_servo(void);
+    void stream_servo(uint8_t angL, uint8_t angR);
     void gait_interpolate(int len, uint8_t* servoL_arr, uint8_t* servoR_arr);
 
     void attach_servos(void);
     void detach_servos(void);
-    void run_servos(int);
     PWMServo ServoL;
     PWMServo ServoR;
     NeoSWSerial Xbee;
     int cycle_time_ms;
     int sensor_dat[3]={0,0,0};
-    volatile int msg_flag = 0;
   private:
     enum STATES _mode;
-    char _input_string[MAX_DATA_PAYLOAD];
-    char _input_msg[MAX_DATA_PAYLOAD];
+    char _input_msg[MSG_BUFF_SIZE][MAX_MSG_SIZE];
     //flags
+    volatile uint32_t _msg_rx = 0;
+    uint32_t _msg_rd=0;
     int _debug=0;
-    int _run_servos=0;
     int _read_sensors=0;
     int _transmit=0;
-    int _plank=0;
+    int _plank =0;
     int _sample_time_ms=15;
     void _plankf(void);
     uint8_t _gaitL[MAX_GAIT_SIZE];
