@@ -31,16 +31,13 @@
 
 #include <Smarticle.h>
 
-Smarticle:: Smarticle(int debug, int run_servos, int transmit, int sample_time_ms, int cycle_period_ms):Xbee(RX_PIN,TX_PIN)
+Smarticle:: Smarticle(int debug, int sample_time_ms):Xbee(RX_PIN,TX_PIN)
 {
   pinMode(LED,OUTPUT);
-  //debug currently not implemented; just uncomment print statements for debug help
+  randomSeed(analogRead(A7));
   _debug = debug;
   _mode = IDLE;
-  _run_servos = run_servos;
-  _transmit = transmit;
   _sample_time_ms = sample_time_ms;
-  cycle_time_ms = cycle_period_ms;
 }
 
 
@@ -81,7 +78,6 @@ void Smarticle::set_plank(int state)
   //sets servos to plank position
   if (state ==1)
   {
-    //flag so that t4 interrupt doesnt write to servos
     _plank=1;
     ServoL.write(90);
     ServoR.write(90);
@@ -94,7 +90,10 @@ void Smarticle::set_plank(int state)
 void Smarticle::set_mode(int m)
 {
   //sets mode given input
+<<<<<<< HEAD
   Xbee.printf("Mode input: %d\n", m);
+=======
+>>>>>>> 8bd9bc4315ace1b6bcfba5d84d986f75e31bb73d
   switch(m){
     case 0: _mode = IDLE;break;
     case 1: _mode = STREAM;break;
@@ -130,33 +129,29 @@ void Smarticle::init_mode()
 {
   //clear all flags on mode change
   _index = 0;
-  TCNT4 = 0;
-  _run_servos=0;
-  _transmit = 0;
-  _plank = 0;
-  _read_sensors = 0;
-  if (_mode==STREAM ){
-    attach_servos();
-    enable_t4_interrupts();
-  }else if (_mode==INTERP){
-      attach_servos();
-      //initialize so that gait sequence maintains plank position
-      _gait_pts=1;
-      _t4_TOP = 3906; //delay of 500ms
-      _gaitL[0]=90;
-      _gaitR[0]=90;
-      enable_t4_interrupts();
-  }else{
+  if (_mode==IDLE){
     detach_servos();
+    _transmit = 0;
+    _read_sensors = 0;
+    _plank = 0;
+    //reset gait so that it maintains plank position
+    _gait_pts=1;
+    _t4_TOP = 3906; //delay of 500ms
+    _gaitL[0]=90;
+    _gaitR[0]=90;
+  }else{
+    attach_servos();
   }
   //clear pending t4 interrupts
   TIFR4  = 0;
+  TCNT4 = 0;
 }
 
 
 void Smarticle::init_gait(char* msg)
 {
   //get number of gait points
+  disable_t4_interrupts();
   sscanf(msg,":GI:%2d,",&_gait_pts);
   //reconstruct 16 bit integer from two 8 bit chars to get gait delay counts for interrupt
   _t4_TOP = (msg[DELAY_OFFSET]<<8)|(msg[DELAY_OFFSET+1]&0xff);
@@ -165,7 +160,7 @@ void Smarticle::init_gait(char* msg)
   for (int ii=0; ii<_gait_pts; ii++){
     _gaitL[ii]=msg[GAIT_OFFSET+ii]-ASCII_OFFSET;
     _gaitR[ii]=msg[GAIT_OFFSET+MAX_GAIT_SIZE+ii]-ASCII_OFFSET;
-    // Xbee.printf("Index:\t%d\tL:%d\tR:%d\n",ii,_gaitL[ii],_gaitR[ii]);
+    if (_debug==1){Xbee.printf("Index:\t%d\tL:%d\tR:%d\n",ii,_gaitL[ii],_gaitR[ii]);}
   }
   //set compare match value to delay counts
   OCR4A = _t4_TOP;
@@ -173,51 +168,67 @@ void Smarticle::init_gait(char* msg)
   TCNT4 = 0;
   //resent array index back at zero to start gait sequence at the beginning
   _index = 0;
+<<<<<<< HEAD
 
   // Xbee.printf("DEBUG: GI %d ms period, %d points\n",_t4_TOP,_gait_pts);
+=======
+>>>>>>> 8bd9bc4315ace1b6bcfba5d84d986f75e31bb73d
 }
 
 
 void Smarticle::rx_interrupt(uint8_t c)
 {
   //runs on every received byte
-  static int len;
-  //if sync character 0x11
-  if (c==0x11){
+  static int len=0;
+  int ind =(_msg_rx)%MSG_BUFF_SIZE;
+  //if stream servo command
+  if (c==0x12){
+    stream_servo(_input_msg[ind][0],_input_msg[ind][1]);
+    _input_msg[ind][0]='\0';
+    len =0;
+  } else if (c==0x11){  //if sync character 0x11
     //set timer counter to half of its TOP value that triggers the interrupt
     TCNT4 = _half_t4_TOP;
-
   //else if end of message character '\n'
+  } else if (c!='\n'){
+      //add character to end of input string and move over null character
+      _input_msg[ind][len++]= c;
+      _input_msg[ind][len]='\0';
   } else if (c=='\n'){
+<<<<<<< HEAD
     //block until msg has finished being interpreted
     // rudimentary 2 message buffer until we implement something more robust
     // while (msg_flag==1){}
+=======
+>>>>>>> 8bd9bc4315ace1b6bcfba5d84d986f75e31bb73d
     //set flag that message has ben received
-    msg_flag=1;
-    //copy over to input_msg and clear input_string so that incoming bytes can still be stored
-    strcpy(_input_msg,_input_string);
-    _input_string[0]='\0';
+    _msg_rx++;
     len = 0;
-  } else{
-    //add character to end of input string and move over null character
-    _input_string[len++]= c;
-    _input_string[len]='\0';
+  }
+}
+
+void Smarticle::manage_msg(void)
+{
+  if ((_msg_rx-_msg_rd)>0){
+    int ind = (_msg_rd++)%MSG_BUFF_SIZE;
+    if(_debug==1){Xbee.printf("msg!>>");}
+    //ensure message matches command structure of leading with a colon ':'
+    // typical message structure example '':M:0' set to mode 0
+    if (_input_msg[ind][0]==':'){
+      interp_msg(_input_msg[ind]);
+    }else if (_debug == 1){
+      Xbee.printf("DEBUG: wrong format >>");
+      Xbee.printf("%c",_input_msg[ind][0]);
+    }
   }
 }
 
 
-int Smarticle::interp_msg(void)
+int Smarticle::interp_msg(char* msg)
 {
-  //interpret received message
-  // Xbee.printf("Received message"); // %s\n",_input_msg);
-  disable_t4_interrupts();
-  msg_flag = 0;
-  //ensure message matches command structure of leading with a colon ':'
-  // typical message structure example '':M:0' set to mode 0
-  if (_input_msg[0]!=':'){
-    // Xbee.printf("DEBUG: no match :(\n");
-    return 0;
+  if(_debug==1){Xbee.printf("%s>>",msg);}
   //determine which command to exectue
+<<<<<<< HEAD
   } else if (_mode==INTERP&& _input_msg[1]=='G'&& _input_msg[2]=='I'){ init_gait(_input_msg);
   } else if (_mode==STREAM&& _input_msg[1]=='S'&& _input_msg[2]=='S'){
   } else if (_input_msg[1]=='M'){ interp_mode(_input_msg);
@@ -230,11 +241,23 @@ int Smarticle::interp_msg(void)
   } else if(_input_msg[1]=='P'&&_input_msg[3]=='1'){ set_plank(1); //Xbee.printf("DEBUG: START PLANK!\n");
 } else if(_input_msg[1]=='P'&&_input_msg[3]=='0'){ set_plank(0); //Xbee.printf("DEBUG: STOP PLANK!\n");
   } else if (_input_msg[1]=='S'&&_input_msg[2]=='P'){ interp_pose(_input_msg);
+=======
+  if (msg[1]=='M'){ interp_mode(msg); if(_debug==1){Xbee.printf("DEBUG: set mode");}
+  } else if (msg[1]=='S'&& msg[3]=='0'){ disable_t4_interrupts(); if(_debug==1){Xbee.printf("DEBUG: stop interrupts");}
+  } else if (msg[1]=='S'&& msg[3]=='1'){ enable_t4_interrupts(); if(_debug==1){Xbee.printf("DEBUG: set interrupts");}
+  } else if (_mode==INTERP&& msg[1]=='G'&& msg[2]=='I'){ init_gait(msg); if(_debug==1){Xbee.printf("DEBUG: set gait");}
+  } else if (msg[1]=='T'&& msg[3]=='1'){ set_transmit(1); if(_debug==1){Xbee.printf("DEBUG: set transmit");}
+  } else if (msg[1]=='T'&& msg[3]=='0'){ set_transmit(0); if(_debug==1){Xbee.printf("DEBUG: stop transmitted");}
+  } else if (msg[1]=='R'&& msg[3]=='1'){ set_read(1); if(_debug==1){Xbee.printf("DEBUG: set read");}
+  } else if (msg[1]=='R'&& msg[3]=='0'){ set_read(0); if(_debug==1){Xbee.printf("DEBUG: stop read");}
+  } else if (msg[1]=='P'&& msg[3]=='1'){ set_plank(1); if(_debug==1){Xbee.printf("DEBUG: START PLANK!");}
+  } else if (msg[1]=='P'&& msg[3]=='0'){ set_plank(0); if(_debug==1){Xbee.printf("DEBUG: STOP PLANK!");}
+} else if (msg[1]=='S'&& msg[2]=='P'){ interp_pose(msg); if(_debug==1){Xbee.printf("DEBUG: set pose");}
+>>>>>>> 8bd9bc4315ace1b6bcfba5d84d986f75e31bb73d
   } else {
-    // Xbee.printf("DEBUG: no match :(\n");
+    if(_debug==1){Xbee.printf("DEBUG: no match :(\n");}
     return 0;
   }
-  enable_t4_interrupts();
   return 1;
 }
 
@@ -242,19 +265,18 @@ int Smarticle::interp_msg(void)
 void Smarticle::interp_mode(char* msg)
 {
   //interpret mode change command
-  _run_servos = 0;
   int m=0;
   if (strlen(msg)==4){
     sscanf(msg,":M:%d,",&m);
   }
-  return set_mode(m);
+  set_mode(m);
 }
 
 
 void Smarticle::interp_pose(char* msg)
 {
   //interpret set pose commands
-  run_servos(0);
+  disable_t4_interrupts();
   int angL=90,angR=90;
   sscanf(msg,":SP:%d,%d",&angL, &angR);
   set_pose(angL,angR);
@@ -291,30 +313,20 @@ void Smarticle::transmit_data(void)
 
 void Smarticle::t4_interrupt(void)
 {
-  //runs when TCNT4 = OCR4A
-  if (_mode!=IDLE){
-    //if plank flag is set, plank!
-    if (_plank==1){
-      ServoL.write(90);
-      ServoR.write(90);
-    }else if (_run_servos==1){
-      switch (_mode) {
-        case INTERP: gait_interpolate(_gait_pts, _gaitL, _gaitR);break;
-        case STREAM: stream_servo();break;
-        default: return;
-      }
-    }
+  if (_mode==INTERP && _plank==0){
+        gait_interpolate(_gait_pts, _gaitL, _gaitR);
   }
 }
 
 
 void Smarticle::enable_t4_interrupts(void)
 {
-  if (_mode!=IDLE){
+  if (_mode==INTERP){
     //enable timer4 compare match A interrupt
     TIMSK4 = 1<<OCIE4A;
+    TCNT4 = 0;
+    _index=0;
   }
-  // Xbee.printf("DEBUG: T2 interrupt enabled!\n");
 }
 
 
@@ -322,21 +334,28 @@ void Smarticle::disable_t4_interrupts(void)
 {
   //disable all timer4 interrupts
   TIMSK4 = 0;
-  // Xbee.printf("DEBUG: T2 interrupt disabled!\n");
 }
 
 
-void Smarticle:: stream_servo(void)
+void Smarticle:: stream_servo(uint8_t angL, uint8_t angR)
 {
-  return;
+  if (_mode==STREAM){
+    if (angL==200+ASCII_OFFSET && angR==200+ASCII_OFFSET){
+      set_pose(random(181),random(181));
+      //  sXbee.printf("DEBUG; rand");
+    }else if(angL==190+ASCII_OFFSET && angR==190+ASCII_OFFSET) {
+      set_pose(180*random(2),180*random(2));
+    }else{set_pose(angL-ASCII_OFFSET,angR-ASCII_OFFSET);}
+  }
+
 }
 
 
 void Smarticle::gait_interpolate(int len, uint8_t *servoL_arr, uint8_t *servoR_arr)
 {
     //move servos to next position specified in gait array
-    ServoL.write(servoL_arr[_index%len]);
-    ServoR.write(servoR_arr[(_index++)%len]);
+    set_pose(servoL_arr[_index%len],servoR_arr[(_index)%len]);
+    _index++;
 }
 
 
@@ -346,10 +365,8 @@ void Smarticle::attach_servos(void)
   if (_mode!=IDLE){
     ServoL.attach(SERVO_L,MIN_US,MAX_US);
     ServoR.attach(SERVO_R,MIN_US,MAX_US);
-    ServoL.write(90);
-    ServoR.write(90);
+    set_pose(90,90);
   }
-  // Xbee.printf("DEBUG: Servos Attached!\n");
 }
 
 
@@ -358,14 +375,4 @@ void Smarticle::detach_servos(void)
   //detach servos
   ServoL.detach();
   ServoR.detach();
-  // Xbee.printf("DEBUG: Servos Detached!\n");
-}
-
-
-void Smarticle::run_servos(int run)
-{
-   // Xbee.printf("DEBUG: TOGGLE SERVOS!\n");
-  _run_servos = run;
-  _index = 0;
-  TCNT4 = 0;
 }

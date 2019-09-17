@@ -1,9 +1,10 @@
 #include <Smarticle.h>
 
 
-Smarticle smart(1);
+Smarticle smart(0);
 
 void setup() {
+  randomSeed(analogRead(A7));
   smart.Xbee.attachInterrupt(handleRxChar);
   smart.Xbee.begin(9600);
   smart.init_t4();
@@ -15,9 +16,7 @@ void setup() {
 void loop() {
  smart.read_sensors();
  smart.transmit_data();
- if (smart.msg_flag==1){
-    smart.interp_msg();
-  }
+  smart.manage_msg();
 }
 
 

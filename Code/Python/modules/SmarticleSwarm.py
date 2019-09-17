@@ -5,6 +5,7 @@
 
 import time
 from modules.XbeeComm import XbeeComm
+from modules.StreamThread import StreamThread
 import threading
 
 
@@ -59,6 +60,10 @@ class SmarticleSwarm(object):
                 if inp[0].upper()=='Y':
                     self.build_network(exp_no_smarticles)
                 else:
+                    #purge Smarticle Xbee buffer
+                    time.sleep(0.5)
+                    swarm.xb.broadcast('\n')
+                    time.sleep(0.5)
                     print('Network Discovery Ended\n')
 
 
@@ -293,7 +298,7 @@ class SmarticleSwarm(object):
         '''
         time_adjust_s=sync_period_s-0.035 #subtract 35ms based on results from timing experiments
         msg = bytearray(b'\x11')
-        #threading.event.wait() blocks until it is a) set and then returns True or b) the specified timeout elapses i nwhich it retrusn nothing
+        #threading.event.wait() blocks until it is a) set and then returns True or b) the specified timeout elapses in which it retrusn nothing
         while self.sync_flag.wait() and not self.timer_counts.wait(timeout=(time_adjust_s)):
                 self.xb.broadcast(msg)
 
