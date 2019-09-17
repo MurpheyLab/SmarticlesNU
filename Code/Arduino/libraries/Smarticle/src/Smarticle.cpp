@@ -34,7 +34,6 @@
 Smarticle:: Smarticle(int debug, int sample_time_ms):Xbee(RX_PIN,TX_PIN)
 {
   pinMode(LED,OUTPUT);
-  //debug currently not implemented; just uncomment print statements for debug help
   randomSeed(analogRead(A7));
   _debug = debug;
   _mode = IDLE;
