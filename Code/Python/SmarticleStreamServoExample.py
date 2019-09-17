@@ -56,10 +56,6 @@ def go_to_gi():
     swarm.start_sync()
 
 
-
-
-
-
 # instantiate SmarticleSwarm object with default args
 # change/specify USB port!!
 swarm = SmarticleSwarm(port=PORT_NAME)
@@ -69,7 +65,6 @@ gaitf = lambda t: [190,190] #[190,190] signifies unique random corners
 # discover smarticles on network; by default has 15s timeout
 swarm.build_network(3)
 swarm.set_mode(2)
-<<<<<<< HEAD:Code/Python/SmarticleSyncExample.py
 
 #send all smarticles the same random gait
 n=15
@@ -78,7 +73,6 @@ R = [0,0,180,180]
 swarm.gi([L,R],400) #gaits, delay between poitns in ms; I wouldnt go faster than 200ms
 
 #or if I want to send them each a unique random gait
-=======
 stream = StreamThread(swarm.xb,gaitf,450)
 stream.run_flag.clear()
 stream.start()
@@ -92,7 +86,6 @@ R = [0,0,180,180]
 swarm.gi([L,R],450) #gaits, delay between poitns in ms; I wouldnt go faster than 200ms
 swarm.init_sync_thread()
 # or if I want to send them each a unique random gait
->>>>>>> 8bd9bc4315ace1b6bcfba5d84d986f75e31bb73d:Code/Python/SmarticleStreamServoExample.py
 # random_gaits(15, 200)
 
 
