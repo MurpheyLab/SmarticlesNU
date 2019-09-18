@@ -69,6 +69,11 @@ gaitf = lambda t: [190,190] #[190,190] signifies unique random corners
 # discover smarticles on network; by default has 15s timeout
 swarm.build_network(3)
 swarm.set_mode(2)
+L = [0,180,180,0]
+R = [0,0,180,180]
+swarm.gi([L,R],400) #gaits, delay between poitns in ms; I wouldnt go faster than 200ms
+
+#or if I want to send them each a unique random gait
 stream = StreamThread(swarm.xb,gaitf,450)
 stream.run_flag.clear()
 stream.start()

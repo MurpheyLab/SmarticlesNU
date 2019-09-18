@@ -179,6 +179,11 @@ void Smarticle::init_gait(char* msg)
   TCNT4 = 0;
   //resent array index back at zero to start gait sequence at the beginning
   _index = 0;
+<<<<<<< HEAD
+
+  // Xbee.printf("DEBUG: GI %d ms period, %d points\n",_t4_TOP,_gait_pts);
+=======
+>>>>>>> 8bd9bc4315ace1b6bcfba5d84d986f75e31bb73d
 }
 
 
@@ -203,6 +208,12 @@ void Smarticle::rx_interrupt(uint8_t c)
       _input_msg[ind][len++]= c;
       _input_msg[ind][len]='\0';
   } else if (c=='\n'){
+<<<<<<< HEAD
+    //block until msg has finished being interpreted
+    // rudimentary 2 message buffer until we implement something more robust
+    // while (msg_flag==1){}
+=======
+>>>>>>> 8bd9bc4315ace1b6bcfba5d84d986f75e31bb73d
     //set flag that message has ben received
     _msg_rx++;
     len = 0;
