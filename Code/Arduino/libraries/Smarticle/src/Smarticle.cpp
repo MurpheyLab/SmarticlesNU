@@ -85,7 +85,7 @@ void Smarticle::set_plank(int state)
   }
 }
 
-void Smarticle::set_stream_delay(int state, int max_delay_val, int min_delay_val)
+void Smarticle::set_stream_delay(int state, int max_delay_val)
 {
   if (state>0){
     if (state==1){
@@ -96,9 +96,6 @@ void Smarticle::set_stream_delay(int state, int max_delay_val, int min_delay_val
   }
   if (max_delay_val>0){
     _random_delay_max=max_delay_val;
-  }
-  if (min_delay_val>0){
-    _random_delay_min=min_delay_val;
   }
 }
 
@@ -272,9 +269,9 @@ void Smarticle::interp_pose(char* msg)
 
 void Smarticle::interp_delay(char* msg)
 {
-  int stat=0,max=0,min=0;
-  sscanf(msg,":SD:%d,%d,%d",&stat, &min, &max);
-  set_stream_delay(stat, min, max);
+  int stat=0,max=0;
+  sscanf(msg,":SD:%d,%d",&stat, &max);
+  set_stream_delay(stat,max);
 }
 
 
@@ -337,7 +334,7 @@ void Smarticle::stream_servo(void)
   if (_mode==STREAM & _stream_cmd==1){
     _stream_cmd=0;
     if (_stream_delay==1){
-        delay(random(_random_delay_min,_random_delay_max));
+        delay(random(_random_delay_max));
     }
     if (_stream_arr[0]==200+ASCII_OFFSET && _stream_arr[1]==200+ASCII_OFFSET){
       set_pose(random(181),random(181));

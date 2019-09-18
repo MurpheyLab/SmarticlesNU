@@ -62,7 +62,7 @@ class SmarticleSwarm(object):
                 else:
                     #purge Smarticle Xbee buffer
                     time.sleep(0.5)
-                    swarm.xb.broadcast('\n')
+                    self.xb.broadcast('\n')
                     time.sleep(0.5)
                     print('Network Discovery Ended\n')
 
@@ -234,7 +234,7 @@ class SmarticleSwarm(object):
         msg=':SP:{},{}\n'.format(int(posL),int(posR))
         self.xb.command(msg, remote_device)
 
-    def set_delay(self, state=-1, min_val=-1, max_val=-1, remote_device = None):
+    def set_delay(self, state=-1, max_val=-1, remote_device = None):
         '''
         Enables/disables random delay in stream servo mode for smarticles.
         Writing  value of negative  one (-1) leaves that  field as is on the smarticle
@@ -259,7 +259,7 @@ class SmarticleSwarm(object):
         *Returns*
         void
         '''
-        msg=':SD:{},{},{}\n'.format(int(state),int(min),int(max))
+        msg=':SD:{},{}\n'.format(int(state),int(max_val))
         self.xb.command(msg, remote_device)
 
 

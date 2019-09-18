@@ -72,7 +72,7 @@ class Smarticle
     void set_plank(int state);
     void set_mode(int mode);
     void set_pose(int angL, int angR);
-    void set_stream_delay(int state, int min_delay_val, int max_delay_val);
+    void set_stream_delay(int state, int max_delay_val);
 
     void init_t4(void);
     void init_mode(void);
@@ -113,7 +113,6 @@ class Smarticle
     uint8_t _stream_arr[2]={0,0};
     int _stream_cmd=0;
     int _stream_delay = 0;
-    int _random_delay_min = 0;
     int _random_delay_max  = 50;
     int _debug=0;
     int _read_sensors=0;
