@@ -121,7 +121,6 @@ class Smarticle
     int _plank =0;
     int _sample_time_ms=15;
     int _servos_attached= 0;
-    void _plankf(void);
     uint8_t _gaitL[MAX_GAIT_SIZE];
     uint8_t _gaitR[MAX_GAIT_SIZE];
     uint16_t _t4_TOP = 3906; //500ms

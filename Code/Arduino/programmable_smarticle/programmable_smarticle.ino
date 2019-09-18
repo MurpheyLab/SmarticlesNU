@@ -14,9 +14,10 @@ void setup() {
 }
 
 void loop() {
- smart.read_sensors();
- smart.transmit_data();
+  smart.read_sensors();
+  smart.transmit_data();
   smart.manage_msg();
+  smart.stream_servo();
 }
 
 

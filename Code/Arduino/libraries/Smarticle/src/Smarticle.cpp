@@ -179,11 +179,6 @@ void Smarticle::init_gait(char* msg)
   TCNT4 = 0;
   //resent array index back at zero to start gait sequence at the beginning
   _index = 0;
-<<<<<<< HEAD
-
-  // Xbee.printf("DEBUG: GI %d ms period, %d points\n",_t4_TOP,_gait_pts);
-=======
->>>>>>> 8bd9bc4315ace1b6bcfba5d84d986f75e31bb73d
 }
 
 
@@ -208,12 +203,6 @@ void Smarticle::rx_interrupt(uint8_t c)
       _input_msg[ind][len++]= c;
       _input_msg[ind][len]='\0';
   } else if (c=='\n'){
-<<<<<<< HEAD
-    //block until msg has finished being interpreted
-    // rudimentary 2 message buffer until we implement something more robust
-    // while (msg_flag==1){}
-=======
->>>>>>> 8bd9bc4315ace1b6bcfba5d84d986f75e31bb73d
     //set flag that message has ben received
     _msg_rx++;
     len = 0;
@@ -343,21 +332,20 @@ void Smarticle::disable_t4_interrupts(void)
 }
 
 
-void Smarticle:: stream_servo(uint8_t angL, uint8_t angR)
+void Smarticle::stream_servo(void)
 {
   if (_mode==STREAM & _stream_cmd==1){
     _stream_cmd=0;
     if (_stream_delay==1){
         delay(random(_random_delay_min,_random_delay_max));
     }
-    if (angL==200+ASCII_OFFSET && angR==200+ASCII_OFFSET){
+    if (_stream_arr[0]==200+ASCII_OFFSET && _stream_arr[1]==200+ASCII_OFFSET){
       set_pose(random(181),random(181));
       //  sXbee.printf("DEBUG; rand");
-    }else if(angL==190+ASCII_OFFSET && angR==190+ASCII_OFFSET) {
+    }else if(_stream_arr[0]==190+ASCII_OFFSET && _stream_arr[1]==190+ASCII_OFFSET) {
       set_pose(180*random(2),180*random(2));
-    }else{set_pose(angL-ASCII_OFFSET,angR-ASCII_OFFSET);}
+    }else{set_pose(_stream_arr[0]-ASCII_OFFSET,_stream_arr[1]-ASCII_OFFSET);}
   }
-
 }
 
 
