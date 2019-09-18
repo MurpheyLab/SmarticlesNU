@@ -72,6 +72,7 @@ class Smarticle
     void set_plank(int state);
     void set_mode(int mode);
     void set_pose(int angL, int angR);
+    void set_stream_delay(int state, int min_delay_val, int max_delay_val);
 
     void init_t4(void);
     void init_mode(void);
@@ -83,6 +84,7 @@ class Smarticle
     int interp_msg(char* msg);
     void interp_mode(char* msg);
     void interp_pose(char* msg);
+    void interp_delay(char* msg);
 
     int * read_sensors(void);
     void transmit_data(void);
@@ -108,11 +110,17 @@ class Smarticle
     //flags
     volatile uint32_t _msg_rx = 0;
     uint32_t _msg_rd=0;
+    uint8_t _stream_arr[2]={0,0};
+    int _stream_cmd=0;
+    int _stream_delay = 0;
+    int _random_delay_min = 0;
+    int _random_delay_max  = 50;
     int _debug=0;
     int _read_sensors=0;
     int _transmit=0;
     int _plank =0;
     int _sample_time_ms=15;
+    int _servos_attached= 0;
     void _plankf(void);
     uint8_t _gaitL[MAX_GAIT_SIZE];
     uint8_t _gaitR[MAX_GAIT_SIZE];

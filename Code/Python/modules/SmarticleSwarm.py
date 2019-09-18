@@ -234,6 +234,34 @@ class SmarticleSwarm(object):
         msg=':SP:{},{}\n'.format(int(posL),int(posR))
         self.xb.command(msg, remote_device)
 
+    def set_delay(self, state=-1, min_val=-1, max_val=-1, remote_device = None):
+        '''
+        Enables/disables random delay in stream servo mode for smarticles.
+        Writing  value of negative  one (-1) leaves that  field as is on the smarticle
+
+        *remote_device*
+        Sends message to remote Xbee in one of three ways depending on the `remote_device` argument
+            1. remote_device == `None`:
+                broadcasts message without acks using `broadcast()`
+            2. remote_device == `True`:
+                broadcasts message with acks using `ack_broadcast()`
+            3. remote_device in values of devices dictionary:
+                send message to single Xbee using `send()`
+
+        *Arguments*
+        | Argument        | Type                                          | Description                                                                | Default Value  |
+        | :------:        | :--:                                          | :---------:                                                                | :-----------:  |
+        | state           | `int`                                         | Values: 0,1 see note about negative values above                           | -1             |
+        | posL            | `int`                                         | Minimum value of random delay                                              | -1             |
+        | posR            | `int`                                         | Maximum value of random delay                                              | -1             |
+        | remote_device   | `RemoteXbeeDevice` Object or `None` or `bool` | Argument value and type determines communication mode as described above   | `None`         |
+
+        *Returns*
+        void
+        '''
+        msg=':SD:{},{},{}\n'.format(int(state),int(min),int(max))
+        self.xb.command(msg, remote_device)
+
 
     def gi(self, gait, delay_ms=250, remote_device = None):
         '''

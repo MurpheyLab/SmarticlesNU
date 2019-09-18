@@ -34,7 +34,6 @@
 Smarticle:: Smarticle(int debug, int sample_time_ms):Xbee(RX_PIN,TX_PIN)
 {
   pinMode(LED,OUTPUT);
-  randomSeed(analogRead(A7));
   _debug = debug;
   _mode = IDLE;
   _sample_time_ms = sample_time_ms;
@@ -86,6 +85,22 @@ void Smarticle::set_plank(int state)
   }
 }
 
+void Smarticle::set_stream_delay(int state, int max_delay_val, int min_delay_val)
+{
+  if (state>0){
+    if (state==1){
+      _stream_delay=1;
+    }else{
+      _stream_delay=0;
+    }
+  }
+  if (max_delay_val>0){
+    _random_delay_max=max_delay_val;
+  }
+  if (min_delay_val>0){
+    _random_delay_min=min_delay_val;
+  }
+}
 
 void Smarticle::set_mode(int m)
 {
@@ -174,7 +189,9 @@ void Smarticle::rx_interrupt(uint8_t c)
   int ind =(_msg_rx)%MSG_BUFF_SIZE;
   //if stream servo command
   if (c==0x12){
-    stream_servo(_input_msg[ind][0],_input_msg[ind][1]);
+    _stream_arr[0]=_input_msg[ind][0];
+    _stream_arr[1]=_input_msg[ind][1];
+    _stream_cmd=1;
     _input_msg[ind][0]='\0';
     len =0;
   } else if (c==0x11){  //if sync character 0x11
@@ -221,9 +238,10 @@ int Smarticle::interp_msg(char* msg)
   } else if (msg[1]=='T'&& msg[3]=='0'){ set_transmit(0); if(_debug==1){Xbee.printf("DEBUG: stop transmitted");}
   } else if (msg[1]=='R'&& msg[3]=='1'){ set_read(1); if(_debug==1){Xbee.printf("DEBUG: set read");}
   } else if (msg[1]=='R'&& msg[3]=='0'){ set_read(0); if(_debug==1){Xbee.printf("DEBUG: stop read");}
-  } else if (msg[1]=='P'&& msg[3]=='1'){ set_plank(1); if(_debug==1){Xbee.printf("DEBUG: START PLANK!");}
-  } else if (msg[1]=='P'&& msg[3]=='0'){ set_plank(0); if(_debug==1){Xbee.printf("DEBUG: STOP PLANK!");}
-} else if (msg[1]=='S'&& msg[2]=='P'){ interp_pose(msg); if(_debug==1){Xbee.printf("DEBUG: set pose");}
+  } else if (msg[1]=='P'&& msg[3]=='1'){ set_plank(1); if(_debug==1){Xbee.printf("DEBUG: start plank");}
+  } else if (msg[1]=='P'&& msg[3]=='0'){ set_plank(0); if(_debug==1){Xbee.printf("DEBUG: stop plank");}
+  } else if (msg[1]=='S'&& msg[2]=='P'){ interp_pose(msg); if(_debug==1){Xbee.printf("DEBUG: set pose");}
+  } else if (msg[1]=='S'&& msg[2]=='D'){ interp_delay(msg); if(_debug==1){Xbee.printf("DEBUG: set delay");}
   } else {
     if(_debug==1){Xbee.printf("DEBUG: no match :(\n");}
     return 0;
@@ -250,6 +268,13 @@ void Smarticle::interp_pose(char* msg)
   int angL=90,angR=90;
   sscanf(msg,":SP:%d,%d",&angL, &angR);
   set_pose(angL,angR);
+}
+
+void Smarticle::interp_delay(char* msg)
+{
+  int stat=0,max=0,min=0;
+  sscanf(msg,":SD:%d,%d,%d",&stat, &min, &max);
+  set_stream_delay(stat, min, max);
 }
 
 
@@ -309,7 +334,11 @@ void Smarticle::disable_t4_interrupts(void)
 
 void Smarticle:: stream_servo(uint8_t angL, uint8_t angR)
 {
-  if (_mode==STREAM){
+  if (_mode==STREAM & _stream_cmd==1){
+    _stream_cmd=0;
+    if (_stream_delay==1){
+        delay(random(_random_delay_min,_random_delay_max));
+    }
     if (angL==200+ASCII_OFFSET && angR==200+ASCII_OFFSET){
       set_pose(random(181),random(181));
       //  sXbee.printf("DEBUG; rand");
@@ -332,11 +361,12 @@ void Smarticle::gait_interpolate(int len, uint8_t *servoL_arr, uint8_t *servoR_a
 void Smarticle::attach_servos(void)
 {
   //attach servos and move to position (90,90)
-  if (_mode!=IDLE){
-    ServoL.attach(SERVO_L,MIN_US,MAX_US);
-    ServoR.attach(SERVO_R,MIN_US,MAX_US);
-    set_pose(90,90);
-  }
+  if (_mode!=IDLE && _servos_attached==0){
+      _servos_attached = 1;
+      ServoL.attach(SERVO_L,MIN_US,MAX_US);
+      ServoR.attach(SERVO_R,MIN_US,MAX_US);
+      set_pose(90,90);
+    }
 }
 
 
@@ -345,4 +375,5 @@ void Smarticle::detach_servos(void)
   //detach servos
   ServoL.detach();
   ServoR.detach();
+  _servos_attached=0;
 }
