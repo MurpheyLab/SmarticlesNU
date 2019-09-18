@@ -252,8 +252,7 @@ class SmarticleSwarm(object):
         | Argument        | Type                                          | Description                                                                | Default Value  |
         | :------:        | :--:                                          | :---------:                                                                | :-----------:  |
         | state           | `int`                                         | Values: 0,1 see note about negative values above                           | -1             |
-        | posL            | `int`                                         | Minimum value of random delay                                              | -1             |
-        | posR            | `int`                                         | Maximum value of random delay                                              | -1             |
+        | max_val         | `int`                                         | Maximum value of random delay                                              | -1             |
         | remote_device   | `RemoteXbeeDevice` Object or `None` or `bool` | Argument value and type determines communication mode as described above   | `None`         |
 
         *Returns*
