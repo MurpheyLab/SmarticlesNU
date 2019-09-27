@@ -76,13 +76,13 @@ class SmarticleSwarm(object):
         *Arguments*
         | Argument        | Type                                          | Description                                                              | Default Value  |
         | :------:        | :--:                                          | :---------:                                                              | :-----------:  |
-        | state           | `int`                                         | Value: 1 or 0. enables/disables updating servos in timer interrupt       | N/A            |
+        | state           | `bool`                                         | Value: 1 or 0. enables/disables updating servos in timer interrupt       | N/A            |
         | remote_device   | `RemoteXbeeDevice` Object or `None` or `bool` | Argument value and type determines communication mode as described above | `None`         |
 
         *Returns*
         void
         '''
-        if (state==1):
+        if (state==True):
             msg = ':S:1\n'
         else:
             msg = ':S:0\n'
@@ -97,7 +97,7 @@ class SmarticleSwarm(object):
         *Arguments*
         | Argument        | Type                                          | Description                                                              | Default Value  |
         | :------:        | :--:                                          | :---------:                                                              | :-----------:  |
-        | state           | `int`                                         | Value: 1 or 0. enables/disables transmitting Data                        | N/A            |
+        | state           | `bool`                                         | Value: 1 or 0. enables/disables transmitting Data                        | N/A            |
         | remote_device   | `RemoteXbeeDevice` Object or `None` or `bool` | Argument value and type determines communication mode as described above | `None`         |
 
         *remote_device*
@@ -126,7 +126,7 @@ class SmarticleSwarm(object):
         *Arguments*
         | Argument        | Type                                          | Description                                                              | Default Value  |
         | :------:        | :--:                                          | :---------:                                                              | :-----------:  |
-        | state           | `int`                                         | Value: 1 or 0. enables/disables reading sensors                          | N/A            |
+        | state           | `bool`                                         | Value: 1 or 0. enables/disables reading sensors                          | N/A            |
         | remote_device   | `RemoteXbeeDevice` Object or `None` or `bool` | Argument value and type determines communication mode as described above | `None`         |
 
         *remote_device*
@@ -141,7 +141,7 @@ class SmarticleSwarm(object):
         *Returns*
         void
         '''
-        if (state==1):
+        if (state==True):
             msg = ':R:1\n'
         else:
             msg = ':R:0\n'
@@ -196,13 +196,13 @@ class SmarticleSwarm(object):
         *Arguments*
         | Argument        | Type                                          | Description                                                                | Default Value  |
         | :------:        | :--:                                          | :---------:                                                                | :-----------:  |
-        | state           | `int`                                         | Values: 0,1. 0: deplank 1: plank                                           | N/A            |
+        | state           | `bool`                                         | Values: 0,1. 0: deplank 1: plank                                           | N/A            |
         | remote_device   | `RemoteXbeeDevice` Object or `None` or `bool` | Argument value and type determines communication mode as described above   | `None`         |
 
         *Returns*
         void
         '''
-        if (state==1):
+        if (state==True):
             msg = ':P:1\n'
         else:
             msg = ':P:0\n'
@@ -262,7 +262,7 @@ class SmarticleSwarm(object):
         self.xb.command(msg, remote_device)
 
 
-    def gi(self, gait, delay_ms=250, remote_device = None):
+    def gait_init(self, gait, delay_ms=250, remote_device = None):
         '''
         Sends gait interpolation data to remote smarticles including:
             1. left and right servo interpolation points (max 15 points each)
