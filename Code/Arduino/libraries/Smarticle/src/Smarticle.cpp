@@ -34,7 +34,6 @@
 Smarticle:: Smarticle(int debug, int sample_time_ms):Xbee(RX_PIN,TX_PIN)
 {
   pinMode(LED,OUTPUT);
-  randomSeed(analogRead(A7));
   _debug = debug;
   _mode = IDLE;
   _sample_time_ms = sample_time_ms;
@@ -86,14 +85,23 @@ void Smarticle::set_plank(int state)
   }
 }
 
+void Smarticle::set_stream_delay(int state, int max_delay_val)
+{
+  if (state>0){
+    if (state==1){
+      _stream_delay=1;
+    }else{
+      _stream_delay=0;
+    }
+  }
+  if (max_delay_val>0){
+    _random_delay_max=max_delay_val;
+  }
+}
 
 void Smarticle::set_mode(int m)
 {
   //sets mode given input
-<<<<<<< HEAD
-  Xbee.printf("Mode input: %d\n", m);
-=======
->>>>>>> 8bd9bc4315ace1b6bcfba5d84d986f75e31bb73d
   switch(m){
     case 0: _mode = IDLE;break;
     case 1: _mode = STREAM;break;
@@ -168,11 +176,6 @@ void Smarticle::init_gait(char* msg)
   TCNT4 = 0;
   //resent array index back at zero to start gait sequence at the beginning
   _index = 0;
-<<<<<<< HEAD
-
-  // Xbee.printf("DEBUG: GI %d ms period, %d points\n",_t4_TOP,_gait_pts);
-=======
->>>>>>> 8bd9bc4315ace1b6bcfba5d84d986f75e31bb73d
 }
 
 
@@ -183,7 +186,9 @@ void Smarticle::rx_interrupt(uint8_t c)
   int ind =(_msg_rx)%MSG_BUFF_SIZE;
   //if stream servo command
   if (c==0x12){
-    stream_servo(_input_msg[ind][0],_input_msg[ind][1]);
+    _stream_arr[0]=_input_msg[ind][0];
+    _stream_arr[1]=_input_msg[ind][1];
+    _stream_cmd=1;
     _input_msg[ind][0]='\0';
     len =0;
   } else if (c==0x11){  //if sync character 0x11
@@ -195,12 +200,6 @@ void Smarticle::rx_interrupt(uint8_t c)
       _input_msg[ind][len++]= c;
       _input_msg[ind][len]='\0';
   } else if (c=='\n'){
-<<<<<<< HEAD
-    //block until msg has finished being interpreted
-    // rudimentary 2 message buffer until we implement something more robust
-    // while (msg_flag==1){}
-=======
->>>>>>> 8bd9bc4315ace1b6bcfba5d84d986f75e31bb73d
     //set flag that message has ben received
     _msg_rx++;
     len = 0;
@@ -228,20 +227,6 @@ int Smarticle::interp_msg(char* msg)
 {
   if(_debug==1){Xbee.printf("%s>>",msg);}
   //determine which command to exectue
-<<<<<<< HEAD
-  } else if (_mode==INTERP&& _input_msg[1]=='G'&& _input_msg[2]=='I'){ init_gait(_input_msg);
-  } else if (_mode==STREAM&& _input_msg[1]=='S'&& _input_msg[2]=='S'){
-  } else if (_input_msg[1]=='M'){ interp_mode(_input_msg);
-  } else if(_input_msg[1]=='S'&&_input_msg[3]=='0'){ run_servos(0);
-  } else if(_input_msg[1]=='S'&&_input_msg[3]=='1'){ run_servos(1);
-  } else if(_input_msg[1]=='T'&&_input_msg[3]=='1'){ set_transmit(1);
-  } else if(_input_msg[1]=='T'&&_input_msg[3]=='0'){ set_transmit(0);
-  } else if(_input_msg[1]=='R'&&_input_msg[3]=='1'){ set_read(1);
-  } else if(_input_msg[1]=='R'&&_input_msg[3]=='0'){ set_read(0);
-  } else if(_input_msg[1]=='P'&&_input_msg[3]=='1'){ set_plank(1); //Xbee.printf("DEBUG: START PLANK!\n");
-} else if(_input_msg[1]=='P'&&_input_msg[3]=='0'){ set_plank(0); //Xbee.printf("DEBUG: STOP PLANK!\n");
-  } else if (_input_msg[1]=='S'&&_input_msg[2]=='P'){ interp_pose(_input_msg);
-=======
   if (msg[1]=='M'){ interp_mode(msg); if(_debug==1){Xbee.printf("DEBUG: set mode");}
   } else if (msg[1]=='S'&& msg[3]=='0'){ disable_t4_interrupts(); if(_debug==1){Xbee.printf("DEBUG: stop interrupts");}
   } else if (msg[1]=='S'&& msg[3]=='1'){ enable_t4_interrupts(); if(_debug==1){Xbee.printf("DEBUG: set interrupts");}
@@ -250,10 +235,10 @@ int Smarticle::interp_msg(char* msg)
   } else if (msg[1]=='T'&& msg[3]=='0'){ set_transmit(0); if(_debug==1){Xbee.printf("DEBUG: stop transmitted");}
   } else if (msg[1]=='R'&& msg[3]=='1'){ set_read(1); if(_debug==1){Xbee.printf("DEBUG: set read");}
   } else if (msg[1]=='R'&& msg[3]=='0'){ set_read(0); if(_debug==1){Xbee.printf("DEBUG: stop read");}
-  } else if (msg[1]=='P'&& msg[3]=='1'){ set_plank(1); if(_debug==1){Xbee.printf("DEBUG: START PLANK!");}
-  } else if (msg[1]=='P'&& msg[3]=='0'){ set_plank(0); if(_debug==1){Xbee.printf("DEBUG: STOP PLANK!");}
-} else if (msg[1]=='S'&& msg[2]=='P'){ interp_pose(msg); if(_debug==1){Xbee.printf("DEBUG: set pose");}
->>>>>>> 8bd9bc4315ace1b6bcfba5d84d986f75e31bb73d
+  } else if (msg[1]=='P'&& msg[3]=='1'){ set_plank(1); if(_debug==1){Xbee.printf("DEBUG: start plank");}
+  } else if (msg[1]=='P'&& msg[3]=='0'){ set_plank(0); if(_debug==1){Xbee.printf("DEBUG: stop plank");}
+  } else if (msg[1]=='S'&& msg[2]=='P'){ interp_pose(msg); if(_debug==1){Xbee.printf("DEBUG: set pose");}
+  } else if (msg[1]=='S'&& msg[2]=='D'){ interp_delay(msg); if(_debug==1){Xbee.printf("DEBUG: set delay");}
   } else {
     if(_debug==1){Xbee.printf("DEBUG: no match :(\n");}
     return 0;
@@ -280,6 +265,13 @@ void Smarticle::interp_pose(char* msg)
   int angL=90,angR=90;
   sscanf(msg,":SP:%d,%d",&angL, &angR);
   set_pose(angL,angR);
+}
+
+void Smarticle::interp_delay(char* msg)
+{
+  int stat=0,max=0;
+  sscanf(msg,":SD:%d,%d",&stat, &max);
+  set_stream_delay(stat,max);
 }
 
 
@@ -337,17 +329,20 @@ void Smarticle::disable_t4_interrupts(void)
 }
 
 
-void Smarticle:: stream_servo(uint8_t angL, uint8_t angR)
+void Smarticle::stream_servo(void)
 {
-  if (_mode==STREAM){
-    if (angL==200+ASCII_OFFSET && angR==200+ASCII_OFFSET){
+  if (_mode==STREAM & _stream_cmd==1){
+    _stream_cmd=0;
+    if (_stream_delay==1){
+        delay(random(_random_delay_max));
+    }
+    if (_stream_arr[0]==200+ASCII_OFFSET && _stream_arr[1]==200+ASCII_OFFSET){
       set_pose(random(181),random(181));
       //  sXbee.printf("DEBUG; rand");
-    }else if(angL==190+ASCII_OFFSET && angR==190+ASCII_OFFSET) {
+    }else if(_stream_arr[0]==190+ASCII_OFFSET && _stream_arr[1]==190+ASCII_OFFSET) {
       set_pose(180*random(2),180*random(2));
-    }else{set_pose(angL-ASCII_OFFSET,angR-ASCII_OFFSET);}
+    }else{set_pose(_stream_arr[0]-ASCII_OFFSET,_stream_arr[1]-ASCII_OFFSET);}
   }
-
 }
 
 
@@ -362,11 +357,12 @@ void Smarticle::gait_interpolate(int len, uint8_t *servoL_arr, uint8_t *servoR_a
 void Smarticle::attach_servos(void)
 {
   //attach servos and move to position (90,90)
-  if (_mode!=IDLE){
-    ServoL.attach(SERVO_L,MIN_US,MAX_US);
-    ServoR.attach(SERVO_R,MIN_US,MAX_US);
-    set_pose(90,90);
-  }
+  if (_mode!=IDLE && _servos_attached==0){
+      _servos_attached = 1;
+      ServoL.attach(SERVO_L,MIN_US,MAX_US);
+      ServoR.attach(SERVO_R,MIN_US,MAX_US);
+      set_pose(90,90);
+    }
 }
 
 
@@ -375,4 +371,5 @@ void Smarticle::detach_servos(void)
   //detach servos
   ServoL.detach();
   ServoR.detach();
+  _servos_attached=0;
 }

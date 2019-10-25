@@ -62,7 +62,7 @@ class SmarticleSwarm(object):
                 else:
                     #purge Smarticle Xbee buffer
                     time.sleep(0.5)
-                    swarm.xb.broadcast('\n')
+                    self.xb.broadcast('\n')
                     time.sleep(0.5)
                     print('Network Discovery Ended\n')
 
@@ -76,13 +76,13 @@ class SmarticleSwarm(object):
         *Arguments*
         | Argument        | Type                                          | Description                                                              | Default Value  |
         | :------:        | :--:                                          | :---------:                                                              | :-----------:  |
-        | state           | `int`                                         | Value: 1 or 0. enables/disables updating servos in timer interrupt       | N/A            |
+        | state           | `bool`                                         | Value: 1 or 0. enables/disables updating servos in timer interrupt       | N/A            |
         | remote_device   | `RemoteXbeeDevice` Object or `None` or `bool` | Argument value and type determines communication mode as described above | `None`         |
 
         *Returns*
         void
         '''
-        if (state==1):
+        if (state==True):
             msg = ':S:1\n'
         else:
             msg = ':S:0\n'
@@ -97,7 +97,7 @@ class SmarticleSwarm(object):
         *Arguments*
         | Argument        | Type                                          | Description                                                              | Default Value  |
         | :------:        | :--:                                          | :---------:                                                              | :-----------:  |
-        | state           | `int`                                         | Value: 1 or 0. enables/disables transmitting Data                        | N/A            |
+        | state           | `bool`                                         | Value: 1 or 0. enables/disables transmitting Data                        | N/A            |
         | remote_device   | `RemoteXbeeDevice` Object or `None` or `bool` | Argument value and type determines communication mode as described above | `None`         |
 
         *remote_device*
@@ -126,7 +126,7 @@ class SmarticleSwarm(object):
         *Arguments*
         | Argument        | Type                                          | Description                                                              | Default Value  |
         | :------:        | :--:                                          | :---------:                                                              | :-----------:  |
-        | state           | `int`                                         | Value: 1 or 0. enables/disables reading sensors                          | N/A            |
+        | state           | `bool`                                         | Value: 1 or 0. enables/disables reading sensors                          | N/A            |
         | remote_device   | `RemoteXbeeDevice` Object or `None` or `bool` | Argument value and type determines communication mode as described above | `None`         |
 
         *remote_device*
@@ -141,7 +141,7 @@ class SmarticleSwarm(object):
         *Returns*
         void
         '''
-        if (state==1):
+        if (state==True):
             msg = ':R:1\n'
         else:
             msg = ':R:0\n'
@@ -196,13 +196,13 @@ class SmarticleSwarm(object):
         *Arguments*
         | Argument        | Type                                          | Description                                                                | Default Value  |
         | :------:        | :--:                                          | :---------:                                                                | :-----------:  |
-        | state           | `int`                                         | Values: 0,1. 0: deplank 1: plank                                           | N/A            |
+        | state           | `bool`                                         | Values: 0,1. 0: deplank 1: plank                                           | N/A            |
         | remote_device   | `RemoteXbeeDevice` Object or `None` or `bool` | Argument value and type determines communication mode as described above   | `None`         |
 
         *Returns*
         void
         '''
-        if (state==1):
+        if (state==True):
             msg = ':P:1\n'
         else:
             msg = ':P:0\n'
@@ -234,8 +234,35 @@ class SmarticleSwarm(object):
         msg=':SP:{},{}\n'.format(int(posL),int(posR))
         self.xb.command(msg, remote_device)
 
+    def set_delay(self, state=-1, max_val=-1, remote_device = None):
+        '''
+        Enables/disables random delay in stream servo mode for smarticles.
+        Writing  value of negative  one (-1) leaves that  field as is on the smarticle
 
-    def gi(self, gait, delay_ms=250, remote_device = None):
+        *remote_device*
+        Sends message to remote Xbee in one of three ways depending on the `remote_device` argument
+            1. remote_device == `None`:
+                broadcasts message without acks using `broadcast()`
+            2. remote_device == `True`:
+                broadcasts message with acks using `ack_broadcast()`
+            3. remote_device in values of devices dictionary:
+                send message to single Xbee using `send()`
+
+        *Arguments*
+        | Argument        | Type                                          | Description                                                                | Default Value  |
+        | :------:        | :--:                                          | :---------:                                                                | :-----------:  |
+        | state           | `int`                                         | Values: 0,1 see note about negative values above                           | -1             |
+        | max_val         | `int`                                         | Maximum value of random delay                                              | -1             |
+        | remote_device   | `RemoteXbeeDevice` Object or `None` or `bool` | Argument value and type determines communication mode as described above   | `None`         |
+
+        *Returns*
+        void
+        '''
+        msg=':SD:{},{}\n'.format(int(state),int(max_val))
+        self.xb.command(msg, remote_device)
+
+
+    def gait_init(self, gait, delay_ms=250, remote_device = None):
         '''
         Sends gait interpolation data to remote smarticles including:
             1. left and right servo interpolation points (max 15 points each)

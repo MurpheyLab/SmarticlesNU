@@ -25,7 +25,7 @@ def random_gaits(num_pts, delay_ms):
         gait=[L,R]
         #if you want them to have different delays
         #delay_ms = randint(200,300)
-        swarm.gi(gait,delay_ms,remote_device=dev)
+        swarm.gait_init(gait,delay_ms,remote_device=dev)
         #move to first pose in gait sequence
         swarm.set_pose(L[0],R[0],remote_device=dev)
 
@@ -65,12 +65,12 @@ gaitf = lambda t: [190,190] #[190,190] signifies unique random corners
 # discover smarticles on network; by default has 15s timeout
 swarm.build_network(3)
 swarm.set_mode(2)
-
+swarm.set_delay(1,100);
 #send all smarticles the same random gait
 n=15
 L = [0,180,180,0]
 R = [0,0,180,180]
-swarm.gi([L,R],400) #gaits, delay between poitns in ms; I wouldnt go faster than 200ms
+swarm.gait_init([L,R],400) #gaits, delay between poitns in ms; I wouldnt go faster than 200ms
 
 #or if I want to send them each a unique random gait
 stream = StreamThread(swarm.xb,gaitf,450)
@@ -83,13 +83,13 @@ stream.start()
 # n=15
 L = [0,180,180,0]
 R = [0,0,180,180]
-swarm.gi([L,R],450) #gaits, delay between poitns in ms; I wouldnt go faster than 200ms
+swarm.gait_init([L,R],450) #gaits, delay between poitns in ms; I wouldnt go faster than 200ms
 swarm.init_sync_thread()
 # or if I want to send them each a unique random gait
 # random_gaits(15, 200)
 
 
-# always call this after updating gait in swarm.gi()
+# always call this after updating gait in swarm.gait_init()
 
 
 ## to start sync:
