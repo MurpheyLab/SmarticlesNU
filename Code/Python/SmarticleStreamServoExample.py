@@ -56,10 +56,6 @@ def go_to_gi():
     swarm.start_sync()
 
 
-
-
-
-
 # instantiate SmarticleSwarm object with default args
 # change/specify USB port!!
 swarm = SmarticleSwarm(port=PORT_NAME)
@@ -70,6 +66,8 @@ gaitf = lambda t: [190,190] #[190,190] signifies unique random corners
 swarm.build_network(3)
 swarm.set_mode(2)
 swarm.set_delay(1,100);
+#send all smarticles the same random gait
+n=15
 L = [0,180,180,0]
 R = [0,0,180,180]
 swarm.gait_init([L,R],400) #gaits, delay between poitns in ms; I wouldnt go faster than 200ms
