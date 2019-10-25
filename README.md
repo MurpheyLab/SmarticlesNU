@@ -22,6 +22,19 @@ Then you can run this command to run the smarticles for 1 minute
 
     >>> timed_sync(1)
     
+    
+Interfacing with The Xbees
+---
+To Change the settings of the Base Xbee, use [DIGI XCTU](https://www.digi.com/resources/documentation/digidocs/90001526/tasks/t_download_and_install_xctu.htm)  
+The Settings for the base Xbee are the default settings for 802.15.4 firmware with these changes:  
+<br>
+        **1.** Change mode (AP) to API Enabled  
+        **2.** Change Pan ID (ID) to 1984  
+        **3.** Ensure address (MY) is 0  
+        **4.** Change Destination Low Address (DL) to FFFF (broadcast)  
+        
+You can also modify these settings in a simple serial console by entering command mode. See this [guide](https://cdn.sparkfun.com/learn/materials/29/22AT%20Commands.pdf) for more information.
+    
 Modifying Code on The Smarticles
 ---
 To modify the code on the smarticles themselves, you will also need to instal MiniCore into the Arduino IDE and an SI Labs driver for the CP2104 chip.  
