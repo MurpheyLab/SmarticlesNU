@@ -101,7 +101,6 @@ class Smarticle
     void detach_servos(void);
     PWMServo ServoL;
     PWMServo ServoR;
-    NeoSWSerial Xbee;
     int cycle_time_ms;
     int sensor_dat[3]={0,0,0};
   private:

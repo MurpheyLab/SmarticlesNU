@@ -1,10 +1,10 @@
-/*
+NeoSerial1/*
   Smarticle.cpp - Arduino Library for NU-Smarticle
   Alex Samland, created Aug 7, 2019
   Last Updated: Aug 29, 2019
-  v1.0
+  v2.0
 
-  NU-Smarticle v1 Pins:
+  NU-Smarticle v2 Pins:
   A0    --    Photoresistor Back
   A1    --    Servo Current Sense
   A2    --    Photoresistor Front
@@ -31,7 +31,7 @@
 
 #include <Smarticle.h>
 
-Smarticle:: Smarticle(int debug, int sample_time_ms):Xbee(RX_PIN,TX_PIN)
+Smarticle:: Smarticle(int debug, int sample_time_ms)
 {
   pinMode(LED,OUTPUT);
   _debug = debug;
@@ -168,7 +168,7 @@ void Smarticle::init_gait(char* msg)
   for (int ii=0; ii<_gait_pts; ii++){
     _gaitL[ii]=msg[GAIT_OFFSET+ii]-ASCII_OFFSET;
     _gaitR[ii]=msg[GAIT_OFFSET+MAX_GAIT_SIZE+ii]-ASCII_OFFSET;
-    if (_debug==1){Xbee.printf("Index:\t%d\tL:%d\tR:%d\n",ii,_gaitL[ii],_gaitR[ii]);}
+    if (_debug==1){NeoSerial1.printf("Index:\t%d\tL:%d\tR:%d\n",ii,_gaitL[ii],_gaitR[ii]);}
   }
   //set compare match value to delay counts
   OCR4A = _t4_TOP;
@@ -210,14 +210,14 @@ void Smarticle::manage_msg(void)
 {
   if ((_msg_rx-_msg_rd)>0){
     int ind = (_msg_rd++)%MSG_BUFF_SIZE;
-    if(_debug==1){Xbee.printf("msg!>>");}
+    if(_debug==1){NeoSerial1.printf("msg!>>");}
     //ensure message matches command structure of leading with a colon ':'
     // typical message structure example '':M:0' set to mode 0
     if (_input_msg[ind][0]==':'){
       interp_msg(_input_msg[ind]);
     }else if (_debug == 1){
-      Xbee.printf("DEBUG: wrong format >>");
-      Xbee.printf("%c",_input_msg[ind][0]);
+      NeoSerial1.printf("DEBUG: wrong format >>");
+      NeoSerial1.printf("%c",_input_msg[ind][0]);
     }
   }
 }
@@ -225,22 +225,22 @@ void Smarticle::manage_msg(void)
 
 int Smarticle::interp_msg(char* msg)
 {
-  if(_debug==1){Xbee.printf("%s>>",msg);}
+  if(_debug==1){NeoSerial1.printf("%s>>",msg);}
   //determine which command to exectue
-  if (msg[1]=='M'){ interp_mode(msg); if(_debug==1){Xbee.printf("DEBUG: set mode");}
-  } else if (msg[1]=='S'&& msg[3]=='0'){ disable_t4_interrupts(); if(_debug==1){Xbee.printf("DEBUG: stop interrupts");}
-  } else if (msg[1]=='S'&& msg[3]=='1'){ enable_t4_interrupts(); if(_debug==1){Xbee.printf("DEBUG: set interrupts");}
-  } else if (_mode==INTERP&& msg[1]=='G'&& msg[2]=='I'){ init_gait(msg); if(_debug==1){Xbee.printf("DEBUG: set gait");}
-  } else if (msg[1]=='T'&& msg[3]=='1'){ set_transmit(1); if(_debug==1){Xbee.printf("DEBUG: set transmit");}
-  } else if (msg[1]=='T'&& msg[3]=='0'){ set_transmit(0); if(_debug==1){Xbee.printf("DEBUG: stop transmitted");}
-  } else if (msg[1]=='R'&& msg[3]=='1'){ set_read(1); if(_debug==1){Xbee.printf("DEBUG: set read");}
-  } else if (msg[1]=='R'&& msg[3]=='0'){ set_read(0); if(_debug==1){Xbee.printf("DEBUG: stop read");}
-  } else if (msg[1]=='P'&& msg[3]=='1'){ set_plank(1); if(_debug==1){Xbee.printf("DEBUG: start plank");}
-  } else if (msg[1]=='P'&& msg[3]=='0'){ set_plank(0); if(_debug==1){Xbee.printf("DEBUG: stop plank");}
-  } else if (msg[1]=='S'&& msg[2]=='P'){ interp_pose(msg); if(_debug==1){Xbee.printf("DEBUG: set pose");}
-  } else if (msg[1]=='S'&& msg[2]=='D'){ interp_delay(msg); if(_debug==1){Xbee.printf("DEBUG: set delay");}
+  if (msg[1]=='M'){ interp_mode(msg); if(_debug==1){NeoSerial1.printf("DEBUG: set mode");}
+  } else if (msg[1]=='S'&& msg[3]=='0'){ disable_t4_interrupts(); if(_debug==1){NeoSerial1.printf("DEBUG: stop interrupts");}
+  } else if (msg[1]=='S'&& msg[3]=='1'){ enable_t4_interrupts(); if(_debug==1){NeoSerial1.printf("DEBUG: set interrupts");}
+  } else if (_mode==INTERP&& msg[1]=='G'&& msg[2]=='I'){ init_gait(msg); if(_debug==1){NeoSerial1.printf("DEBUG: set gait");}
+  } else if (msg[1]=='T'&& msg[3]=='1'){ set_transmit(1); if(_debug==1){NeoSerial1.printf("DEBUG: set transmit");}
+  } else if (msg[1]=='T'&& msg[3]=='0'){ set_transmit(0); if(_debug==1){NeoSerial1.printf("DEBUG: stop transmitted");}
+  } else if (msg[1]=='R'&& msg[3]=='1'){ set_read(1); if(_debug==1){NeoSerial1.printf("DEBUG: set read");}
+  } else if (msg[1]=='R'&& msg[3]=='0'){ set_read(0); if(_debug==1){NeoSerial1.printf("DEBUG: stop read");}
+  } else if (msg[1]=='P'&& msg[3]=='1'){ set_plank(1); if(_debug==1){NeoSerial1.printf("DEBUG: start plank");}
+  } else if (msg[1]=='P'&& msg[3]=='0'){ set_plank(0); if(_debug==1){NeoSerial1.printf("DEBUG: stop plank");}
+  } else if (msg[1]=='S'&& msg[2]=='P'){ interp_pose(msg); if(_debug==1){NeoSerial1.printf("DEBUG: set pose");}
+  } else if (msg[1]=='S'&& msg[2]=='D'){ interp_delay(msg); if(_debug==1){NeoSerial1.printf("DEBUG: set delay");}
   } else {
-    if(_debug==1){Xbee.printf("DEBUG: no match :(\n");}
+    if(_debug==1){NeoSerial1.printf("DEBUG: no match :(\n");}
     return 0;
   }
   return 1;
@@ -298,7 +298,7 @@ void Smarticle::transmit_data(void)
 {
   //send data: sensor_dat[0]= photo_front, sensor_dat[1]= photo_back, sensor_dat[2]= mic
   if (_transmit && _mode!=IDLE){
-    Xbee.printf("%d,%d,%d\n",sensor_dat[0], sensor_dat[1], sensor_dat[2]);
+    NeoSerial1.printf("%d,%d,%d\n",sensor_dat[0], sensor_dat[1], sensor_dat[2]);
   }
 }
 
