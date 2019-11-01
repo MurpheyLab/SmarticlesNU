@@ -33,7 +33,7 @@
 #include <string.h>
 #include "Arduino.h"
 #include "PWMServo.h"
-#include "NeoSWSerial.h"
+#include "NeoHWSerial.h"
 
 //max microsecond pulse sent to servos; adjust to change 180 deg position
 #define MAX_US 2500

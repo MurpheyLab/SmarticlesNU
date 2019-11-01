@@ -1,4 +1,4 @@
-NeoSerial1/*
+/*
   Smarticle.cpp - Arduino Library for NU-Smarticle
   Alex Samland, created Aug 7, 2019
   Last Updated: Oct 31, 2019
