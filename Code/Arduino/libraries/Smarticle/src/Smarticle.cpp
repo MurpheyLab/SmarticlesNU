@@ -1,20 +1,19 @@
 NeoSerial1/*
   Smarticle.cpp - Arduino Library for NU-Smarticle
   Alex Samland, created Aug 7, 2019
-  Last Updated: Aug 29, 2019
+  Last Updated: Oct 31, 2019
   v2.0
 
   NU-Smarticle v2 Pins:
-  A0    --    Photoresistor Back
+  A0    --    Photoresistor Right
   A1    --    Servo Current Sense
-  A2    --    Photoresistor Front
-  A3    --    Microphone (will be changed to resolve pin conflict)
-  A3    --    Photoresistor Left
-  D2    --    XBee Dout (Arduino SWserial RX)
-  D3    --    XBee Din (Arduino SWserial TX)
+  A2    --    Photoresistor Back
+  A3    --    Photoresistor Front
+  --    --    XBee Dout (Serial1)
+  --    --    XBee Din (Serial1)
   D7    --    External pth LED
-  D9    --    Right Servo Signal (bridged through D4)
-  D10   --    Left Servo Signal
+  D10    --    Right Servo Signal
+  D9   --    Left Servo Signal
   D13   --    SCK Red LED
 
 
@@ -36,6 +35,7 @@ Smarticle:: Smarticle(int debug, int sample_time_ms)
   pinMode(LED,OUTPUT);
   _debug = debug;
   _mode = IDLE;
+  NeoSerial1.begin(9600);
   _sample_time_ms = sample_time_ms;
 }
 
@@ -279,16 +279,18 @@ int * Smarticle::read_sensors(void)
 {
   if (_read_sensors ==1){
     unsigned long startTime= millis();  // Start of sample window
-    int dat[3]={0,0,0};
+    int dat[4]={0,0,0,0};
     //get maximum value from specified sample window
     while(millis() - startTime < _sample_time_ms) {
         dat[0] = max(dat[0],analogRead(PRF));
         dat[1] = max(dat[1],analogRead(PRB));
-        dat[2] = max(dat[2],analogRead(MIC));
+        dat[2] = max(dat[2],analogRead(PRR));
+        dat[3] = max(dat[3],analogRead(STRESS));
       }
     sensor_dat[0]=dat[0];
     sensor_dat[1]=dat[1];
     sensor_dat[2]=dat[2];
+    sensor_dat[3]=dat[3];
   }
   return sensor_dat;
 }
@@ -296,9 +298,9 @@ int * Smarticle::read_sensors(void)
 
 void Smarticle::transmit_data(void)
 {
-  //send data: sensor_dat[0]= photo_front, sensor_dat[1]= photo_back, sensor_dat[2]= mic
+  //send data: sensor_dat[0]= photo_front, sensor_dat[1]= photo_back, sensor_dat[2]= photo_right, sensor_dat[3]= current sense
   if (_transmit && _mode!=IDLE){
-    NeoSerial1.printf("%d,%d,%d\n",sensor_dat[0], sensor_dat[1], sensor_dat[2]);
+    NeoSerial1.printf("%d,%d,%d,%d\n",sensor_dat[0], sensor_dat[1], sensor_dat[2],sensor_dat[3]);
   }
 }
 

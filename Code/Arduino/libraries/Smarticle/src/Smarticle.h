@@ -2,21 +2,21 @@
   Smarticle.h - Arduino Library for NU-Smarticle
   header file for
   Alex Samland, created Aug 7, 2019
-  Last Updated: Aug 29, 2019
-  v1.0
+  Last Updated: Oct 31, 2019
+  v2.0
 
-  NU-Smarticle v1 Pins:
-  A0    --    Photoresistor Back
+
+  NU-Smarticle v2 Pins:
+  A0    --    Photoresistor Right
   A1    --    Servo Current Sense
-  A2    --    Photoresistor Front
-  A3    --    Microphone (will be changed to resolve pin conflict)
-  A3    --    Photoresistor Left
-  D2    --    XBee Dout (Arduino serial RX)
-  D3    --    XBee Din (Arduino serial TX)
+  A2    --    Photoresistor Back
+  A3    --    Photoresistor Front
+  --    --    XBee Dout (Serial1)
+  --    --    XBee Din (Serial1)
   D7    --    External pth LED
-  D9    --    Right Servo Signal (bridged through D4)
-  D10   --    Left Servo Signal
-  D13   --    SCK Red Led
+  D10    --    Right Servo Signal
+  D9   --    Left Servo Signal
+  D13   --    SCK Red LED
 
 
   Smarticle Modes:
@@ -42,11 +42,12 @@
 #define RX_PIN 2
 #define TX_PIN 3
 #define LED 13
-#define SERVO_L 10
-#define SERVO_R 9
-#define PRF A2 //photoresistor front
-#define PRB A0 //photoresistor back
-#define MIC A3 //microphone
+#define SERVO_L 9
+#define SERVO_R 10
+#define PRF A3 //photoresistor front
+#define PRB A2 //photoresistor back
+#define PRR A0 //photoresistor Right
+#define STRESS A1 //Current Sense
 //max number of gait points that can be sent to smarticle in gait interpolation mode
 #define MAX_GAIT_SIZE 15
 //offsets for gait interpolation message interpretation
