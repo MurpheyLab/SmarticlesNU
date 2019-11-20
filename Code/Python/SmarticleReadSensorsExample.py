@@ -33,7 +33,7 @@ swarm.xb.add_rx_callback(rx_callback)
 swarm.build_network(5)
 #change all smarticles to gait interpolate mode
 swarm.set_mode(2)
-
+swarm.set_read_sensors(1)
 swarm.set_transmit(1)
 
 #send all smarticles the same random gait
