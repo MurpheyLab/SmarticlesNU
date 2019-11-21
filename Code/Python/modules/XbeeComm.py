@@ -4,6 +4,7 @@
 # Module for communicating with smarticle swarm over Xbee3s
 
 import time
+import numpy as np
 from pdb import set_trace as bp
 
 from digi.xbee.models.status import NetworkDiscoveryStatus
@@ -35,6 +36,8 @@ class XbeeComm(object):
         self.base = Raw802Device(port, baud_rate)
         self.debug = debug
         self.open_base()
+        self.callbacks_added = False
+        self.ascii_offset = 32
 
 
     def open_base(self):
@@ -54,6 +57,27 @@ class XbeeComm(object):
         elif self.debug:
             print("Failed to open device")
         return success
+
+    def add_callbacks(self):
+        '''adds callback functions for discovery processess'''
+        # Callback for discovered devices.
+        def callback_device_discovered(remote):
+            if self.debug:
+                print("Device discovered: %s" % remote)
+            self.add_remote(remote)
+
+        # Callback for discovery finished.
+        def callback_discovery_finished(status):
+            if self.debug:
+                if status == NetworkDiscoveryStatus.SUCCESS:
+                    # print("Discovery process finished successfully.\nDevices: {}".format(self.devices))
+                    print("Discovery cycle finished\n")
+                else:
+                    print("There was an error discovering devices: %s" % status.description)
+
+        self.network.add_device_discovered_callback(callback_device_discovered)
+
+        self.network.add_discovery_process_finished_callback(callback_discovery_finished)
 
 
     def add_remote(self,remote_device):
@@ -91,26 +115,11 @@ class XbeeComm(object):
         self.devices ={}
         self.network = self.base.get_network()
         self.network.clear()
-
         self.network.set_discovery_timeout(15)  # 15 seconds.
 
-        # Callback for discovered devices.
-        def callback_device_discovered(remote):
-            if self.debug:
-                print("Device discovered: %s" % remote)
-            self.add_remote(remote)
-
-        # Callback for discovery finished.
-        def callback_discovery_finished(status):
-            if self.debug:
-                if status == NetworkDiscoveryStatus.SUCCESS:
-                    print("Discovery process finished successfully.\nDevices: {}".format(self.devices))
-                else:
-                    print("There was an error discovering devices: %s" % status.description)
-
-        self.network.add_device_discovered_callback(callback_device_discovered)
-
-        self.network.add_discovery_process_finished_callback(callback_discovery_finished)
+        if self.callbacks_added == False:
+            self.add_callbacks()
+            self.callbacks_added = True
 
         self.network.start_discovery_process()
 
@@ -150,6 +159,30 @@ class XbeeComm(object):
 
         if self.debug:
             print("Success")
+
+
+    def format_stream_msg(self, pose):
+        '''
+        takes in list of arm angles and returns string in form of stream command
+        to be sent to Smarticle in stream mode
+
+        *Arguments*
+        | Argument  | Type                  | Description                | Default Value |
+        | :------:  | :--:                  | :---------:                | :-----------: |
+        | pose      | 2 element list of int | pose angles to set arms to | N/A           |
+
+        *Returns*
+        void
+
+        More info on RemoteXbeeDevice:
+        https://xbplib.readthedocs.io/en/stable/api/digi.xbee.devices.html#digi.xbee.devices.RemoteXBeeDevice
+        '''
+        pose = [int(pose[0]), int(pose[1])]
+        pose = np.clip(pose, 0, 254-self.ascii_offset) + self.ascii_offset #clip values outside of 0-180 and add ASCII_OFFSET
+        b_stream = bytearray([18]) # Decimal 18, hex 0x12 is stream character
+        msg = bytearray(list(pose))+b_stream
+
+        return msg
 
 
     def broadcast(self, msg):

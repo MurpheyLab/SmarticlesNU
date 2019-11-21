@@ -56,7 +56,7 @@ class SmarticleSwarm(object):
         self.xb.discover()
         if exp_no_smarticles != None:
             if (len(self.xb.devices))<exp_no_smarticles:
-                inp= input('Failed to discover all {} expected Smarticles. Retry discovery (Y/N)\n'.format(exp_no_smarticles))
+                inp= input('Only discovered {} out of {} expected Smarticles. Retry discovery (Y/N)\n'.format(len(self.xb.devices),exp_no_smarticles))
                 if inp[0].upper()=='Y':
                     self.build_network(exp_no_smarticles)
                 else:
@@ -65,6 +65,20 @@ class SmarticleSwarm(object):
                     self.xb.broadcast('\n')
                     time.sleep(0.5)
                     print('Network Discovery Ended\n')
+            else:
+                #purge Smarticle Xbee buffer
+                print('Successfully discovered {} out of {} expected Smarticles\n'.format(len(self.xb.devices),exp_no_smarticles))
+                time.sleep(0.5)
+                self.xb.broadcast('\n')
+                time.sleep(0.5)
+                print('Network Discovery Ended\n')
+        else:
+            #purge Smarticle Xbee buffer
+            time.sleep(0.5)
+            self.xb.broadcast('\n')
+            time.sleep(0.5)
+            print('Network Discovery Ended\n')
+
 
 
 
@@ -234,6 +248,35 @@ class SmarticleSwarm(object):
         msg=':SP:{},{}\n'.format(int(posL),int(posR))
         self.xb.command(msg, remote_device)
 
+    def stream_pose(self, posL, posR, remote_device = None):
+        '''
+        Sets smarticle to specified servo positions. Differs from set_pose in
+        that it sends angles over the streaming pipeline, which requires the
+        smarticles be in stream mode
+
+        *remote_device*
+        Sends message to remote Xbee in one of three ways depending on the `remote_device` argument
+            1. remote_device == `None`:
+                broadcasts message without acks using `broadcast()`
+            2. remote_device == `True`:
+                broadcasts message with acks using `ack_broadcast()`
+            3. remote_device in values of devices dictionary:
+                send message to single Xbee using `send()`
+
+        *Arguments*
+        | Argument        | Type                                          | Description                                                                | Default Value  |
+        | :------:        | :--:                                          | :---------:                                                                | :-----------:  |
+        | posL            | `int`                                         | Left servo angle: 0-180 deg                                                | N/A            |
+        | posR            | `int`                                         | Right servo angle: 0-180 deg                                               | N/A            |
+        | remote_device   | `RemoteXbeeDevice` Object or `None` or `bool` | Argument value and type determines communication mode as described above   | `None`         |
+
+        *Returns*
+        void
+        '''
+        msg = self.xb.format_stream_msg([posL, posR])
+        self.xb.command(msg,remote_device)
+
+
     def set_delay(self, state=-1, max_val=-1, remote_device = None):
         '''
         Enables/disables random delay in stream servo mode for smarticles.
@@ -310,14 +353,6 @@ class SmarticleSwarm(object):
         self.xb.command(msg, remote_device)
         time.sleep(0.1) #ensure messages are not dropped as buffer isn't implemented yet
 
-    def sync_signal(self):
-        '''
-        Broadcasts sync signal '0x11' to maintain synchronization
-        '''
-        msg = bytearray(b'\x11')
-        t = time.time()
-        self.xb.broadcast(msg)
-        print("sync! {}\n".format(t))
 
     def sync_thread_target(self,sync_period_s):
         '''
@@ -355,36 +390,3 @@ class SmarticleSwarm(object):
         self.set_servos(0)
         #cause sync_flag.wait() to block
         self.sync_flag.clear()
-
-
-##Still being developed;
-    # def servo_thread_target(self, gaitf):
-    #     '''DOC'''
-    #
-    #     t = 0
-    #     self.lock.acquire()
-    #     while self.run_servos:
-    #         self.lock.release()
-    #         t0 = time.time()
-    #         self.xb.broadcast('{}\n'.format(int(gaitf(t))))
-    #         t += self.servo_period_s
-    #         while ((time.time()-t0)<self.servo_period_s):
-    #             time.sleep(0.001)
-    #         self.lock.acquire()
-    #     self.lock.release()
-    #
-    # def init_servo_thread(self, gait_fun=None):
-    #     '''DOC: initializes servo thread'''
-    #     self.servo_thread = threading.Thread(target=self.servo_thread_target, args= (gait_fun,), daemon = True)
-    #
-    #
-    # def start_servo_thread(self):
-    #     '''DOC'''
-    #     with self.lock:
-    #         self.run_servos = 1
-    #     self.servo_thread.start()
-    #
-    # def stop_servo_thread(self):
-    #     '''DOC'''
-    #     with self.lock:
-    #         self.run_servos = 0

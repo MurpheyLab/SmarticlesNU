@@ -49,7 +49,7 @@ def go_to_gi():
 swarm = SmarticleSwarm(port=PORT_NAME)
 swarm.xb.add_rx_callback(rx_callback)
 # discover smarticles on network; by default has 15s timeout
-swarm.build_network(3)
+swarm.build_network(8)
 
 # initialize square gait
 swarm.set_mode(2)
