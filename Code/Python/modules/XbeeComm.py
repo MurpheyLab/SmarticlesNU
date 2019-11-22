@@ -152,13 +152,13 @@ class XbeeComm(object):
             if self.debug():
                 print("Could not find the remote device")
             exit(1)
-        if self.debug:
-            print("Sending data to {} >> {}...".format(remote_device.get_node_id(), msg))
+#         if self.debug:
+#             print("Sending data to {} >> {}...".format(remote_device.get_node_id(), msg))
 
         self.base.send_data(remote_device, msg)
 
-        if self.debug:
-            print("Success")
+#         if self.debug:
+#             print("Success")
 
 
     def format_stream_msg(self, pose):
