@@ -18,7 +18,7 @@ class SmarticleSwarm(object):
     GI_LENGTH = 15
     ASCII_OFFSET = 32
 
-    def __init__(self, port='/dev/tty.usbserial-DN050I6Q', baud_rate = 9600, debug = 1,servo_period_ms=0):
+    def __init__(self, port='/dev/tty.usbserial-DN050I6Q', baud_rate = 9600, debug = 0,servo_period_ms=0):
         '''
         Initalizes and opens local base xbee (connected via USB) with given port and baud rate and adds it to attribute `base`
 

@@ -18,7 +18,7 @@ class XbeeComm(object):
             https://github.com/digidotcom/xbee-python'''
 
 
-    def __init__(self, port='/dev/tty.usbserial-DN050I6Q', baud_rate = 9600, debug = 1):
+    def __init__(self, port='/dev/tty.usbserial-DN050I6Q', baud_rate = 9600, debug = 0):
         '''
         Initalizes and opens local base xbee (connected via USB) with given port and baud rate and adds it to attribute `base`
 
@@ -62,18 +62,16 @@ class XbeeComm(object):
         '''adds callback functions for discovery processess'''
         # Callback for discovered devices.
         def callback_device_discovered(remote):
-            if self.debug:
-                print("Device discovered: %s" % remote)
+            print("Device discovered: %s" % remote)
             self.add_remote(remote)
 
         # Callback for discovery finished.
         def callback_discovery_finished(status):
-            if self.debug:
-                if status == NetworkDiscoveryStatus.SUCCESS:
-                    # print("Discovery process finished successfully.\nDevices: {}".format(self.devices))
-                    print("Discovery cycle finished\n")
-                else:
-                    print("There was an error discovering devices: %s" % status.description)
+            if status == NetworkDiscoveryStatus.SUCCESS:
+                # print("Discovery process finished successfully.\nDevices: {}".format(self.devices))
+                print("Discovery cycle finished\n")
+            else:
+                print("There was an error discovering devices: %s" % status.description)
 
         self.network.add_device_discovered_callback(callback_device_discovered)
 
@@ -122,9 +120,7 @@ class XbeeComm(object):
             self.callbacks_added = True
 
         self.network.start_discovery_process()
-
-        if self.debug:
-            print("Discovering remote XBee devices...")
+        print("Discovering remote XBee devices...")
 
         while self.network.is_discovery_running():
             time.sleep(0.1)
@@ -152,13 +148,13 @@ class XbeeComm(object):
             if self.debug():
                 print("Could not find the remote device")
             exit(1)
-#         if self.debug:
-#             print("Sending data to {} >> {}...".format(remote_device.get_node_id(), msg))
+        if self.debug:
+            print("Sending data to {} >> {}...".format(remote_device.get_node_id(), msg))
 
         self.base.send_data(remote_device, msg)
 
-#         if self.debug:
-#             print("Success")
+        if self.debug:
+            print("Success")
 
 
     def format_stream_msg(self, pose):
