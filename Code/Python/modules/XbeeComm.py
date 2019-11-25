@@ -5,8 +5,6 @@
 
 import time
 import numpy as np
-from pdb import set_trace as bp
-
 from digi.xbee.models.status import NetworkDiscoveryStatus
 from digi.xbee.devices import Raw802Device
 
@@ -57,6 +55,19 @@ class XbeeComm(object):
         elif self.debug:
             print("Failed to open device")
         return success
+    
+    def close_base(self):
+        '''
+        Closes local xbee defined by attribute 'base' which is set in `__init__`
+
+        *Arguments*
+        None
+
+        *Returns*
+        void
+        '''
+        if self.base is not None and self.base.is_open():
+            self.base.close()
 
     def add_callbacks(self):
         '''adds callback functions for discovery processess'''
@@ -93,9 +104,9 @@ class XbeeComm(object):
         More info on RemoteXbeeDevice:
         https://xbplib.readthedocs.io/en/stable/api/digi.xbee.devices.html#digi.xbee.devices.RemoteXBeeDevice
         '''
-
+        smarticle_number = int(''.join([s for s in remote_device.get_node_id() if s.isdigit()]))
         setattr(self,remote_device.get_node_id(),remote_device)
-        self.devices[remote_device.get_node_id()]=remote_device
+        self.devices[smarticle_number]=remote_device
 
 
     def discover(self):

@@ -78,6 +78,11 @@ class SmarticleSwarm(object):
             self.xb.broadcast('\n')
             time.sleep(0.5)
             print('Network Discovery Ended\n')
+            
+            
+    def close(self):
+        '''closes serial connection to XBee'''
+        self.xb.close_base()
 
 
 
