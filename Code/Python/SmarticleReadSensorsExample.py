@@ -6,7 +6,7 @@ import time
 import numpy as np
 
 # TO DO: change to your port
-PORT_NAME = '/dev/tty.usbserial-DN050I6Q'
+PORT_NAME = '/dev/ttyUSB0'
 
 
 def rx_callback(xbee_message):
