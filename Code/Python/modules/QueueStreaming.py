@@ -17,17 +17,12 @@ class QueueStreaming(threading.Thread):
         self.xb=xbee
         self.q = queue.Queue()
         super().__init__(target=self.target_function, args=(self.q,), daemon = True)
+        self.start()
 
     def target_function(self,q):
         '''Execute commands on queue until queue is joined'''
         while True:
-            [PosL, PosR, remote_device] = q.get()
+            [posL, posR, remote_device] = q.get()
             msg = self.xb.format_stream_msg([posL, posR])
-            self.xb.command(msg,remote_device)
-
-
-
-
-    def close(self):
-        '''Ends operation of Target Function'''
-        self.q.join()
+            self.xb.command(msg,remote_device, async = True)
+            q.task_done()
