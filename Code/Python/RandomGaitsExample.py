@@ -5,11 +5,9 @@ from modules.StreamThread import StreamThread
 from random import randint
 import time
 import numpy as np
-import math
 
 # TO DO: change to your port
 PORT_NAME = '/dev/ttyUSB0'
-
 
 def rx_callback(xbee_message):
     '''Simple call_back function to print received packets'''
