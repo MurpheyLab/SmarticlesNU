@@ -1,9 +1,9 @@
-#SmarticleSyncExample.py
+# SmarticleSyncExample.py
+import sys
+sys.path.append('modules')
 
-from modules.SmarticleSwarm import SmarticleSwarm
-from modules.StreamThread import StreamThread
+from SmarticleSwarm import *
 from random import randint
-import time
 import numpy as np
 
 # TO DO: change to your port
