@@ -16,7 +16,7 @@ class QueuePlank(threading.Thread):
     def __init__(self,xbee):
         self.xb=xbee
         self.q = queue.Queue()
-        self.plank_smarticle = None
+        self.planked_smarticle = None
         super().__init__(target=self.target_function, args=(self.q,), daemon = True)
         self.start()
 
@@ -28,35 +28,36 @@ class QueuePlank(threading.Thread):
                 msg = ':P:1\n'
             else:
                 msg = ':P:0\n'
-            self.xb.command(msg,remote_device, async = True)
+            self.xb.command(msg,remote_device, asynck = True)
             q.task_done()
 
-    def update_action_queue(self,a):
+    def update_action_queue(self,a,smart_ids):
             """
             updates action queue based on input of action vector
             """
-            amax = a.argmax()
-            devs = list(self.xb.devices.values())
-            # if action is to deplank all smarticles
             if a[-1] == 1:
                 # if smarticles are not already all deplanked
-                if self.plank_smarticle is not None:
+                if self.planked_smarticle is not None:
                     # deplank the planked smarticle
-                    self.q.put([0, devs[self.plank_smarticle]])
-                    self.plank_smarticle = None
+                    self.q.put([0, self.xb.devices[self.planked_smarticle]])
+                    self.planked_smarticle = None
+                return
+
+            new_plank_smarticle = smart_ids[a.argmax()]
+
             # if smarticle to plank is arleady planked, do nothing
-            elif amax == self.plank_smarticle:
+            if new_plank_smarticle == self.planked_smarticle:
                 return
             # if no smarticle is currently planked
-            elif self.plank_smarticle is None:
+            elif self.planked_smarticle is None:
                 # plank new smarticle
-                self.q.put([1, devs[amax]])
-                self.plank_smarticle = amax
+                self.q.put([1, self.xb.devices[new_plank_smarticle]])
+                self.planked_smarticle = new_plank_smarticle
             # if current smarticle needs to be deplanked,
             # and new smarticle needs to be planked
             else:
                 # deplank previously planked smarticle
-                self.q.put([0,devs[self.plank_smarticle]])
+                self.q.put([0,self.xb.devices[self.planked_smarticle]])
                 # plank new smarticle
-                self.q.put([1, devs[amax]])
-                self.plank_smarticle = amax
+                self.q.put([1, self.xb.devices[new_plank_smarticle]])
+                self.planked_smarticle = new_plank_smarticle

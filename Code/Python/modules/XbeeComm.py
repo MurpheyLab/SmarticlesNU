@@ -137,7 +137,7 @@ class XbeeComm(object):
             time.sleep(0.1)
 
 
-    def send(self, remote_device, msg, async = False):
+    def send(self, remote_device, msg, asynck = False):
         '''
         Sends message to remote xbee and receives acknowledgement on sucess.
         modified from digi's example SendDataSample.py
@@ -162,8 +162,8 @@ class XbeeComm(object):
             exit(1)
         if self.debug:
             print("Sending data to {} >> {}...".format(remote_device.get_node_id(), msg))
-            
-        if async is True:
+
+        if asynck is True:
             self.base.send_data_async(remote_device, msg)
         else:
             self.base.send_data(remote_device, msg)
@@ -229,7 +229,7 @@ class XbeeComm(object):
             self.send(remote_dev,msg)
 
 
-    def command(self, msg, remote_device = None, async = False):
+    def command(self, msg, remote_device = None, asynck = False):
         '''
         Sends message to remote Xbee in one of three ways depending on the `remote_device` argument
             1. remote_device == `None`:
@@ -256,7 +256,7 @@ class XbeeComm(object):
             self.ack_broadcast(msg)
         else:
             assert remote_device in self.devices.values(),"Remote Device not found in active devices"
-            self.send(remote_device,msg, async)
+            self.send(remote_device,msg, asynck)
 
     def add_rx_callback(self, callback_fun):
         '''

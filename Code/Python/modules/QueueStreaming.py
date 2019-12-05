@@ -22,5 +22,5 @@ class QueueStreaming(threading.Thread):
         while True:
             [posL, posR, remote_device] = q.get()
             msg = self.xb.format_stream_msg([posL, posR])
-            self.xb.command(msg,remote_device, async = True)
+            self.xb.command(msg,remote_device, asynck = True)
             q.task_done()
