@@ -323,7 +323,7 @@ void Smarticle::transmit_data(void)
 
 void Smarticle::t4_interrupt(void)
 {
-  if (_mode==INTERP && _plank==0){
+  if (_mode==INTERP){
         gait_interpolate(_gait_pts, _gaitL, _gaitR);
   }
 }
@@ -367,7 +367,9 @@ void Smarticle::stream_servo(void)
 void Smarticle::gait_interpolate(int len, uint8_t *servoL_arr, uint8_t *servoR_arr)
 {
     //move servos to next position specified in gait array
-    set_pose(servoL_arr[_index%len],servoR_arr[(_index)%len]);
+    if (_plank==0){
+      set_pose(servoL_arr[_index%len],servoR_arr[(_index)%len]);
+    }
     _index++;
 }
 
