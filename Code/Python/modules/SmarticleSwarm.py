@@ -310,6 +310,59 @@ class SmarticleSwarm(object):
         self.xb.command(msg, remote_device)
 
 
+    def set_pose_noise(self, max_val, remote_device = None):
+        '''
+        Sets noise on servo positions (noisy arm angles)
+
+        *remote_device*
+        Sends message to remote Xbee in one of three ways depending on the `remote_device` argument
+            1. remote_device == `None`:
+                broadcasts message without acks using `broadcast()`
+            2. remote_device == `True`:
+                broadcasts message with acks using `ack_broadcast()`
+            3. remote_device in values of devices dictionary:
+                send message to single Xbee using `send()`
+
+        *Arguments*
+        | Argument        | Type                                          | Description                                                                | Default Value  |
+        | :------:        | :--:                                          | :---------:                                                                | :-----------:  |
+        | max_val         | `int`                                         | Maximum value of random noise                                              | N/A            |
+        | remote_device   | `RemoteXbeeDevice` Object or `None` or `bool` | Argument value and type determines communication mode as described above   | `None`         |
+
+        *Returns*
+        void
+        '''
+        msg=':PN:{}\n'.format(int(max_val))
+        self.xb.command(msg, remote_device)
+
+
+    def set_sync_noise(self, max_val, remote_device = None):
+        '''
+        Sets noise on synchronization time for gait interp mode
+
+        *remote_device*
+        Sends message to remote Xbee in one of three ways depending on the `remote_device` argument
+            1. remote_device == `None`:
+                broadcasts message without acks using `broadcast()`
+            2. remote_device == `True`:
+                broadcasts message with acks using `ack_broadcast()`
+            3. remote_device in values of devices dictionary:
+                send message to single Xbee using `send()`
+
+        *Arguments*
+        | Argument        | Type                                          | Description                                                                | Default Value  |
+        | :------:        | :--:                                          | :---------:                                                                | :-----------:  |
+        | max_val         | `int`                                         | Maximum value of random delay                                              | N/A            |
+        | remote_device   | `RemoteXbeeDevice` Object or `None` or `bool` | Argument value and type determines communication mode as described above   | `None`         |
+
+        *Returns*
+        void
+        '''
+        timer_counts = int(max_val/0.128)
+        msg=':SN:{}\n'.format(timer_counts)
+        self.xb.command(msg, remote_device)
+
+
     def gait_init(self, gait, delay_ms=250, remote_device = None):
         '''
         Sends gait interpolation data to remote smarticles including:
