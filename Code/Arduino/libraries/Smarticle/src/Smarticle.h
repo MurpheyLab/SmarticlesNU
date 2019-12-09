@@ -83,6 +83,8 @@ class Smarticle
 
     int interp_msg(char* msg);
     void interp_mode(char* msg);
+    void interp_pose_noise(char* msg);
+    void interp_sync_noise(char* msg);
     void interp_pose(char* msg);
     void interp_delay(char* msg);
 
@@ -126,6 +128,8 @@ class Smarticle
     uint16_t _half_t4_TOP = 1953;
     int _gait_pts=1;
     uint16_t _index = 0;
+    int _pose_noise = 0;
+    int _sync_noise = 0;
 
 };
 
