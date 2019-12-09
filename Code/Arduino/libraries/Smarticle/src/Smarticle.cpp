@@ -112,11 +112,13 @@ void Smarticle::set_mode(int m)
 }
 
 
+
+
 void Smarticle::set_pose(int angL, int angR)
 {
   //sets smarticle to given arm angles
-  ServoL.write(angL);
-  ServoR.write(angR);
+  ServoL.write(angL+random(_pose_noise+1));
+  ServoR.write(angR+random(_pose_noise+1));
 }
 
 void Smarticle::init_t4(void)
@@ -193,7 +195,7 @@ void Smarticle::rx_interrupt(uint8_t c)
     len =0;
   } else if (c==0x11){  //if sync character 0x11
     //set timer counter to half of its TOP value that triggers the interrupt
-    TCNT4 = _half_t4_TOP;
+    TCNT4 = _half_t4_TOP+random(_sync_noise+1);
   //else if end of message character '\n'
   } else if (c!='\n'){
       //add character to end of input string and move over null character
@@ -239,6 +241,8 @@ int Smarticle::interp_msg(char* msg)
   } else if (msg[1]=='P'&& msg[3]=='0'){ set_plank(0); if(_debug==1){NeoSerial1.printf("DEBUG: stop plank");}
   } else if (msg[1]=='S'&& msg[2]=='P'){ interp_pose(msg); if(_debug==1){NeoSerial1.printf("DEBUG: set pose");}
   } else if (msg[1]=='S'&& msg[2]=='D'){ interp_delay(msg); if(_debug==1){NeoSerial1.printf("DEBUG: set delay");}
+  } else if (msg[1]=='P'&& msg[2]=='N'){ interp_pose_noise(msg); if(_debug==1){NeoSerial1.printf("DEBUG: set pose noise");}
+  } else if (msg[1]=='S'&& msg[2]=='N'){ interp_sync_noise(msg); if(_debug==1){NeoSerial1.printf("DEBUG: set sync noise");}
   } else {
     if(_debug==1){NeoSerial1.printf("DEBUG: no match :(\n");}
     return 0;
@@ -265,6 +269,22 @@ void Smarticle::interp_pose(char* msg)
   int angL=90,angR=90;
   sscanf(msg,":SP:%d,%d",&angL, &angR);
   set_pose(angL,angR);
+}
+
+void Smarticle::interp_pose_noise(char* msg)
+{
+  //interpret set pose noise commands
+  int noise = 0;
+  sscanf(msg,":PN:%d",&noise);
+  _pose_noise = noise;
+}
+
+void Smarticle::interp_sync_noise(char* msg)
+{
+  //interpret set sync noise commands
+  int noise = 0;
+  sscanf(msg,":SN:%d",&noise);
+  _sync_noise = noise;
 }
 
 void Smarticle::interp_delay(char* msg)
@@ -339,7 +359,7 @@ void Smarticle::stream_servo(void)
         delay(random(_random_delay_max));
     }
     if (_stream_arr[0]==200+ASCII_OFFSET && _stream_arr[1]==200+ASCII_OFFSET){
-      set_pose(random(181),random(181));
+      set_pose(random(181),random(181));\
       //  sXbee.printf("DEBUG; rand");
     }else if(_stream_arr[0]==190+ASCII_OFFSET && _stream_arr[1]==190+ASCII_OFFSET) {
       set_pose(180*random(2),180*random(2));
