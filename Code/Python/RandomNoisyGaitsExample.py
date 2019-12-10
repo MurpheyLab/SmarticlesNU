@@ -58,7 +58,9 @@ L = [0,180,180,0]
 R = [0,0,180,180]
 swarm.gait_init([L,R],450) #gaits, delay between poitns in ms; I wouldnt go faster than 200ms
 swarm.set_pose_noise(25)
-swarm.set_sync_noise(25)
+# maximum value should be less than 50% of gait period (450ms in this example)
+# In practice I wouldnt go above 40-45%
+swarm.set_sync_noise(200)
 # always call this after updating gait in swarm.gait_init()
 swarm.init_sync_thread()
 
