@@ -78,8 +78,8 @@ class SmarticleSwarm(object):
             self.xb.broadcast('\n')
             time.sleep(0.5)
             print('Network Discovery Ended\n')
-            
-            
+
+
     def close(self):
         '''closes serial connection to XBee'''
         self.xb.close_base()
@@ -332,7 +332,7 @@ class SmarticleSwarm(object):
         *Returns*
         void
         '''
-        msg=':PN:{}\n'.format(int(max_val))
+        msg=':PN:{}\n'.format(int(2*max_val))
         self.xb.command(msg, remote_device)
 
 
