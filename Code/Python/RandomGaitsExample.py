@@ -7,7 +7,7 @@ from random import randint
 import numpy as np
 
 # TO DO: change to your port
-PORT_NAME = '/dev/ttyUSB0'
+PORT_NAME = '/dev/tty.usbserial-DN05LPOA'
 
 def rx_callback(xbee_message):
     '''Simple call_back function to print received packets'''
