@@ -118,7 +118,7 @@ void Smarticle::set_pose(int angL, int angR)
 {
   //sets smarticle to given arm angles
   ServoL.write(angL-_pose_noise/2+random(_pose_noise+1));
-  ServoR.write(angR+_pose_noise/2+random(_pose_noise+1));
+  ServoR.write(angR-_pose_noise/2+random(_pose_noise+1));
 }
 
 void Smarticle::init_t4(void)
