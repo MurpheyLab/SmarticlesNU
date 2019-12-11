@@ -393,6 +393,7 @@ class SmarticleSwarm(object):
         void
         '''
         self.delay_ms = delay_ms
+        self.gait_len = len(gait[0])
         timer_counts = int(delay_ms/0.128)
         gaitL=gait[0]
         gaitR=gait[1]
@@ -412,22 +413,31 @@ class SmarticleSwarm(object):
         time.sleep(0.1) #ensure messages are not dropped as buffer isn't implemented yet
 
 
-    def sync_thread_target(self,sync_period_s):
+    def sync_thread_target(self,sync_period_s, keep_time):
         '''
         Thread to keep gaits in sync
         '''
-        time_adjust_s=sync_period_s-0.035 #subtract 35ms based on results from timing experiments
+        time_adjust_s=sync_period_s-0.0357 #subtract 35ms based on results from timing experiments
         msg = bytearray(b'\x11')
         #threading.event.wait() blocks until it is a) set and then returns True or b) the specified timeout elapses in which it retrusn nothing
         while self.sync_flag.wait() and not self.timer_counts.wait(timeout=(time_adjust_s)):
                 self.xb.broadcast(msg)
+                if keep_time:
+                    t = time.time()
+                    with self.lock:
+                        self.sync_time_list.append(t)
 
 
-    def init_sync_thread(self):
+
+
+    def init_sync_thread(self, keep_time=False):
         '''Initializes gait sync thread. Must be called every time the gait sequence is updated'''
         # calculate sync period: approximately 3s but must be a multiple of the gait delay
-        self.sync_period_s = int((max(3000//self.delay_ms,1))*self.delay_ms)/1000
-        self.sync_thread = threading.Thread(target=self.sync_thread_target, args= (self.sync_period_s,),  daemon = True)
+        self.sync_period_s = (self.gait_len*self.delay_ms)/1000
+        print('sync_period: {}'.format(self.sync_period_s))
+        if keep_time:
+            self.sync_time_list =[]
+        self.sync_thread = threading.Thread(target=self.sync_thread_target, args= (self.sync_period_s,keep_time),  daemon = True)
         self.timer_counts = threading.Event()
         self.sync_flag = threading.Event()
         self.sync_thread.start()

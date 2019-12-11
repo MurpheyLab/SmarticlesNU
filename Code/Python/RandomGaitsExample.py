@@ -55,7 +55,7 @@ L = [0,180,180,0]
 R = [0,0,180,180]
 swarm.gait_init([L,R],450) #gaits, delay between poitns in ms; I wouldnt go faster than 200ms
 # always call this after updating gait in swarm.gait_init()
-swarm.init_sync_thread()
+swarm.init_sync_thread(keep_time=True)
 
 # initialize streaming settings
 # turns on random delay of max 100ms
