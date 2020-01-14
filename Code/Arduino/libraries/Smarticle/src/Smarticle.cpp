@@ -320,7 +320,21 @@ void Smarticle::transmit_data(void)
 {
   //send data: sensor_dat[0]= photo_front, sensor_dat[1]= photo_back, sensor_dat[2]= photo_right, sensor_dat[3]= current sense
   if (_transmit && _mode!=IDLE){
-    NeoSerial1.printf("%d,%d,%d,%d\n",sensor_dat[0], sensor_dat[1], sensor_dat[2],sensor_dat[3]);
+    _transmit_counts++;
+    _transmit_dat[0]+=sensor_dat[0];
+    _transmit_dat[1]+=sensor_dat[1];
+    _transmit_dat[2]+=sensor_dat[2];
+    _transmit_dat[3]+=sensor_dat[3];
+
+    if (_transmit_counts >= 100){
+      NeoSerial1.printf("%d,%d,%d,%d\n",_transmit_dat[0]/_transmit_counts, _transmit_dat[1]/_transmit_counts, _transmit_dat[2]/_transmit_counts,_transmit_dat[3]/_transmit_counts);
+      _transmit_dat[0]=0;
+      _transmit_dat[1]=0;
+      _transmit_dat[2]=0;
+      _transmit_dat[3]=0;
+      _transmit_counts = 0;
+    }
+
   }
 }
 

@@ -65,7 +65,7 @@ enum STATES{IDLE = 0, STREAM=1, INTERP=2};
 class Smarticle
 {
   public:
-    Smarticle(int debug=0, int sample_time_ms = 15);
+    Smarticle(int debug=0, int sample_time_ms = 10);
 
     void set_led(int state);
     void set_transmit(int state);
@@ -105,7 +105,7 @@ class Smarticle
     PWMServo ServoL;
     PWMServo ServoR;
     int cycle_time_ms;
-    int sensor_dat[3]={0,0,0};
+    int sensor_dat[4]={0,0,0,0};
   private:
     enum STATES _mode;
     char _input_msg[MSG_BUFF_SIZE][MAX_MSG_SIZE];
@@ -113,6 +113,8 @@ class Smarticle
     volatile uint32_t _msg_rx = 0;
     uint32_t _msg_rd=0;
     uint8_t _stream_arr[2]={0,0};
+    int _transmit_dat[4]={0,0,0,0};
+    int _transmit_counts;
     int _stream_cmd=0;
     int _stream_delay = 0;
     int _random_delay_max  = 50;
