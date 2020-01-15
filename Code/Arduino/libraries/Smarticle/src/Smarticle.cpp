@@ -1,8 +1,7 @@
 /*
   Smarticle.cpp - Arduino Library for NU-Smarticle
   Alex Samland, created Aug 7, 2019
-  Last Updated: Aug 29, 2019
-  v1.0
+  Last Updated: Jan 15, 2020
 
   NU-Smarticle v1 Pins:
   A0    --    Photoresistor Back
@@ -31,12 +30,11 @@
 
 #include <Smarticle.h>
 
-Smarticle:: Smarticle(int debug, int sample_time_ms):Xbee(RX_PIN,TX_PIN)
+Smarticle::Smarticle(int debug):Xbee(RX_PIN,TX_PIN)
 {
   pinMode(LED,OUTPUT);
   _debug = debug;
   _mode = IDLE;
-  _sample_time_ms = sample_time_ms;
 }
 
 
@@ -111,6 +109,14 @@ void Smarticle::set_mode(int m)
   init_mode();
 }
 
+void Smarticle::set_threshold(int* thresh)
+{
+  _sensor_threshold[0] = thresh[0];
+  _sensor_threshold[1] = thresh[1];
+  _sensor_threshold[2] = thresh[2];
+  _sensor_threshold[3] = thresh[3];
+}
+
 
 void Smarticle::set_pose(int angL, int angR)
 {
@@ -142,6 +148,9 @@ void Smarticle::init_mode()
     _transmit = 0;
     _read_sensors = 0;
     _plank = 0;
+    _light_plank = 0;
+    // reset sensor thresholds
+    set_threshold(_sensor_threshold_constant);
     //reset gait so that it maintains plank position
     _gait_pts=1;
     _t4_TOP = 3906; //delay of 500ms
@@ -237,6 +246,9 @@ int Smarticle::interp_msg(char* msg)
   } else if (msg[1]=='R'&& msg[3]=='0'){ set_read(0); if(_debug==1){Xbee.printf("DEBUG: stop read");}
   } else if (msg[1]=='P'&& msg[3]=='1'){ set_plank(1); if(_debug==1){Xbee.printf("DEBUG: start plank");}
   } else if (msg[1]=='P'&& msg[3]=='0'){ set_plank(0); if(_debug==1){Xbee.printf("DEBUG: stop plank");}
+  } else if (msg[1]=='L'&& msg[2]=='P' && msg[4]=='1'){ _light_plank=1; if(_debug==1){Xbee.printf("DEBUG: light_plank on");}
+  } else if (msg[1]=='L'&& msg[2]=='P' && msg[4]=='0'){ _light_plank=0; if(_debug==1){Xbee.printf("DEBUG: light_plank off");}
+  } else if (msg[1]=='S'&& msg[2]=='T'){ interp_threshold(msg); if(_debug==1){Xbee.printf("DEBUG: set threshold");}
   } else if (msg[1]=='S'&& msg[2]=='P'){ interp_pose(msg); if(_debug==1){Xbee.printf("DEBUG: set pose");}
   } else if (msg[1]=='S'&& msg[2]=='D'){ interp_delay(msg); if(_debug==1){Xbee.printf("DEBUG: set delay");}
 } else if (msg[1]=='P'&& msg[2]=='N'){ interp_pose_noise(msg); if(_debug==1){Xbee.printf("DEBUG: set pose noise");}
@@ -257,6 +269,14 @@ void Smarticle::interp_mode(char* msg)
     sscanf(msg,":M:%d,",&m);
   }
   set_mode(m);
+}
+
+void Smarticle::interp_threshold(char* msg)
+{
+  // interpret set sensor threshold command
+  int thresh[4] = {1500, 1500, 1500, 1500};
+  sscanf(msg,":ST:%d,%d,%d,%d",thresh,thresh+1,thresh+2,thresh+3);
+  set_threshold(thresh);
 }
 
 
@@ -296,27 +316,46 @@ void Smarticle::interp_delay(char* msg)
 int * Smarticle::read_sensors(void)
 {
   if (_read_sensors ==1){
-    unsigned long startTime= millis();  // Start of sample window
-    int dat[3]={0,0,0};
+    int dat[2]={0,0};
     //get maximum value from specified sample window
+    unsigned long startTime= millis();  // Start of sample window
     while(millis() - startTime < _sample_time_ms) {
         dat[0] = max(dat[0],analogRead(PRF));
         dat[1] = max(dat[1],analogRead(PRB));
-        dat[2] = max(dat[2],analogRead(MIC));
       }
     sensor_dat[0]=dat[0];
     sensor_dat[1]=dat[1];
-    sensor_dat[2]=dat[2];
-  }
+    if (_light_plank==1 && _mode==INTERP){
+      bool trigger = (sensor_dat[0]>=_sensor_threshold[0]||
+                     sensor_dat[1]>=_sensor_threshold[1]);
+      if (_plank == 0 && trigger){
+        set_plank(1);
+        Xbee.printf("PLANK 1\n");
+      }else if (_plank == 1 && !trigger){
+        set_plank(0);
+        Xbee.printf("PLANK 0\n");
+      }
+    }
   return sensor_dat;
+  }
 }
 
 
 void Smarticle::transmit_data(void)
 {
-  //send data: sensor_dat[0]= photo_front, sensor_dat[1]= photo_back, sensor_dat[2]= mic
+  //send data: sensor_dat[0]= photo_front, sensor_dat[1]= photo_back, sensor_dat[2]= photo_right, sensor_dat[3]= current sense
   if (_transmit && _mode!=IDLE){
-    Xbee.printf("%d,%d,%d\n",sensor_dat[0], sensor_dat[1], sensor_dat[2]);
+    _transmit_counts++;
+    _transmit_dat[0]+=sensor_dat[0];
+    _transmit_dat[1]+=sensor_dat[1];
+
+    if (_transmit_counts >= 10){
+      Xbee.printf("%d,%d\n",_transmit_dat[0]/_transmit_counts, _transmit_dat[1]/_transmit_counts);
+      _transmit_dat[0]=0;
+      _transmit_dat[1]=0;
+      _transmit_counts = 0;
+    }
+
   }
 }
 
