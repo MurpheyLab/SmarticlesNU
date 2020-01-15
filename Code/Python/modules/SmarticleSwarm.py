@@ -111,7 +111,7 @@ class SmarticleSwarm(object):
     def set_transmit(self, state, remote_device = None):
         '''
         Enables/disables smarticle transmitting data.
-        Data sent in following format: '{int Phot_front}, {int photo_back}, {int mic}'(values between 0-1023)
+        Data sent in following format: '{int Photo_front}, {int photo_back}, {int photo_right} {int current_sense}'(values between 0-1023)
 
         *Arguments*
         | Argument        | Type                                          | Description                                                              | Default Value  |
@@ -137,6 +137,33 @@ class SmarticleSwarm(object):
             msg = ':T:0\n'
         self.xb.command(msg, remote_device)
 
+    def set_sensor_threshold(self, thresh, remote_device = None):
+        '''
+        Enables/disables smarticle reading sensors
+
+        *Arguments*
+        | Argument        | Type                                          | Description                                                              | Default Value  |
+        | :------:        | :--:                                          | :---------:                                                              | :-----------:  |
+        | thresh          | `list of int`                                 | Threshold values for PR_front, PR_back, PR_right, current sense          | N/A            |
+        | remote_device   | `RemoteXbeeDevice` Object or `None` or `bool` | Argument value and type determines communication mode as described above | `None`         |
+
+        *remote_device*
+        Sends message to remote Xbee in one of three ways depending on the `remote_device` argument
+            1. remote_device == `None`:
+                broadcasts message without acks using `broadcast()`
+            2. remote_device == `True`:
+                broadcasts message with acks using `ack_broadcast()`
+            3. remote_device in values of devices dictionary:
+                send message to single Xbee using `send()`
+
+        *Returns*
+        void
+        '''
+        assert len(thresh)==4, 'Threshold list must be 4 elements'
+        msg = ':ST:{},{},{},{}\n'.format(thresh[0], thresh[1], thresh[2], thresh[3])
+        self.xb.command(msg, remote_device)
+
+
 
     def set_read_sensors(self, state, remote_device = None):
         '''
@@ -145,7 +172,7 @@ class SmarticleSwarm(object):
         *Arguments*
         | Argument        | Type                                          | Description                                                              | Default Value  |
         | :------:        | :--:                                          | :---------:                                                              | :-----------:  |
-        | state           | `bool`                                         | Value: 1 or 0. enables/disables reading sensors                          | N/A            |
+        | state           | `bool`                                        | Value: 1 or 0. enables/disables reading sensors                          | N/A            |
         | remote_device   | `RemoteXbeeDevice` Object or `None` or `bool` | Argument value and type determines communication mode as described above | `None`         |
 
         *remote_device*
@@ -176,6 +203,7 @@ class SmarticleSwarm(object):
         | 0     | Idle             | Smarticle does nothing. Servos detach and no data is transmitted |
         | 1     | Stream servos    | Servo points streamed (still in development)                     |
         | 2     | Gait interpolate | Iterate through interpolated points sent to smarticle            |
+        | 3     | Light Plank      | Plank when light threshold exceeded                              |
 
         *remote_device*
         Sends message to remote Xbee in one of three ways depending on the `remote_device` argument
@@ -195,7 +223,7 @@ class SmarticleSwarm(object):
         *Returns*
         void
         '''
-        assert (state>=0 and state<=2),"Mode must between 0-2"
+        assert (state>=0 and state<=3),"Mode must between 0-3"
         msg = ':M:{}\n'.format(int(state))
         self.xb.command(msg, remote_device)
 
