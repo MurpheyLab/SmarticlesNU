@@ -137,6 +137,17 @@ class SmarticleSwarm(object):
             msg = ':T:0\n'
         self.xb.command(msg, remote_device)
 
+    def set_light_plank(self, state, remote_device = None):
+        '''
+        DOC
+        '''
+        if state is True:
+            stat = 1;
+        else:
+            stat = 0;
+        msg = ':LP:{}\n'.format(stat)
+        self.xb.command(msg, remote_device)
+
     def set_sensor_threshold(self, thresh, remote_device = None):
         '''
         Enables/disables smarticle reading sensors
@@ -203,7 +214,6 @@ class SmarticleSwarm(object):
         | 0     | Idle             | Smarticle does nothing. Servos detach and no data is transmitted |
         | 1     | Stream servos    | Servo points streamed (still in development)                     |
         | 2     | Gait interpolate | Iterate through interpolated points sent to smarticle            |
-        | 3     | Light Plank      | Plank when light threshold exceeded                              |
 
         *remote_device*
         Sends message to remote Xbee in one of three ways depending on the `remote_device` argument
@@ -223,7 +233,7 @@ class SmarticleSwarm(object):
         *Returns*
         void
         '''
-        assert (state>=0 and state<=3),"Mode must between 0-3"
+        assert (state>=0 and state<=2),"Mode must between 0-2"
         msg = ':M:{}\n'.format(int(state))
         self.xb.command(msg, remote_device)
 
