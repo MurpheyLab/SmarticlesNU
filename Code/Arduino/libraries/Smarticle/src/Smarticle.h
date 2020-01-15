@@ -60,18 +60,19 @@
 #define MSG_BUFF_SIZE 4
 
 
-enum STATES{IDLE = 0, STREAM=1, INTERP=2};
+enum STATES{IDLE = 0, STREAM=1, INTERP=2, LIGHT_PLANK=3};
 
 class Smarticle
 {
   public:
-    Smarticle(int debug=0, int sample_time_ms = 10);
+    Smarticle(int debug=0);
 
     void set_led(int state);
     void set_transmit(int state);
     void set_read(int state);
     void set_plank(int state);
     void set_mode(int mode);
+    void set_threshold(int* thresh);
     void set_pose(int angL, int angR);
     void set_stream_delay(int state, int max_delay_val);
 
@@ -83,6 +84,7 @@ class Smarticle
     void manage_msg(void);
 
     int interp_msg(char* msg);
+    void interp_threshold(char* msg);
     void interp_mode(char* msg);
     void interp_pose(char* msg);
     void interp_pose_noise(char* msg);
@@ -104,7 +106,6 @@ class Smarticle
     void detach_servos(void);
     PWMServo ServoL;
     PWMServo ServoR;
-    int cycle_time_ms;
     int sensor_dat[4]={0,0,0,0};
   private:
     enum STATES _mode;
@@ -113,6 +114,8 @@ class Smarticle
     volatile uint32_t _msg_rx = 0;
     uint32_t _msg_rd=0;
     uint8_t _stream_arr[2]={0,0};
+    int _sensor_threshold_constant[4]={1500,1500,1500,1500};
+    int _sensor_threshold[4]={1500,1500,1500,1500};
     int _transmit_dat[4]={0,0,0,0};
     int _transmit_counts;
     int _stream_cmd=0;
@@ -122,7 +125,7 @@ class Smarticle
     int _read_sensors=0;
     int _transmit=0;
     int _plank =0;
-    int _sample_time_ms=15;
+    int _sample_time_ms=10;
     int _servos_attached= 0;
     uint8_t _gaitL[MAX_GAIT_SIZE];
     uint8_t _gaitR[MAX_GAIT_SIZE];

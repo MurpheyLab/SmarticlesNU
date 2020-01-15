@@ -30,13 +30,12 @@
 
 #include <Smarticle.h>
 
-Smarticle:: Smarticle(int debug, int sample_time_ms)
+Smarticle:: Smarticle(int debug)
 {
   pinMode(LED,OUTPUT);
   _debug = debug;
   _mode = IDLE;
   NeoSerial1.begin(9600);
-  _sample_time_ms = sample_time_ms;
 }
 
 
@@ -106,12 +105,19 @@ void Smarticle::set_mode(int m)
     case 0: _mode = IDLE;break;
     case 1: _mode = STREAM;break;
     case 2: _mode = INTERP;break;
+    case 3: _mode = LIGHT_PLANK;break;
     default: _mode = IDLE;
   }
   init_mode();
 }
 
-
+void Smarticle::set_threshold(int* thresh)
+{
+  _sensor_threshold[0] = thresh[0];
+  _sensor_threshold[1] = thresh[1];
+  _sensor_threshold[2] = thresh[2];
+  _sensor_threshold[3] = thresh[3];
+}
 
 
 void Smarticle::set_pose(int angL, int angR)
@@ -144,6 +150,8 @@ void Smarticle::init_mode()
     _transmit = 0;
     _read_sensors = 0;
     _plank = 0;
+    // reset sensor thresholds
+    set_threshold(_sensor_threshold_constant);
     //reset gait so that it maintains plank position
     _gait_pts=1;
     _t4_TOP = 3906; //delay of 500ms
@@ -210,8 +218,10 @@ void Smarticle::rx_interrupt(uint8_t c)
 
 void Smarticle::manage_msg(void)
 {
+  // if received messages is more than read messages
   if ((_msg_rx-_msg_rd)>0){
-    int ind = (_msg_rd++)%MSG_BUFF_SIZE;
+    int ind = (_msg_rd)%MSG_BUFF_SIZE;
+    _msg_rd++;
     if(_debug==1){NeoSerial1.printf("msg!>>");}
     //ensure message matches command structure of leading with a colon ':'
     // typical message structure example '':M:0' set to mode 0
@@ -239,6 +249,7 @@ int Smarticle::interp_msg(char* msg)
   } else if (msg[1]=='R'&& msg[3]=='0'){ set_read(0); if(_debug==1){NeoSerial1.printf("DEBUG: stop read");}
   } else if (msg[1]=='P'&& msg[3]=='1'){ set_plank(1); if(_debug==1){NeoSerial1.printf("DEBUG: start plank");}
   } else if (msg[1]=='P'&& msg[3]=='0'){ set_plank(0); if(_debug==1){NeoSerial1.printf("DEBUG: stop plank");}
+  } else if (msg[1]=='S'&& msg[2]=='T'){ interp_threshold(msg); if(_debug==1){NeoSerial1.printf("DEBUG: set threshold");}
   } else if (msg[1]=='S'&& msg[2]=='P'){ interp_pose(msg); if(_debug==1){NeoSerial1.printf("DEBUG: set pose");}
   } else if (msg[1]=='S'&& msg[2]=='D'){ interp_delay(msg); if(_debug==1){NeoSerial1.printf("DEBUG: set delay");}
   } else if (msg[1]=='P'&& msg[2]=='N'){ interp_pose_noise(msg); if(_debug==1){NeoSerial1.printf("DEBUG: set pose noise");}
@@ -259,6 +270,14 @@ void Smarticle::interp_mode(char* msg)
     sscanf(msg,":M:%d,",&m);
   }
   set_mode(m);
+}
+
+void Smarticle::interp_threshold(char* msg)
+{
+  // interpret set sensor threshold command
+  int thresh[4] = {1500, 1500, 1500, 1500};
+  sscanf(msg,":ST:%d,%d,%d,%d",thresh,thresh+1,thresh+2,thresh);
+  set_threshold(thresh);
 }
 
 
@@ -311,8 +330,21 @@ int * Smarticle::read_sensors(void)
     sensor_dat[1]=dat[1];
     sensor_dat[2]=dat[2];
     sensor_dat[3]=dat[3];
-  }
+    if (_mode==LIGHT_PLANK){
+      bool trigger = (sensor_dat[0]>=_sensor_threshold[0]||
+                     sensor_dat[1]>=_sensor_threshold[1]||
+                     sensor_dat[2]>=_sensor_threshold[2]||
+                     sensor_dat[3]>=_sensor_threshold[3]);
+      if (_plank == 0 && trigger){
+        set_plank(1);
+        NeoSerial1.printf("PLANK 1\n");
+      }else if (_plank == 1 && !trigger){
+        set_plank(0);
+        NeoSerial1.printf("PLANK 0\n");
+      }
+    }
   return sensor_dat;
+  }
 }
 
 
@@ -326,7 +358,7 @@ void Smarticle::transmit_data(void)
     _transmit_dat[2]+=sensor_dat[2];
     _transmit_dat[3]+=sensor_dat[3];
 
-    if (_transmit_counts >= 100){
+    if (_transmit_counts >= 10){
       NeoSerial1.printf("%d,%d,%d,%d\n",_transmit_dat[0]/_transmit_counts, _transmit_dat[1]/_transmit_counts, _transmit_dat[2]/_transmit_counts,_transmit_dat[3]/_transmit_counts);
       _transmit_dat[0]=0;
       _transmit_dat[1]=0;
