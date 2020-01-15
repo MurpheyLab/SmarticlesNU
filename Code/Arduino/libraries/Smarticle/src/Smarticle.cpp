@@ -105,7 +105,6 @@ void Smarticle::set_mode(int m)
     case 0: _mode = IDLE;break;
     case 1: _mode = STREAM;break;
     case 2: _mode = INTERP;break;
-    case 3: _mode = LIGHT_PLANK;break;
     default: _mode = IDLE;
   }
   init_mode();
@@ -150,6 +149,7 @@ void Smarticle::init_mode()
     _transmit = 0;
     _read_sensors = 0;
     _plank = 0;
+    _light_plank = 0;
     // reset sensor thresholds
     set_threshold(_sensor_threshold_constant);
     //reset gait so that it maintains plank position
@@ -249,6 +249,8 @@ int Smarticle::interp_msg(char* msg)
   } else if (msg[1]=='R'&& msg[3]=='0'){ set_read(0); if(_debug==1){NeoSerial1.printf("DEBUG: stop read");}
   } else if (msg[1]=='P'&& msg[3]=='1'){ set_plank(1); if(_debug==1){NeoSerial1.printf("DEBUG: start plank");}
   } else if (msg[1]=='P'&& msg[3]=='0'){ set_plank(0); if(_debug==1){NeoSerial1.printf("DEBUG: stop plank");}
+  } else if (msg[1]=='L'&& msg[2]=='P' && msg[4]=='1'){ _light_plank=1; if(_debug==1){NeoSerial1.printf("DEBUG: light_plank on");}
+  } else if (msg[1]=='L'&& msg[2]=='P' && msg[4]=='0'){ _light_plank=0; if(_debug==1){NeoSerial1.printf("DEBUG: light_plank off");}
   } else if (msg[1]=='S'&& msg[2]=='T'){ interp_threshold(msg); if(_debug==1){NeoSerial1.printf("DEBUG: set threshold");}
   } else if (msg[1]=='S'&& msg[2]=='P'){ interp_pose(msg); if(_debug==1){NeoSerial1.printf("DEBUG: set pose");}
   } else if (msg[1]=='S'&& msg[2]=='D'){ interp_delay(msg); if(_debug==1){NeoSerial1.printf("DEBUG: set delay");}
@@ -276,7 +278,7 @@ void Smarticle::interp_threshold(char* msg)
 {
   // interpret set sensor threshold command
   int thresh[4] = {1500, 1500, 1500, 1500};
-  sscanf(msg,":ST:%d,%d,%d,%d",thresh,thresh+1,thresh+2,thresh);
+  sscanf(msg,":ST:%d,%d,%d,%d",thresh,thresh+1,thresh+2,thresh+3);
   set_threshold(thresh);
 }
 
@@ -317,9 +319,9 @@ void Smarticle::interp_delay(char* msg)
 int * Smarticle::read_sensors(void)
 {
   if (_read_sensors ==1){
-    unsigned long startTime= millis();  // Start of sample window
     int dat[4]={0,0,0,0};
     //get maximum value from specified sample window
+    unsigned long startTime= millis();  // Start of sample window
     while(millis() - startTime < _sample_time_ms) {
         dat[0] = max(dat[0],analogRead(PRF));
         dat[1] = max(dat[1],analogRead(PRB));
@@ -330,7 +332,7 @@ int * Smarticle::read_sensors(void)
     sensor_dat[1]=dat[1];
     sensor_dat[2]=dat[2];
     sensor_dat[3]=dat[3];
-    if (_mode==LIGHT_PLANK){
+    if (_light_plank==1 && _mode==INTERP){
       bool trigger = (sensor_dat[0]>=_sensor_threshold[0]||
                      sensor_dat[1]>=_sensor_threshold[1]||
                      sensor_dat[2]>=_sensor_threshold[2]||

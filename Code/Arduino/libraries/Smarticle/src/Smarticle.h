@@ -60,7 +60,7 @@
 #define MSG_BUFF_SIZE 4
 
 
-enum STATES{IDLE = 0, STREAM=1, INTERP=2, LIGHT_PLANK=3};
+enum STATES{IDLE = 0, STREAM=1, INTERP=2};
 
 class Smarticle
 {
@@ -124,6 +124,7 @@ class Smarticle
     int _debug=0;
     int _read_sensors=0;
     int _transmit=0;
+    int _light_plank=0;
     int _plank =0;
     int _sample_time_ms=10;
     int _servos_attached= 0;
