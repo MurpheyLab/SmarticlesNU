@@ -7,6 +7,7 @@ import time
 from XbeeComm import XbeeComm
 from StreamThread import StreamThread
 import threading
+import numpy as np
 
 
 class SmarticleSwarm(object):
@@ -139,7 +140,25 @@ class SmarticleSwarm(object):
 
     def set_light_plank(self, state, remote_device = None):
         '''
-        DOC
+        Enables/Disables light plank (i.e. smarticles planking when light sensors are above set threshold)
+
+        *Arguments*
+        | Argument        | Type                                          | Description                                                              | Default Value  |
+        | :------:        | :--:                                          | :---------:                                                              | :-----------:  |
+        | state           | `bool`                                         | Value: 1 or 0. enables/disables light planking                          | N/A            |
+        | remote_device   | `RemoteXbeeDevice` Object or `None` or `bool` | Argument value and type determines communication mode as described above | `None`         |
+
+        *remote_device*
+        Sends message to remote Xbee in one of three ways depending on the `remote_device` argument
+            1. remote_device == `None`:
+                broadcasts message without acks using `broadcast()`
+            2. remote_device == `True`:
+                broadcasts message with acks using `ack_broadcast()`
+            3. remote_device in values of devices dictionary:
+                send message to single Xbee using `send()`
+
+        *Returns*
+        void
         '''
         if state is True:
             stat = 1;
@@ -202,6 +221,36 @@ class SmarticleSwarm(object):
             msg = ':R:1\n'
         else:
             msg = ':R:0\n'
+        self.xb.command(msg, remote_device)
+
+
+    def set_pose_epsilon(self, eps, remote_device = None):
+        '''
+        Sets epsilon value for smarticle poses. The smarticle will move the arm
+        randomly propoportional to epsilon (0-1). For example, if epsilon is 0.1,
+        the smarticle will move its arm to a random angle 10% of the time
+
+        *Arguments*
+        | Argument        | Type                                          | Description                                                              | Default Value  |
+        | :------:        | :--:                                          | :---------:                                                              | :-----------:  |
+        | eps             | 'float'                                       | Value: 0-1, determines proportion of random arm movements                | N/A            |
+        | remote_device   | `RemoteXbeeDevice` Object or `None` or `bool` | Argument value and type determines communication mode as described above | `None`         |
+
+        *remote_device*
+        Sends message to remote Xbee in one of three ways depending on the `remote_device` argument
+            1. remote_device == `None`:
+                broadcasts message without acks using `broadcast()`
+            2. remote_device == `True`:
+                broadcasts message with acks using `ack_broadcast()`
+            3. remote_device in values of devices dictionary:
+                send message to single Xbee using `send()`
+
+        *Returns*
+        void
+        '''
+        # ensure eps is between 0 and 1
+        eps = 100*round(np.clip(eps,0,1),2)
+        msg = ':SE:{}\n'.format(eps)
         self.xb.command(msg, remote_device)
 
     def set_mode(self, state, remote_device = None):

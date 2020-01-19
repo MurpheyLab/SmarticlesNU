@@ -85,6 +85,7 @@ class Smarticle
 
     int interp_msg(char* msg);
     void interp_threshold(char* msg);
+    void interp_epsilon(char* msg);
     void interp_mode(char* msg);
     void interp_pose(char* msg);
     void interp_pose_noise(char* msg);
@@ -136,6 +137,7 @@ class Smarticle
     uint16_t _index = 0;
     int _pose_noise = 0;
     int _sync_noise = 0;
+    int _epsilon = 0;
 
 };
 
