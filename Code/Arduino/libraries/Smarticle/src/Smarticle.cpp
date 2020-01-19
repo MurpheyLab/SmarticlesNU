@@ -120,10 +120,28 @@ void Smarticle::set_threshold(int* thresh)
 
 void Smarticle::set_pose(int angL, int angR)
 {
-  //sets smarticle to given arm angles
-  ServoL.write(angL-_pose_noise/2+random(_pose_noise+1));
-  ServoR.write(angR-_pose_noise/2+random(_pose_noise+1));
-}
+   //sets smarticle to given arm angles
+   ServoL.write(angL-_pose_noise/2+random(_pose_noise+1));
+   ServoR.write(angR-_pose_noise/2+random(_pose_noise+1));
+   if (_epsilon==0){
+     ServoL.write(angL-_pose_noise/2+random(_pose_noise+1));
+     ServoR.write(angR-_pose_noise/2+random(_pose_noise+1));
+   }
+   else{
+     int coinL = random(101);
+     int coinR = random(101);
+     if (coinL<=_epsilon){
+       ServoL.write(random(181));
+     }else{
+       ServoL.write(angL-_pose_noise/2+random(_pose_noise+1));
+     }
+     if (coinR<=_epsilon){
+       ServoR.write(random(181));
+     }else{
+       ServoR.write(angL-_pose_noise/2+random(_pose_noise+1));
+     }
+   }
+ }
 
 void Smarticle::init_t4(void)
 {
@@ -149,6 +167,7 @@ void Smarticle::init_mode()
     _read_sensors = 0;
     _plank = 0;
     _light_plank = 0;
+    _epsilon = 0;
     // reset sensor thresholds
     set_threshold(_sensor_threshold_constant);
     //reset gait so that it maintains plank position
@@ -249,6 +268,7 @@ int Smarticle::interp_msg(char* msg)
   } else if (msg[1]=='L'&& msg[2]=='P' && msg[4]=='1'){ _light_plank=1; if(_debug==1){Xbee.printf("DEBUG: light_plank on");}
   } else if (msg[1]=='L'&& msg[2]=='P' && msg[4]=='0'){ _light_plank=0; if(_debug==1){Xbee.printf("DEBUG: light_plank off");}
   } else if (msg[1]=='S'&& msg[2]=='T'){ interp_threshold(msg); if(_debug==1){Xbee.printf("DEBUG: set threshold");}
+  } else if (msg[1]=='S'&& msg[2]=='E'){ interp_epsilon(msg); if(_debug==1){Xbee.printf("DEBUG: set pose epsilon");}
   } else if (msg[1]=='S'&& msg[2]=='P'){ interp_pose(msg); if(_debug==1){Xbee.printf("DEBUG: set pose");}
   } else if (msg[1]=='S'&& msg[2]=='D'){ interp_delay(msg); if(_debug==1){Xbee.printf("DEBUG: set delay");}
 } else if (msg[1]=='P'&& msg[2]=='N'){ interp_pose_noise(msg); if(_debug==1){Xbee.printf("DEBUG: set pose noise");}
@@ -278,6 +298,14 @@ void Smarticle::interp_threshold(char* msg)
   sscanf(msg,":ST:%d,%d,%d,%d",thresh,thresh+1,thresh+2,thresh+3);
   set_threshold(thresh);
 }
+
+void Smarticle:: interp_epsilon(char* msg)
+ {
+   // interpets set epsilon command
+   int eps = 0;
+   sscanf(msg,":SE:%d",&eps);
+   _epsilon = eps;
+ }
 
 
 void Smarticle::interp_pose(char* msg)
