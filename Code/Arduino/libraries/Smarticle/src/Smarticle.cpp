@@ -122,7 +122,6 @@ void Smarticle::set_threshold(int* thresh)
 void Smarticle::set_pose(int angL, int angR)
 {
   //sets smarticle to given arm angles
-  NeoSerial1.printf("eps: %d\n",_epsilon);
   if (_epsilon==0){
     ServoL.write(angL-_pose_noise/2+random(_pose_noise+1));
     ServoR.write(angR-_pose_noise/2+random(_pose_noise+1));
@@ -130,7 +129,6 @@ void Smarticle::set_pose(int angL, int angR)
   else{
     int coinL = random(101);
     int coinR = random(101);
-    NeoSerial1.printf("coinL: %d, coinR: %d\n", coinL, coinR);
     if (coinL<=_epsilon){
       ServoL.write(random(181));
     }else{
@@ -308,7 +306,6 @@ void Smarticle:: interp_epsilon(char* msg)
   // interpets set epsilon command
   int eps = 0;
   sscanf(msg,":SE:%d",&eps);
-  NeoSerial1.printf("DEBUG: eps = %d",eps);
   _epsilon = eps;
 }
 
