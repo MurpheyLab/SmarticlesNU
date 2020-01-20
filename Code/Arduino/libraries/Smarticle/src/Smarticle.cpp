@@ -130,14 +130,14 @@ void Smarticle::set_pose(int angL, int angR)
     int coinL = random(101);
     int coinR = random(101);
     if (coinL<=_epsilon){
-      ServoL.write(random(181));
+      ServoL.write(180*random(2));
     }else{
       ServoL.write(angL-_pose_noise/2+random(_pose_noise+1));
     }
     if (coinR<=_epsilon){
-      ServoR.write(random(181));
+      ServoR.write(180*random(2));
     }else{
-      ServoR.write(angL-_pose_noise/2+random(_pose_noise+1));
+      ServoR.write(angR-_pose_noise/2+random(_pose_noise+1));
     }
   }
 }
