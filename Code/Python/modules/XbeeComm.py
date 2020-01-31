@@ -25,7 +25,7 @@ class XbeeComm(object):
         | :------:  | :--:     | :---------:                                | :-----------:                       |
         | port      | `string` | USB port to open for local XBee            | please set for your own convenience |
         | baud_rate | `int`    | Baud rate to use for USB serial port       | 9600                                |
-        | debug     | `int`    | Enables/disables print statements in class | 1                                   |
+        | debug     | `int`    | Enables/disables print statements in class | 0                                   |
 
         *Returns*
         void

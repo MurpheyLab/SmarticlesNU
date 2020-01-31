@@ -19,23 +19,23 @@ class SmarticleSwarm(object):
     GI_LENGTH = 15
     ASCII_OFFSET = 32
 
-    def __init__(self, port='/dev/tty.usbserial-DN050I6Q', baud_rate = 9600, debug = 0,servo_period_ms=0):
+    def __init__(self, port='/dev/tty.usbserial-DN050I6Q', baud_rate = 9600, debug = 0):
         '''
         Initalizes and opens local base xbee (connected via USB) with given port and baud rate and adds it to attribute `base`
 
-        *Arguments*
-        | Argument            | Type     | Description                                | Default Value                       |
-        | :------:            | :--:     | :---------:                                | :-----------:                       |
-        | port                | `string` | USB port to open for local XBee            | please set for your own convenience |
-        | baud_rate           | `int`    | Baud rate to use for USB serial port       | 9600                                |
-        | debug               | `int`    | Enables/disables print statements in class | 1                                   |
-        | servo_period_ms     | `int`    | Servo Stream period for thread in ms       | 0                                   |
+        **Arguments**
 
-        *Returns*
+        | Argument            | Type       | Description                                | Default Value                       |
+        | :------             | :--        | :---------                                 | :-----------                        |
+        | port                | `string`   | USB port to open for local XBee            | set for your own convenience        |
+        | baud_rate           | `int`      | Baud rate to use for USB serial port       | 9600                                |
+        | debug               | `int`      | Enables/disables print statements in class | 0                                   |
+        |<img width=250/>|<img width=250/>|<img width=1000/>|<img width=700/>|
+
+        **Returns**  
         void
         '''
         self.xb = XbeeComm(port,baud_rate,debug)
-        self.servo_period_s = servo_period_ms*0.001
         self.lock = threading.Lock()
 
 
