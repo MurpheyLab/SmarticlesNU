@@ -450,7 +450,7 @@ class SmarticleSwarm(object):
         self.xb.command(msg, remote_device)
 
 
-    def gait_init(self, gait, delay_ms=250, remote_device = None):
+    def gait_init(self, gait, delay_ms, gait_num=0, remote_device = None):
         '''
         Sends gait interpolation data to remote smarticles including:
             1. left and right servo interpolation points (max 15 points each)
@@ -492,12 +492,19 @@ class SmarticleSwarm(object):
             while len(gaitL)!=self.GI_LENGTH:
                 gaitL.append(self.ASCII_OFFSET)
                 gaitR.append(self.ASCII_OFFSET)
-        str = ':GI:{:02},'.format(gait_points)
+        str = ':GI:{:01},{:02},'.format(gait_num, gait_points)
         b_str = bytearray(str,'utf-8')
         b_delay = bytearray(timer_counts.to_bytes(2,'big'))+bytearray(';','utf-8')
         msg=  b_str+b_delay+bytearray(gaitL)+bytearray(gaitR)+bytearray('\n','utf-8')
         self.xb.command(msg, remote_device)
         time.sleep(0.1) #ensure messages are not dropped as buffer isn't implemented yet
+
+    def select_gait(self, n, remote_device = None):
+        '''
+        DOC
+        '''
+        msg = ':GN:{}\n'.format(n)
+        self.xb.command(msg, remote_device)
 
 
     def sync_thread_target(self,sync_period_s, keep_time):
