@@ -83,6 +83,15 @@ void Smarticle::set_plank(int state)
   }
 }
 
+void Smarticle::set_gait_num(char* msg)
+ {
+   int n = 0;
+   sscanf(msg,":GN:%d",&n);
+   _index = 0;
+
+   _gait_num = n;
+ }
+
 void Smarticle::set_stream_delay(int state, int max_delay_val)
 {
   if (state>0){
@@ -171,10 +180,13 @@ void Smarticle::init_mode()
     // reset sensor thresholds
     set_threshold(_sensor_threshold_constant);
     //reset gait so that it maintains plank position
-    _gait_pts=1;
+    _gait_num=0;
     _t4_TOP = 3906; //delay of 500ms
-    _gaitL[0]=90;
-    _gaitR[0]=90;
+    for (int ii=0; ii<MAX_GAIT_NUM; ii++){
+       _gaitL[ii][0]=90;
+       _gaitR[ii][0]=90;
+       _gait_pts[ii]=1;
+     }
   }else{
     attach_servos();
   }
@@ -188,15 +200,18 @@ void Smarticle::init_gait(char* msg)
 {
   //get number of gait points
   disable_t4_interrupts();
-  sscanf(msg,":GI:%2d,",&_gait_pts);
+  int n;
+  int gait_len;
+  sscanf(msg,":GI:%d,%2d,",&n, &gait_len);
+  _gait_pts[n]=gait_len;
   //reconstruct 16 bit integer from two 8 bit chars to get gait delay counts for interrupt
   _t4_TOP = (msg[DELAY_OFFSET]<<8)|(msg[DELAY_OFFSET+1]&0xff);
   _half_t4_TOP = _t4_TOP/2;
   //read each of the specificed number of gait pts and save to an array of integers
-  for (int ii=0; ii<_gait_pts; ii++){
-    _gaitL[ii]=msg[GAIT_OFFSET+ii]-ASCII_OFFSET;
-    _gaitR[ii]=msg[GAIT_OFFSET+MAX_GAIT_SIZE+ii]-ASCII_OFFSET;
-    if (_debug==1){Xbee.printf("Index:\t%d\tL:%d\tR:%d\n",ii,_gaitL[ii],_gaitR[ii]);}
+  for (int ii=0; ii<_gait_pts[n]; ii++){
+    _gaitL[n][ii]=msg[GAIT_OFFSET+ii]-ASCII_OFFSET;
+    _gaitR[n][ii]=msg[GAIT_OFFSET+MAX_GAIT_SIZE+ii]-ASCII_OFFSET;
+    if (_debug==1){Xbee.printf("Number:%d\tIndex:\t%d\tL:%d\tR:%d\n",n,ii,_gaitL[n][ii],_gaitR[n][ii]);}
   }
   //set compare match value to delay counts
   OCR4A = _t4_TOP;
@@ -270,6 +285,7 @@ int Smarticle::interp_msg(char* msg)
   } else if (msg[1]=='S'&& msg[2]=='T'){ interp_threshold(msg); if(_debug==1){Xbee.printf("DEBUG: set threshold");}
   } else if (msg[1]=='S'&& msg[2]=='E'){ interp_epsilon(msg); if(_debug==1){Xbee.printf("DEBUG: set pose epsilon");}
   } else if (msg[1]=='S'&& msg[2]=='P'){ interp_pose(msg); if(_debug==1){Xbee.printf("DEBUG: set pose");}
+  } else if (msg[1]=='G'&& msg[2]=='N'){ set_gait_num(msg); if(_debug==1){Xbee.printf("DEBUG: set gait num");}
   } else if (msg[1]=='S'&& msg[2]=='D'){ interp_delay(msg); if(_debug==1){Xbee.printf("DEBUG: set delay");}
 } else if (msg[1]=='P'&& msg[2]=='N'){ interp_pose_noise(msg); if(_debug==1){Xbee.printf("DEBUG: set pose noise");}
 } else if (msg[1]=='S'&& msg[2]=='N'){ interp_sync_noise(msg); if(_debug==1){Xbee.printf("DEBUG: set sync noise");}
@@ -391,7 +407,7 @@ void Smarticle::transmit_data(void)
 void Smarticle::t4_interrupt(void)
 {
   if (_mode==INTERP){
-        gait_interpolate(_gait_pts, _gaitL, _gaitR);
+        gait_interpolate(_gait_pts[_gait_num], _gaitL[_gait_num], _gaitR[_gait_num]);
   }
 }
 
