@@ -50,9 +50,10 @@
 #define STRESS A1 //Current Sense
 //max number of gait points that can be sent to smarticle in gait interpolation mode
 #define MAX_GAIT_SIZE 15
+#define MAX_GAIT_NUM 8
 //offsets for gait interpolation message interpretation
-#define DELAY_OFFSET 7
-#define GAIT_OFFSET 10
+#define DELAY_OFFSET 9
+#define GAIT_OFFSET 12
 #define ASCII_OFFSET 32
 //max data that can be sent in an xbee message
 #define MAX_DATA_PAYLOAD 108
@@ -71,6 +72,7 @@ class Smarticle
     void set_transmit(int state);
     void set_read(int state);
     void set_plank(int state);
+    void set_gait_num(char* msg);
     void set_mode(int mode);
     void set_threshold(int* thresh);
     void set_pose(int angL, int angR);
@@ -129,11 +131,12 @@ class Smarticle
     int _plank =0;
     int _sample_time_ms=10;
     int _servos_attached= 0;
-    uint8_t _gaitL[MAX_GAIT_SIZE];
-    uint8_t _gaitR[MAX_GAIT_SIZE];
+    uint8_t _gaitL[MAX_GAIT_NUM][MAX_GAIT_SIZE];
+    uint8_t _gaitR[MAX_GAIT_NUM][MAX_GAIT_SIZE];
     uint16_t _t4_TOP = 3906; //500ms
     uint16_t _half_t4_TOP = 1953;
-    int _gait_pts=1;
+    int _gait_pts[MAX_GAIT_NUM];
+    int _gait_num = 0;
     uint16_t _index = 0;
     int _pose_noise = 0;
     int _sync_noise = 0;
