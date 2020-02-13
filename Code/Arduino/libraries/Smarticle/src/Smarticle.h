@@ -2,8 +2,8 @@
   Smarticle.h - Arduino Library for NU-Smarticle
   header file for
   Alex Samland, created Aug 7, 2019
-  Last Updated: Oct 31, 2019
-  v2.0
+  Last Updated: Feb 11, 2020
+  v2.1
 
 
   NU-Smarticle v2 Pins:
@@ -52,6 +52,7 @@
 #define MAX_GAIT_SIZE 15
 #define MAX_GAIT_NUM 8
 //offsets for gait interpolation message interpretation
+#define SENSOR_COUNT 4
 #define DELAY_OFFSET 9
 #define GAIT_OFFSET 12
 #define VALUE_OFFSET 3
@@ -69,79 +70,82 @@ class Smarticle
   public:
     Smarticle(int debug=0);
 
-    void set_led(int state);
-    void set_transmit(int state);
-    void set_read(int state);
-    void set_plank(int state);
-    void set_gait_num(char* msg);
-    void set_mode(int mode);
-    void set_threshold(int* thresh);
-    void set_pose(int angL, int angR);
-    void set_stream_delay(int state, int max_delay_val);
-
     void init_t4(void);
+    void attach_servos(void);
+    void detach_servos(void);
+
+    bool toggle_led(char state);
+    uint8_t set_mode(int mode);
     void init_mode(void);
+    bool toggle_t4_interrupt(void);
+    bool toggle_plank(char state);
+    uint8_t select_gait(char gait_num);
+    bool toggle_read_sensors(char state);
+    bool toggle_transmit(char state);
+    uint8_t set_gait_epsilon(char eps);
+    uint8_t set_pose_noise(char noise_range);
+
+    void set_pose(int angL, int angR);
+    uint16_t set_stream_delay(int max_delay_val);
+
+    void set_light_plank_threshold(int* thresh);
     void init_gait(char* msg);
 
     void rx_interrupt(uint8_t c);
     void manage_msg(void);
 
-    int interp_msg(char* msg);
-    void interp_threshold(char* msg);
-    void interp_epsilon(char* msg);
-    void interp_mode(char* msg);
-    void interp_pose(char* msg);
-    void interp_pose_noise(char* msg);
-    void interp_sync_noise(char* msg);
-    void interp_delay(char* msg);
-
-    int * read_sensors(void);
+    uint16_t * read_sensors(void);
     void transmit_data(void);
-
+    void stream_servo(void);
 
     void t4_interrupt(void);
-    void enable_t4_interrupts(void);
-    void disable_t4_interrupts(void);
 
-    void stream_servo(void);
-    void gait_interpolate(int len, uint8_t* servoL_arr, uint8_t* servoR_arr);
 
-    void attach_servos(void);
-    void detach_servos(void);
+
+
     PWMServo ServoL;
     PWMServo ServoR;
-    int sensor_dat[4]={0,0,0,0};
+    int sensor_dat[SENSOR_COUNT]={0,0,0,0};
   private:
     enum STATES _mode;
-    char _input_msg[MSG_BUFF_SIZE][MAX_MSG_SIZE];
-    //flags
+
+    // Private functions
+    uint16_t _convert_to_14bit(char val_7bit_1, char val_7bit_2);
+    void _interp_msg(char* msg);
+    void _gait_interpolate(int len, uint8_t* servoL_arr, uint8_t* servoR_arr);
+
+    // volatile variables used in ISRs
+    // rx_interrupt
+    volatile char _input_msg[MSG_BUFF_SIZE][MAX_MSG_SIZE];
     volatile uint32_t _msg_rx = 0;
+    volatile uint8_t _stream_arr[2]={0,0};
+    volatile bool _stream_cmd=0;
+    volatile uint16_t _half_t4_TOP = 1953;
+
+    // t4_interrupt
+    volatile uint8_t _gait_pts[MAX_GAIT_NUM];
+    volatile uint8_t _gaitL[MAX_GAIT_NUM][MAX_GAIT_SIZE];
+    volatile uint8_t _gaitR[MAX_GAIT_NUM][MAX_GAIT_SIZE];
+    volatile uint8_t _gait_num = 0;
+    volatile uint32_t _index = 0;
+
     uint32_t _msg_rd=0;
-    uint8_t _stream_arr[2]={0,0};
-    int _sensor_threshold_constant[4]={1500,1500,1500,1500};
-    int _sensor_threshold[4]={1500,1500,1500,1500};
-    int _transmit_dat[4]={0,0,0,0};
-    int _transmit_counts;
-    int _stream_cmd=0;
-    int _stream_delay = 0;
-    int _random_delay_max  = 50;
-    int _debug=0;
-    int _read_sensors=0;
-    int _transmit=0;
-    int _light_plank=0;
-    int _plank =0;
-    int _sample_time_ms=10;
-    int _servos_attached= 0;
-    uint8_t _gaitL[MAX_GAIT_NUM][MAX_GAIT_SIZE];
-    uint8_t _gaitR[MAX_GAIT_NUM][MAX_GAIT_SIZE];
+    uint16_t _sensor_threshold_constant[]={1500,1500,1500,1500};
+    uint16_t _sensor_threshold[SENSOR_COUNT]={1500,1500,1500,1500};
+    uint16_t _transmit_dat[4]={0,0,0,0};
+    uint16_t _transmit_counts;
+    uint16_t _random_delay_max  = 50;
+    bool _debug=0;
+    bool _read_sensors=0;
+    bool _transmit=0;
+    bool _light_plank=0;
+    bool _plank =0;
+    uint8_t _sample_time_ms=10;
+    bool _servos_attached= 0;
     uint16_t _t4_TOP = 3906; //500ms
-    uint16_t _half_t4_TOP = 1953;
-    int _gait_pts[MAX_GAIT_NUM];
-    int _gait_num = 0;
-    uint16_t _index = 0;
-    int _pose_noise = 0;
-    int _sync_noise = 0;
-    int _epsilon = 0;
+    uint8_t _pose_noise = 0;
+    uint16_t _sync_noise = 0;
+    uint8_t _epsilon = 0;
 
 };
 

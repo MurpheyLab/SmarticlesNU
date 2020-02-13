@@ -30,130 +30,14 @@
 
 #include <Smarticle.h>
 
-Smarticle:: Smarticle(int debug)
-{
+Smarticle:: Smarticle(int debug){
   pinMode(LED,OUTPUT);
   _debug = debug;
   _mode = IDLE;
   NeoSerial1.begin(9600);
 }
 
-
-void Smarticle::set_led(int state)
-{
-  //turn on or off system LED on pin 13
-  if (state==1){
-    digitalWrite(LED,HIGH);
-  }else{
-    digitalWrite(LED,LOW);
-  }
-  return;
-}
-
-
-void Smarticle::set_transmit(int state)
-{
-  //write to value of _transmit to enable/disable transmitting sensor data
-  if (state==1)
-  {
-    _transmit = state;
-  }else{ _transmit=0; }
-}
-
-
-void Smarticle::set_read(int state)
-{
-  //write to value of _transmit to enable/disable reading sensor data
-  if (state==1)
-  {
-    _read_sensors = state;
-  }else{ _read_sensors=0; }
-}
-
-
-void Smarticle::set_plank(int state)
-{
-  //sets servos to plank position
-  if (state ==1)
-  {
-    _plank=1;
-    ServoL.write(90);
-    ServoR.write(90);
-  }else{
-    _plank=0;
-  }
-}
-
-void Smarticle::set_stream_delay(int state, int max_delay_val)
-{
-  if (state>0){
-    if (state==1){
-      _stream_delay=1;
-    }else{
-      _stream_delay=0;
-    }
-  }
-  if (max_delay_val>0){
-    _random_delay_max=max_delay_val;
-  }
-}
-
-void Smarticle::set_mode(int m)
-{
-  //sets mode given input
-  switch(m){
-    case 0: _mode = IDLE;break;
-    case 1: _mode = STREAM;break;
-    case 2: _mode = INTERP;break;
-    default: _mode = IDLE;
-  }
-  init_mode();
-}
-
-void Smarticle::set_threshold(int* thresh)
-{
-  _sensor_threshold[0] = thresh[0];
-  _sensor_threshold[1] = thresh[1];
-  _sensor_threshold[2] = thresh[2];
-  _sensor_threshold[3] = thresh[3];
-}
-
-
-void Smarticle::set_pose(int angL, int angR)
-{
-  //sets smarticle to given arm angles
-  if (_epsilon==0){
-    ServoL.write(angL-_pose_noise/2+random(_pose_noise+1));
-    ServoR.write(angR-_pose_noise/2+random(_pose_noise+1));
-  }
-  else{
-    int coinL = random(101);
-    int coinR = random(101);
-    if (coinL<=_epsilon){
-      ServoL.write(180*random(2));
-    }else{
-      ServoL.write(angL-_pose_noise/2+random(_pose_noise+1));
-    }
-    if (coinR<=_epsilon){
-      ServoR.write(180*random(2));
-    }else{
-      ServoR.write(angR-_pose_noise/2+random(_pose_noise+1));
-    }
-  }
-}
-
-void Smarticle::set_gait_num(char* msg)
-{
-  int n = 0;
-  sscanf(msg,":GN:%d",&n);
-  _index = 0;
-
-  _gait_num = n;
-}
-
-
-void Smarticle::init_t4(void)
-{
+void Smarticle::init_t4(void){
   /* Timer Clock = 8000000 Hz / 1024 */
   TCCR4A = 0;
   //select timer mode and set prescaler to 1024 --> each tick is 0.128ms
@@ -165,9 +49,47 @@ void Smarticle::init_t4(void)
   TIFR4  = 0;
 }
 
+void Smarticle::attach_servos(void){
+  //attach servos and move to position (90,90)
+  if (_mode!=IDLE && _servos_attached==0){
+      _servos_attached = 1;
+      ServoL.attach(SERVO_L,MIN_US,MAX_US);
+      ServoR.attach(SERVO_R,MIN_US,MAX_US);
+      set_pose(90,90);
+    }
+}
 
-void Smarticle::init_mode()
-{
+void Smarticle::detach_servos(void){
+  //detach servos
+  ServoL.detach();
+  ServoR.detach();
+  _servos_attached=0;
+}
+
+uint8_t Smarticle::toggle_led(char state){
+  //turn on or off system LED on pin 13
+  if (state==1){
+    digitalWrite(LED,HIGH);
+    return 1;
+  }else{
+    digitalWrite(LED,LOW);
+    return 0;
+  }
+}
+
+uint8_t Smarticle::set_mode(char m){
+  //sets mode given input
+  switch(m){
+    case 0: _mode = IDLE;break;
+    case 1: _mode = STREAM;break;
+    case 2: _mode = INTERP;break;
+    default: _mode = IDLE;
+  }
+  init_mode();
+  return (uint8_t) _mode;
+}
+
+void Smarticle::init_mode(){
   //clear all flags on mode change
   _index = 0;
   if (_mode==IDLE){
@@ -195,9 +117,109 @@ void Smarticle::init_mode()
   TCNT4 = 0;
 }
 
+uint8_t Smarticle::toggle_t4_interrupts(int state){
+  if (_mode==INTERP && state==1){
+    //enable timer4 compare match A interrupt
+    TIMSK4 = 1<<OCIE4A;
+    TCNT4 = 0;
+    _index=0;
+    return 1
+  } else{
+    //disable all timer4 interrupts
+    TIMSK4 = 0;
+    return 0
+  }
+}
 
-void Smarticle::init_gait(char* msg)
-{
+uint8_t Smarticle::toggle_plank(char state){
+  //sets servos to plank position
+  if (state ==1)
+  {
+    _plank=1;
+    ServoL.write(90);
+    ServoR.write(90);
+  }else{
+    _plank=0;
+  }
+  return _plank;
+}
+
+uint8_t Smarticle::select_gait(int n){
+  _index = 0;
+  _gait_num = n;
+  return _gait_num
+}
+
+uint8_t Smarticle::toggle_read_sensors(char state){
+  //write to value of _transmit to enable/disable reading sensor data
+  if (state==1)
+  {
+    _read_sensors = state;
+    return 1;
+  }else{
+    _read_sensors=0;
+    return 0;
+  }
+}
+
+uint8_t Smarticle::toggle_transmit(char state){
+  //write to value of _transmit to enable/disable transmitting sensor data
+  if (state==1)
+  {
+    _transmit = state;
+    return 1;
+  }else{
+    _transmit=0;
+    return 0;
+  }
+}
+
+uint8_t Smarticle:: set_gait_epsilon(char eps){
+  // interpets set epsilon command
+  _gait_epsilon = eps;
+  return _gait_epsilon
+}
+
+uint8_t Smarticle::set_pose_noise(char noise_range){
+  //interpret set pose noise commands
+  _pose_noise = noise_range;
+  return _pose_noise
+}
+
+void Smarticle::set_pose(int angL, int angR){
+  //sets smarticle to given arm angles
+  if (_epsilon==0){
+    ServoL.write(angL-_pose_noise/2+random(_pose_noise+1));
+    ServoR.write(angR-_pose_noise/2+random(_pose_noise+1));
+  }
+  else{
+    int coinL = random(101);
+    int coinR = random(101);
+    if (coinL<=_epsilon){
+      ServoL.write(180*random(2));
+    }else{
+      ServoL.write(angL-_pose_noise/2+random(_pose_noise+1));
+    }
+    if (coinR<=_epsilon){
+      ServoR.write(180*random(2));
+    }else{
+      ServoR.write(angR-_pose_noise/2+random(_pose_noise+1));
+    }
+  }
+}
+
+void Smarticle::set_stream_timing_noise(uint16_t max_delay_val){
+  _random_stream_delay_max=max_delay_val;
+  return _random_stream_delay_max
+}
+
+void Smarticle::set_light_plank_threshold(int* thresh){
+  for (int ii=0; ii<SENSOR_COUNT; ii++){
+    _sensor_threshold[ii] = thresh[ii];
+  }
+}
+
+void Smarticle::init_gait(char* msg){
   //get number of gait points
   disable_t4_interrupts();
   int n;
@@ -221,9 +243,7 @@ void Smarticle::init_gait(char* msg)
   _index = 0;
 }
 
-
-void Smarticle::rx_interrupt(uint8_t c)
-{
+void Smarticle::rx_interrupt(uint8_t c){
   //runs on every received byte
   static int len=0;
   int ind =(_msg_rx)%MSG_BUFF_SIZE;
@@ -249,8 +269,7 @@ void Smarticle::rx_interrupt(uint8_t c)
   }
 }
 
-void Smarticle::manage_msg(void)
-{
+void Smarticle::manage_msg(void){
   // if received messages is more than read messages
   if ((_msg_rx-_msg_rd)>0){
     int ind = (_msg_rd)%MSG_BUFF_SIZE;
@@ -259,7 +278,7 @@ void Smarticle::manage_msg(void)
     //ensure message matches command structure of leading with a colon ':'
     // typical message structure example '':M:0' set to mode 0
     if (_input_msg[ind][0]==0x13 && _input_msg[ind][1]==0x13){
-      interp_msg(_input_msg[ind]);
+      _interp_msg(_input_msg[ind]);
     }else if (_debug == 1){
       NeoSerial1.printf("DEBUG: wrong format >>");
       NeoSerial1.printf("%s",_input_msg[ind]);
@@ -267,125 +286,7 @@ void Smarticle::manage_msg(void)
   }
 }
 
-
-int Smarticle::interp_msg(char* msg)
-{
-  if(_debug==1){NeoSerial1.printf("%s\n>>",msg);}
-  //determine which command to exectue
-  char msg_code = msg[2];
-  if ((msg_code >= 0x21) && (msg_code <= 0x29)){
-    uint8_t value1 = msg[3]-ASCII_OFFSET;
-    switch (msg_code) {
-      case 0x21:
-        // select mode
-      case 0x22:
-        // set t4 interrupts
-      case 0x23:
-        // set plank
-      case 0x24:
-        // select gait
-      case 0x25:
-        // set read sensors
-      case 0x26:
-        // set transmit
-      case 0x27:
-        // set stream timing noise
-      case 0x28:
-        // set gait epsilon
-      case 0x29:
-        // set pose noise
-    }
-  }
-  return 1;
-//   if (msg[1]=='M'){ interp_mode(msg); if(_debug==1){NeoSerial1.printf("DEBUG: set mode");}
-//   } else if (msg[1]=='S'&& msg[3]=='0'){ disable_t4_interrupts(); if(_debug==1){NeoSerial1.printf("DEBUG: stop interrupts");}
-//   } else if (msg[1]=='S'&& msg[3]=='1'){ enable_t4_interrupts(); if(_debug==1){NeoSerial1.printf("DEBUG: set interrupts");}
-//   } else if (_mode==INTERP&& msg[1]=='G'&& msg[2]=='I'){ init_gait(msg); if(_debug==1){NeoSerial1.printf("DEBUG: set gait");}
-//   } else if (msg[1]=='T'&& msg[3]=='1'){ set_transmit(1); if(_debug==1){NeoSerial1.printf("DEBUG: set transmit");}
-//   } else if (msg[1]=='T'&& msg[3]=='0'){ set_transmit(0); if(_debug==1){NeoSerial1.printf("DEBUG: stop transmitted");}
-//   } else if (msg[1]=='R'&& msg[3]=='1'){ set_read(1); if(_debug==1){NeoSerial1.printf("DEBUG: set read");}
-//   } else if (msg[1]=='R'&& msg[3]=='0'){ set_read(0); if(_debug==1){NeoSerial1.printf("DEBUG: stop read");}
-//   } else if (msg[1]=='P'&& msg[3]=='1'){ set_plank(1); if(_debug==1){NeoSerial1.printf("DEBUG: start plank");}
-//   } else if (msg[1]=='P'&& msg[3]=='0'){ set_plank(0); if(_debug==1){NeoSerial1.printf("DEBUG: stop plank");}
-//   } else if (msg[1]=='L'&& msg[2]=='P' && msg[4]=='1'){ _light_plank=1; if(_debug==1){NeoSerial1.printf("DEBUG: light_plank on");}
-//   } else if (msg[1]=='L'&& msg[2]=='P' && msg[4]=='0'){ _light_plank=0; if(_debug==1){NeoSerial1.printf("DEBUG: light_plank off");}
-//   } else if (msg[1]=='S'&& msg[2]=='T'){ interp_threshold(msg); if(_debug==1){NeoSerial1.printf("DEBUG: set threshold");}
-//   } else if (msg[1]=='S'&& msg[2]=='E'){ interp_epsilon(msg); if(_debug==1){NeoSerial1.printf("DEBUG: set pose epsilon");}
-// } else if (msg[1]=='G'&& msg[2]=='N'){ set_gait_num(msg); if(_debug==1){NeoSerial1.printf("DEBUG: set gait num");}
-//   } else if (msg[1]=='S'&& msg[2]=='P'){ interp_pose(msg); if(_debug==1){NeoSerial1.printf("DEBUG: set pose");}
-//   } else if (msg[1]=='S'&& msg[2]=='D'){ interp_delay(msg); if(_debug==1){NeoSerial1.printf("DEBUG: set delay");}
-//   } else if (msg[1]=='P'&& msg[2]=='N'){ interp_pose_noise(msg); if(_debug==1){NeoSerial1.printf("DEBUG: set pose noise");}
-//   } else if (msg[1]=='S'&& msg[2]=='N'){ interp_sync_noise(msg); if(_debug==1){NeoSerial1.printf("DEBUG: set sync noise");}
-//   } else {
-//     if(_debug==1){NeoSerial1.printf("DEBUG: no match :(\n");}
-//     return 0;
-//   }
-//   return 1;
-}
-
-
-void Smarticle::interp_mode(char* msg)
-{
-  //interpret mode change command
-  int m=0;
-  if (strlen(msg)==4){
-    sscanf(msg,":M:%d,",&m);
-  }
-  set_mode(m);
-}
-
-void Smarticle::interp_threshold(char* msg)
-{
-  // interpret set sensor threshold command
-  int thresh[4] = {1500, 1500, 1500, 1500};
-  sscanf(msg,":ST:%d,%d,%d,%d",thresh,thresh+1,thresh+2,thresh+3);
-  set_threshold(thresh);
-}
-
-void Smarticle:: interp_epsilon(char* msg)
-{
-  // interpets set epsilon command
-  int eps = 0;
-  sscanf(msg,":SE:%d",&eps);
-  _epsilon = eps;
-}
-
-
-void Smarticle::interp_pose(char* msg)
-{
-  //interpret set pose commands
-  disable_t4_interrupts();
-  int angL=90,angR=90;
-  sscanf(msg,":SP:%d,%d",&angL, &angR);
-  set_pose(angL,angR);
-}
-
-void Smarticle::interp_pose_noise(char* msg)
-{
-  //interpret set pose noise commands
-  int noise = 0;
-  sscanf(msg,":PN:%d",&noise);
-  _pose_noise = noise;
-}
-
-void Smarticle::interp_sync_noise(char* msg)
-{
-  //interpret set sync noise commands
-  int noise = 0;
-  sscanf(msg,":SN:%d",&noise);
-  _sync_noise = noise;
-}
-
-void Smarticle::interp_delay(char* msg)
-{
-  int stat=0,max=0;
-  sscanf(msg,":SD:%d,%d",&stat, &max);
-  set_stream_delay(stat,max);
-}
-
-
-int * Smarticle::read_sensors(void)
-{
+uint16_t * Smarticle::read_sensors(void){
   if (_read_sensors ==1){
     int dat[4]={0,0,0,0};
     //get maximum value from specified sample window
@@ -417,9 +318,7 @@ int * Smarticle::read_sensors(void)
   }
 }
 
-
-void Smarticle::transmit_data(void)
-{
+void Smarticle::transmit_data(void){
   //send data: sensor_dat[0]= photo_front, sensor_dat[1]= photo_back, sensor_dat[2]= photo_right, sensor_dat[3]= current sense
   if (_transmit && _mode!=IDLE){
     _transmit_counts++;
@@ -440,76 +339,129 @@ void Smarticle::transmit_data(void)
   }
 }
 
-
-void Smarticle::t4_interrupt(void)
-{
-  if (_mode==INTERP){
-        gait_interpolate(_gait_pts[_gait_num], _gaitL[_gait_num], _gaitR[_gait_num]);
-  }
-}
-
-
-void Smarticle::enable_t4_interrupts(void)
-{
-  if (_mode==INTERP){
-    //enable timer4 compare match A interrupt
-    TIMSK4 = 1<<OCIE4A;
-    TCNT4 = 0;
-    _index=0;
-  }
-}
-
-
-void Smarticle::disable_t4_interrupts(void)
-{
-  //disable all timer4 interrupts
-  TIMSK4 = 0;
-}
-
-
-void Smarticle::stream_servo(void)
-{
+void Smarticle::stream_servo(void){
   if (_mode==STREAM & _stream_cmd==1){
     _stream_cmd=0;
-    if (_stream_delay==1){
-        delay(random(_random_delay_max));
-    }
+    delay(random(_random_delay_max+1));
     if (_stream_arr[0]==200+ASCII_OFFSET && _stream_arr[1]==200+ASCII_OFFSET){
-      set_pose(random(181),random(181));\
-      //  sXbee.printf("DEBUG; rand");
+      set_pose(random(181),random(181));
     }else if(_stream_arr[0]==190+ASCII_OFFSET && _stream_arr[1]==190+ASCII_OFFSET) {
       set_pose(180*random(2),180*random(2));
     }else{set_pose(_stream_arr[0]-ASCII_OFFSET,_stream_arr[1]-ASCII_OFFSET);}
   }
 }
 
+void Smarticle::t4_interrupt(void){
+  if (_mode==INTERP){
+        _gait_interpolate(_gait_pts[_gait_num], _gaitL[_gait_num], _gaitR[_gait_num]);
+  }
+}
 
-void Smarticle::gait_interpolate(int len, uint8_t *servoL_arr, uint8_t *servoR_arr)
-{
+uint16_t Smarticle::_convert_to_14bit(char val_7bit_1, char val_7bit_2){
+  //reconstruct 14 bit integer from two 7 bit chars to get gait delay counts for interrupt
+  uint16_t out= ((val_7bit_1<<7)|(val_7bit_2&0x7f))&0x3fff;
+  return out;
+}
+
+void Smarticle::_interp_msg(char* msg){
+  if(_debug==1){NeoSerial1.printf("%s\n>>",msg);}
+  //determine which command to exectue
+  char msg_code = msg[2];
+  if ((msg_code >= 0x20) && (msg_code <= 0x27)){
+    char value1 = msg[VALUE_OFFSET]-ASCII_OFFSET;
+    int ret;
+    switch (msg_code) {
+      case 0x20:
+        // toggle LED
+        ret = toggle_led(value1)
+        if(_debug==1){NeoSerial1.printf("DEBUG: toggle LED: %d\n",ret);}
+        break;
+
+      case 0x21:
+        // select mode
+        ret = set_mode(value1)
+        if(_debug==1){NeoSerial1.printf("DEBUG: set mode: %d\n",ret);}
+        break;
+      case 0x22:
+        // toggle t4 interrupt
+        ret = toggle_t4_interrupt(value1);
+        if(_debug==1){NeoSerial1.printf("DEBUG: toggle t4 interrupt: %d\n", ret);}
+        break;
+      case 0x23:
+        // toggle plank
+        ret = toggle_plank(value1);
+        if(_debug==1){NeoSerial1.printf("DEBUG: toggle plank: %d\n", ret);}
+        break;
+      case 0x24:
+        // select gait
+        ret = select_gait(value1);
+        if(_debug==1){NeoSerial1.printf("DEBUG: select gait: %d\n", ret);}
+        break;
+      case 0x25:
+        // toggle read sensors
+        ret = toggle_read_sensors(value1);
+        if(_debug==1){NeoSerial1.printf("DEBUG: toggle read sensors: %d\n",ret);}
+        break;
+      case 0x26:
+        // toggle transmit
+        ret = toggle_transmit(value1);
+        if(_debug==1){NeoSerial1.printf("DEBUG: toggle transmit sensor values: %d\n",ret);}
+        break;
+      case 0x27:
+        // toggle stream timing noise
+        ret = toggle_stream_timing_noise(value1);
+        if(_debug==1){NeoSerial1.printf("DEBUG: toggle stream timing noise: %d\n",ret);}
+        break;
+      case 0x28:
+        // set pose noise
+        ret = set_pose_noise(value1);
+        if(_debug==1){NeoSerial1.printf("DEBUG: set pose noise: %d\n",ret);}
+        break;
+    }
+  } else if ((msg_code >= 0x30) && (msg_code <= 0x34)){
+    char value1 = msg[VALUE_OFFSET]-ASCII_OFFSET;
+    char value2 = msg[1+VALUE_OFFSET]-ASCII_OFFSET;
+    int ret;
+    switch (msg_code) {
+      case 0x30:
+        // set pose
+        set_pose( (int) value1, (int) value2);
+        if(_debug==1){NeoSerial1.printf("DEBUG: set pose: (%d,%d)\n", value1, value2);}
+        break;
+      case 0x31:
+        // set sync noise
+        uint16_t in = _convert_to_14bit(value1, value2)
+        ret = set_sync_noise(in);
+        if(_debug==1){NeoSerial1.printf("DEBUG: set sync noise: %d\n",ret);}
+        break;
+      case 0x32:
+        // set stream timing noise
+        uint16_t in = _convert_to_14bit(value1, value2)
+        ret = set_stream_timing_noise(in);
+        if(_debug==1){NeoSerial1.printf("DEBUG: set streaming timing noise: %d\n",ret);}
+        break;
+
+    }
+  } else if (msg_code==0x40){
+    uint16_t thresh[SENSOR_COUNT], val;
+    for(int ii=0; ii<SENSOR_COUNT; ii++){
+      val = _convert_to_14bit(msg[VALUE_OFFSET+ii], msg[VALUE_OFFSET+ii+1]);
+      thresh[ii]=val;
+    }
+    set_light_plank_threshold(thresh);
+  } else if (msg_code==0x41){
+    init_gait(msg);
+  } else {
+    if(_debug==1){
+      NeoSerial1.printf("DEBUG: no match :(\n");
+    }
+  }
+}
+
+void Smarticle::_gait_interpolate(int len, uint8_t *servoL_arr, uint8_t *servoR_arr){
     //move servos to next position specified in gait array
     if (_plank ==0){
       set_pose(servoL_arr[_index%len],servoR_arr[(_index)%len]);
     }
     _index++;
-}
-
-
-void Smarticle::attach_servos(void)
-{
-  //attach servos and move to position (90,90)
-  if (_mode!=IDLE && _servos_attached==0){
-      _servos_attached = 1;
-      ServoL.attach(SERVO_L,MIN_US,MAX_US);
-      ServoR.attach(SERVO_R,MIN_US,MAX_US);
-      set_pose(90,90);
-    }
-}
-
-
-void Smarticle::detach_servos(void)
-{
-  //detach servos
-  ServoL.detach();
-  ServoR.detach();
-  _servos_attached=0;
 }
