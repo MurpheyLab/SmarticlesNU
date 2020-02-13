@@ -53,13 +53,12 @@
 #define MAX_GAIT_NUM 8
 //offsets for gait interpolation message interpretation
 #define SENSOR_COUNT 4
-#define DELAY_OFFSET 9
-#define GAIT_OFFSET 12
+#define GAIT_OFFSET 7
 #define VALUE_OFFSET 3
 #define ASCII_OFFSET 32
 //max data that can be sent in an xbee message
 #define MAX_DATA_PAYLOAD 108
-#define MAX_MSG_SIZE 50
+#define MAX_MSG_SIZE 40
 #define MSG_BUFF_SIZE 4
 
 
@@ -75,21 +74,22 @@ class Smarticle
     void detach_servos(void);
 
     bool toggle_led(char state);
-    uint8_t set_mode(int mode);
+    uint8_t set_mode(char m);
     void init_mode(void);
-    bool toggle_t4_interrupt(void);
+    bool toggle_t4_interrupt(char state);
     bool toggle_plank(char state);
-    uint8_t select_gait(char gait_num);
+    uint8_t select_gait(char n);
     bool toggle_read_sensors(char state);
     bool toggle_transmit(char state);
     uint8_t set_gait_epsilon(char eps);
     uint8_t set_pose_noise(char noise_range);
 
     void set_pose(int angL, int angR);
-    uint16_t set_stream_delay(int max_delay_val);
+    uint16_t set_sync_noise(uint16_t max_noise);
+    uint16_t set_stream_timing_noise(uint16_t max_delay_val);
 
-    void set_light_plank_threshold(int* thresh);
-    void init_gait(char* msg);
+    void set_light_plank_threshold(uint16_t* thresh);
+    void init_gait(volatile char* msg);
 
     void rx_interrupt(uint8_t c);
     void manage_msg(void);
@@ -105,14 +105,14 @@ class Smarticle
 
     PWMServo ServoL;
     PWMServo ServoR;
-    int sensor_dat[SENSOR_COUNT]={0,0,0,0};
+    uint16_t sensor_dat[SENSOR_COUNT]={0,0,0,0};
   private:
     enum STATES _mode;
 
     // Private functions
     uint16_t _convert_to_14bit(char val_7bit_1, char val_7bit_2);
-    void _interp_msg(char* msg);
-    void _gait_interpolate(int len, uint8_t* servoL_arr, uint8_t* servoR_arr);
+    void _interp_msg(volatile char* msg);
+    void _gait_interpolate(int len, volatile uint8_t* servoL_arr, volatile uint8_t* servoR_arr);
 
     // volatile variables used in ISRs
     // rx_interrupt
@@ -121,31 +121,32 @@ class Smarticle
     volatile uint8_t _stream_arr[2]={0,0};
     volatile bool _stream_cmd=0;
     volatile uint16_t _half_t4_TOP = 1953;
+    volatile uint16_t _sync_noise = 0;
+
 
     // t4_interrupt
+    volatile bool _plank =0;
     volatile uint8_t _gait_pts[MAX_GAIT_NUM];
     volatile uint8_t _gaitL[MAX_GAIT_NUM][MAX_GAIT_SIZE];
     volatile uint8_t _gaitR[MAX_GAIT_NUM][MAX_GAIT_SIZE];
     volatile uint8_t _gait_num = 0;
     volatile uint32_t _index = 0;
+    volatile uint8_t _pose_noise = 0;
+    volatile uint8_t _gait_epsilon = 0;
 
     uint32_t _msg_rd=0;
-    uint16_t _sensor_threshold_constant[]={1500,1500,1500,1500};
+    uint16_t _sensor_threshold_constant[SENSOR_COUNT]={1500,1500,1500,1500};
     uint16_t _sensor_threshold[SENSOR_COUNT]={1500,1500,1500,1500};
     uint16_t _transmit_dat[4]={0,0,0,0};
     uint16_t _transmit_counts;
-    uint16_t _random_delay_max  = 50;
+    uint16_t _random_stream_delay_max  = 50;
     bool _debug=0;
     bool _read_sensors=0;
     bool _transmit=0;
     bool _light_plank=0;
-    bool _plank =0;
     uint8_t _sample_time_ms=10;
     bool _servos_attached= 0;
     uint16_t _t4_TOP = 3906; //500ms
-    uint8_t _pose_noise = 0;
-    uint16_t _sync_noise = 0;
-    uint8_t _epsilon = 0;
 
 };
 

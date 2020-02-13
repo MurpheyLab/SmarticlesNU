@@ -1,15 +1,15 @@
 #include <Smarticle.h>
 
 
-Smarticle smart(0);
+Smarticle smart(1);
 
 void setup() {
   randomSeed(analogRead(A7));
   NeoSerial1.attachInterrupt(handleRxChar);
   smart.init_t4();
-  smart.set_led(1);
+  smart.toggle_led(1);
   delay(3000);
-  smart.set_led(0);
+  smart.toggle_led(0);
 }
 
 void loop() {
