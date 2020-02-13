@@ -258,11 +258,11 @@ void Smarticle::manage_msg(void)
     if(_debug==1){NeoSerial1.printf("msg!>>");}
     //ensure message matches command structure of leading with a colon ':'
     // typical message structure example '':M:0' set to mode 0
-    if (_input_msg[ind][0]==':'){
+    if (_input_msg[ind][0]==0x13 && _input_msg[ind][1]==0x13){
       interp_msg(_input_msg[ind]);
     }else if (_debug == 1){
       NeoSerial1.printf("DEBUG: wrong format >>");
-      NeoSerial1.printf("%c",_input_msg[ind][0]);
+      NeoSerial1.printf("%s",_input_msg[ind]);
     }
   }
 }
@@ -270,32 +270,57 @@ void Smarticle::manage_msg(void)
 
 int Smarticle::interp_msg(char* msg)
 {
-  if(_debug==1){NeoSerial1.printf("%s>>",msg);}
+  if(_debug==1){NeoSerial1.printf("%s\n>>",msg);}
   //determine which command to exectue
-  if (msg[1]=='M'){ interp_mode(msg); if(_debug==1){NeoSerial1.printf("DEBUG: set mode");}
-  } else if (msg[1]=='S'&& msg[3]=='0'){ disable_t4_interrupts(); if(_debug==1){NeoSerial1.printf("DEBUG: stop interrupts");}
-  } else if (msg[1]=='S'&& msg[3]=='1'){ enable_t4_interrupts(); if(_debug==1){NeoSerial1.printf("DEBUG: set interrupts");}
-  } else if (_mode==INTERP&& msg[1]=='G'&& msg[2]=='I'){ init_gait(msg); if(_debug==1){NeoSerial1.printf("DEBUG: set gait");}
-  } else if (msg[1]=='T'&& msg[3]=='1'){ set_transmit(1); if(_debug==1){NeoSerial1.printf("DEBUG: set transmit");}
-  } else if (msg[1]=='T'&& msg[3]=='0'){ set_transmit(0); if(_debug==1){NeoSerial1.printf("DEBUG: stop transmitted");}
-  } else if (msg[1]=='R'&& msg[3]=='1'){ set_read(1); if(_debug==1){NeoSerial1.printf("DEBUG: set read");}
-  } else if (msg[1]=='R'&& msg[3]=='0'){ set_read(0); if(_debug==1){NeoSerial1.printf("DEBUG: stop read");}
-  } else if (msg[1]=='P'&& msg[3]=='1'){ set_plank(1); if(_debug==1){NeoSerial1.printf("DEBUG: start plank");}
-  } else if (msg[1]=='P'&& msg[3]=='0'){ set_plank(0); if(_debug==1){NeoSerial1.printf("DEBUG: stop plank");}
-  } else if (msg[1]=='L'&& msg[2]=='P' && msg[4]=='1'){ _light_plank=1; if(_debug==1){NeoSerial1.printf("DEBUG: light_plank on");}
-  } else if (msg[1]=='L'&& msg[2]=='P' && msg[4]=='0'){ _light_plank=0; if(_debug==1){NeoSerial1.printf("DEBUG: light_plank off");}
-  } else if (msg[1]=='S'&& msg[2]=='T'){ interp_threshold(msg); if(_debug==1){NeoSerial1.printf("DEBUG: set threshold");}
-  } else if (msg[1]=='S'&& msg[2]=='E'){ interp_epsilon(msg); if(_debug==1){NeoSerial1.printf("DEBUG: set pose epsilon");}
-} else if (msg[1]=='G'&& msg[2]=='N'){ set_gait_num(msg); if(_debug==1){NeoSerial1.printf("DEBUG: set gait num");}
-  } else if (msg[1]=='S'&& msg[2]=='P'){ interp_pose(msg); if(_debug==1){NeoSerial1.printf("DEBUG: set pose");}
-  } else if (msg[1]=='S'&& msg[2]=='D'){ interp_delay(msg); if(_debug==1){NeoSerial1.printf("DEBUG: set delay");}
-  } else if (msg[1]=='P'&& msg[2]=='N'){ interp_pose_noise(msg); if(_debug==1){NeoSerial1.printf("DEBUG: set pose noise");}
-  } else if (msg[1]=='S'&& msg[2]=='N'){ interp_sync_noise(msg); if(_debug==1){NeoSerial1.printf("DEBUG: set sync noise");}
-  } else {
-    if(_debug==1){NeoSerial1.printf("DEBUG: no match :(\n");}
-    return 0;
+  char msg_code = msg[2];
+  if ((msg_code >= 0x21) && (msg_code <= 0x29)){
+    uint8_t value1 = msg[3]-ASCII_OFFSET;
+    switch (msg_code) {
+      case 0x21:
+        // select mode
+      case 0x22:
+        // set t4 interrupts
+      case 0x23:
+        // set plank
+      case 0x24:
+        // select gait
+      case 0x25:
+        // set read sensors
+      case 0x26:
+        // set transmit
+      case 0x27:
+        // set stream timing noise
+      case 0x28:
+        // set gait epsilon
+      case 0x29:
+        // set pose noise
+    }
   }
   return 1;
+//   if (msg[1]=='M'){ interp_mode(msg); if(_debug==1){NeoSerial1.printf("DEBUG: set mode");}
+//   } else if (msg[1]=='S'&& msg[3]=='0'){ disable_t4_interrupts(); if(_debug==1){NeoSerial1.printf("DEBUG: stop interrupts");}
+//   } else if (msg[1]=='S'&& msg[3]=='1'){ enable_t4_interrupts(); if(_debug==1){NeoSerial1.printf("DEBUG: set interrupts");}
+//   } else if (_mode==INTERP&& msg[1]=='G'&& msg[2]=='I'){ init_gait(msg); if(_debug==1){NeoSerial1.printf("DEBUG: set gait");}
+//   } else if (msg[1]=='T'&& msg[3]=='1'){ set_transmit(1); if(_debug==1){NeoSerial1.printf("DEBUG: set transmit");}
+//   } else if (msg[1]=='T'&& msg[3]=='0'){ set_transmit(0); if(_debug==1){NeoSerial1.printf("DEBUG: stop transmitted");}
+//   } else if (msg[1]=='R'&& msg[3]=='1'){ set_read(1); if(_debug==1){NeoSerial1.printf("DEBUG: set read");}
+//   } else if (msg[1]=='R'&& msg[3]=='0'){ set_read(0); if(_debug==1){NeoSerial1.printf("DEBUG: stop read");}
+//   } else if (msg[1]=='P'&& msg[3]=='1'){ set_plank(1); if(_debug==1){NeoSerial1.printf("DEBUG: start plank");}
+//   } else if (msg[1]=='P'&& msg[3]=='0'){ set_plank(0); if(_debug==1){NeoSerial1.printf("DEBUG: stop plank");}
+//   } else if (msg[1]=='L'&& msg[2]=='P' && msg[4]=='1'){ _light_plank=1; if(_debug==1){NeoSerial1.printf("DEBUG: light_plank on");}
+//   } else if (msg[1]=='L'&& msg[2]=='P' && msg[4]=='0'){ _light_plank=0; if(_debug==1){NeoSerial1.printf("DEBUG: light_plank off");}
+//   } else if (msg[1]=='S'&& msg[2]=='T'){ interp_threshold(msg); if(_debug==1){NeoSerial1.printf("DEBUG: set threshold");}
+//   } else if (msg[1]=='S'&& msg[2]=='E'){ interp_epsilon(msg); if(_debug==1){NeoSerial1.printf("DEBUG: set pose epsilon");}
+// } else if (msg[1]=='G'&& msg[2]=='N'){ set_gait_num(msg); if(_debug==1){NeoSerial1.printf("DEBUG: set gait num");}
+//   } else if (msg[1]=='S'&& msg[2]=='P'){ interp_pose(msg); if(_debug==1){NeoSerial1.printf("DEBUG: set pose");}
+//   } else if (msg[1]=='S'&& msg[2]=='D'){ interp_delay(msg); if(_debug==1){NeoSerial1.printf("DEBUG: set delay");}
+//   } else if (msg[1]=='P'&& msg[2]=='N'){ interp_pose_noise(msg); if(_debug==1){NeoSerial1.printf("DEBUG: set pose noise");}
+//   } else if (msg[1]=='S'&& msg[2]=='N'){ interp_sync_noise(msg); if(_debug==1){NeoSerial1.printf("DEBUG: set sync noise");}
+//   } else {
+//     if(_debug==1){NeoSerial1.printf("DEBUG: no match :(\n");}
+//     return 0;
+//   }
+//   return 1;
 }
 
 

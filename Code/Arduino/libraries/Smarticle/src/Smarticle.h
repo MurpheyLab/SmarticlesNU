@@ -54,6 +54,7 @@
 //offsets for gait interpolation message interpretation
 #define DELAY_OFFSET 9
 #define GAIT_OFFSET 12
+#define VALUE_OFFSET 3
 #define ASCII_OFFSET 32
 //max data that can be sent in an xbee message
 #define MAX_DATA_PAYLOAD 108
