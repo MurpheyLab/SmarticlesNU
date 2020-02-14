@@ -52,18 +52,40 @@ swarm.build_network(8)
 
 # initialize square gait
 swarm.set_mode(2)
-L = [0,180,0,180]
-R = [180,0,180,0]
+L = [0,180,0,180,0,180,0,180,0,180,0,180,0,180, 90]
+R = [0,180,0,180,0,180,0,180,0,180,0,180,0,180, 90]
 
 
-swarm.gait_init([L,R], 600,gait_num = 0) #gaits, delay between poitns in ms; I wouldnt go faster than 200m
+swarm.gait_init([L,R], 1200,gait_num = 0) #gaits, delay between poitns in ms; I wouldnt go faster than 200m
 # time.sleep(0)
 swarm.gait_init([L,R],567, gait_num = 1) #gaits, delay between poitns in ms; I wouldnt go faster than 200ms
 # time.sleep(2)
-swarm.gait_init([L,R], 533,gait_num = 2) #gaits, delay between poitns in ms; I wouldnt go faster than 200m
+swarm.gait_init([R,R], 533,gait_num = 2) #gaits, delay between poitns in ms; I wouldnt go faster than 200m
 # time.sleep(2)
-swarm.gait_init([L,R],500, gait_num = 3) #gaits, delay between poitns in ms; I wouldnt go faster than 200ms
+swarm.gait_init([L,L],500, gait_num = 3) #gaits, delay between poitns in ms; I wouldnt go faster than 200ms
 # swarm.init_sync_thread()
+swarm.gait_init([L,R], 1200,gait_num = 0) #gaits, delay between poitns in ms; I wouldnt go faster than 200m
+# time.sleep(0)
+swarm.gait_init([L,R],567, gait_num = 1) #gaits, delay between poitns in ms; I wouldnt go faster than 200ms
+# time.sleep(2)
+swarm.gait_init([R,R], 533,gait_num = 2) #gaits, delay between poitns in ms; I wouldnt go faster than 200m
+# time.sleep(2)
+swarm.gait_init([L,L],500, gait_num = 3) #gaits, delay between poitns in ms; I wouldnt go faster than 200ms
+swarm.gait_init([L,R], 1200,gait_num = 0) #gaits, delay between poitns in ms; I wouldnt go faster than 200m
+# time.sleep(0)
+swarm.gait_init([L,R],567, gait_num = 1) #gaits, delay between poitns in ms; I wouldnt go faster than 200ms
+# time.sleep(2)
+swarm.gait_init([R,R], 533,gait_num = 2) #gaits, delay between poitns in ms; I wouldnt go faster than 200m
+# time.sleep(2)
+swarm.gait_init([L,L],500, gait_num = 3) #gaits, delay between poitns in ms; I wouldnt go faster than 200ms
+# swarm.init_sync_thread()
+swarm.gait_init([L,R], 1200,gait_num = 0) #gaits, delay between poitns in ms; I wouldnt go faster than 200m
+# time.sleep(0)
+swarm.gait_init([L,R],567, gait_num = 1) #gaits, delay between poitns in ms; I wouldnt go faster than 200ms
+# time.sleep(2)
+swarm.gait_init([R,R], 533,gait_num = 2) #gaits, delay between poitns in ms; I wouldnt go faster than 200m
+# time.sleep(2)
+swarm.gait_init([L,L],500, gait_num = 3) #gaits, delay between poitns in ms; I wouldnt go faster than 200ms
 
 
 # swarm.start_sync()
