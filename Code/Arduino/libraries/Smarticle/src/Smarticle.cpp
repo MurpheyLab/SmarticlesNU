@@ -186,6 +186,11 @@ uint8_t Smarticle::set_pose_noise(char noise_range){
   return _pose_noise;
 }
 
+bool Smarticle::toggle_light_plank(char state){
+  _light_plank = state;
+  return _light_plank;
+}
+
 void Smarticle::set_pose(int angL, int angR){
   //sets smarticle to given arm angles
   if (_gait_epsilon==0){
@@ -227,16 +232,17 @@ void Smarticle::set_light_plank_threshold(uint16_t* thresh){
 void Smarticle::init_gait(volatile char* msg){
   //get number of gait points
   toggle_t4_interrupt(0);
-  char n = msg[VALUE_OFFSET];
-  char gait_len = msg[VALUE_OFFSET+1];
+  char n = msg[VALUE_OFFSET]-ASCII_OFFSET;
+  char gait_len = msg[VALUE_OFFSET+1]-ASCII_OFFSET;
   _gait_pts[n]=gait_len;
   //reconstruct 16 bit integer from two 8 bit chars to get gait delay counts for interrupt
-  _t4_TOP = _convert_to_14bit(msg[VALUE_OFFSET+2], msg[VALUE_OFFSET+3]);
+  _t4_TOP = _convert_to_14bit(msg[VALUE_OFFSET+2]-ASCII_OFFSET, msg[VALUE_OFFSET+3]-ASCII_OFFSET);
+  NeoSerial1.printf("Time Step: %d",_t4_TOP);
   _half_t4_TOP = _t4_TOP/2;
   //read each of the specificed number of gait pts and save to an array of integers
   for (int ii=0; ii<_gait_pts[n]; ii++){
     _gaitL[n][ii]=msg[GAIT_OFFSET+ii]-ASCII_OFFSET;
-    _gaitR[n][ii]=msg[GAIT_OFFSET+MAX_GAIT_SIZE+ii]-ASCII_OFFSET;
+    _gaitR[n][ii]=msg[GAIT_OFFSET+gait_len+ii]-ASCII_OFFSET;
     if (_debug==1){NeoSerial1.printf("Number:%d\tIndex:%d\tL:%d\tR:%d\n",n,ii,_gaitL[n][ii],_gaitR[n][ii]);}
   }
   //set compare match value to delay counts
@@ -371,7 +377,7 @@ void Smarticle::_interp_msg(volatile char* msg){
   if(_debug==1){NeoSerial1.printf("%s\n>>",msg);}
   //determine which command to exectue
   char msg_code = msg[2];
-  if ((msg_code >= 0x20) && (msg_code <= 0x27)){
+  if ((msg_code >= 0x20) && (msg_code <= 0x29)){
     char value1 = msg[VALUE_OFFSET]-ASCII_OFFSET;
     int ret;
     switch (msg_code) {
@@ -421,6 +427,11 @@ void Smarticle::_interp_msg(volatile char* msg){
         ret = set_pose_noise(value1);
         if(_debug==1){NeoSerial1.printf("DEBUG: set pose noise: %d\n",ret);}
         break;
+      case 0x29:
+        // set pose noise
+        ret = toggle_light_plank(value1);
+        if(_debug==1){NeoSerial1.printf("DEBUG: toggle light plank: %d\n",ret);}
+        break;
     }
   } else if ((msg_code >= 0x30) && (msg_code <= 0x34)){
     char value1 = msg[VALUE_OFFSET]-ASCII_OFFSET;
@@ -463,7 +474,7 @@ void Smarticle::_interp_msg(volatile char* msg){
   }
 }
 
-void Smarticle::_gait_interpolate(int len, volatile uint8_t *servoL_arr, volatile uint8_t *servoR_arr){
+void Smarticle::_gait_interpolate(int len, uint8_t *servoL_arr, uint8_t *servoR_arr){
     //move servos to next position specified in gait array
     if (_plank ==0){
       set_pose(servoL_arr[_index%len],servoR_arr[(_index)%len]);

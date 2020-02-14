@@ -15,8 +15,14 @@ class SmarticleSwarm(object):
     Class that Utilizies XbeeCom class for performing smarticle operations
     coordinated with Smarticle.h and Smarticle.cpp used on the Smarticle microcontrollers
     '''
+    msg_code_dict = {'toggle_led': 0x20, 'set_mode': 0x21, 'toggle_t4_interrupt': 0x22,\
+        'toggle_plank': 0x23, 'select_gait': 0x24, 'toggle_read_sensors': 0x25,\
+        'toggle_transmit': 0x26, 'set_gait_epsilon': 0x27, 'set_pose_noise': 0x28,\
+        'set_pose': 0x30, 'set_sync_noise': 0x31, 'set_stream_timing_noise': 0x32,\
+        'toggle_light_plank': 0x29, 'set_light_plank_threshold': 0x40, 'init_gait': 0x41}
+    msg_prefix = bytearray([0x13,0x13])
+    msg_end = bytearray([0x0A])
 
-    GI_LENGTH = 15
     ASCII_OFFSET = 32
 
     def __init__(self, port='/dev/tty.usbserial-DN050I6Q', baud_rate = 9600, debug = 0):
@@ -32,11 +38,22 @@ class SmarticleSwarm(object):
         | debug               | `int`      | Enables/disables print statements in class | 0                                   |
         |<img width=250/>|<img width=250/>|<img width=1000/>|<img width=700/>|
 
-        **Returns**  
+        **Returns**
         void
         '''
         self.xb = XbeeComm(port,baud_rate,debug)
         self.lock = threading.Lock()
+
+    @classmethod
+    def format_msg(self, msg):
+        return self.msg_prefix+msg+self.msg_end
+
+    @classmethod
+    def convert_to_2_chars(self, val):
+        val = val&0x3ffff
+        c1 = (val>>7)+self.ASCII_OFFSET
+        c2 = (val&0x7f)+self.ASCII_OFFSET
+        return [c1,c2]
 
 
     def build_network(self, exp_no_smarticles=None):
@@ -96,16 +113,16 @@ class SmarticleSwarm(object):
         *Arguments*
         | Argument        | Type                                          | Description                                                              | Default Value  |
         | :------:        | :--:                                          | :---------:                                                              | :-----------:  |
-        | state           | `bool`                                         | Value: 1 or 0. enables/disables updating servos in timer interrupt       | N/A            |
+        | state           | `int`                                         | Value: 1 or 0. enables/disables updating servos in timer interrupt       | N/A            |
         | remote_device   | `RemoteXbeeDevice` Object or `None` or `bool` | Argument value and type determines communication mode as described above | `None`         |
 
         *Returns*
         void
         '''
-        if (state==True):
-            msg = ':S:1\n'
-        else:
-            msg = ':S:0\n'
+        msg_code = self.msg_code_dict['toggle_t4_interrupt']
+        if state != 1:
+            state = 0
+        msg = self.format_msg(bytearray([msg_code,self.ASCII_OFFSET+state]))
         self.xb.command(msg, remote_device)
 
 
@@ -117,7 +134,7 @@ class SmarticleSwarm(object):
         *Arguments*
         | Argument        | Type                                          | Description                                                              | Default Value  |
         | :------:        | :--:                                          | :---------:                                                              | :-----------:  |
-        | state           | `bool`                                         | Value: 1 or 0. enables/disables transmitting Data                        | N/A            |
+        | state           | `int`                                         | Value: 1 or 0. enables/disables transmitting Data                        | N/A            |
         | remote_device   | `RemoteXbeeDevice` Object or `None` or `bool` | Argument value and type determines communication mode as described above | `None`         |
 
         *remote_device*
@@ -132,10 +149,10 @@ class SmarticleSwarm(object):
         *Returns*
         void
         '''
-        if (state==1):
-            msg = ':T:1\n'
-        else:
-            msg = ':T:0\n'
+        msg_code = self.msg_code_dict['toggle_transmit']
+        if state != 1:
+            state = 0
+        msg = self.format_msg(bytearray([msg_code,self.ASCII_OFFSET+state]))
         self.xb.command(msg, remote_device)
 
     def set_light_plank(self, state, remote_device = None):
@@ -160,11 +177,11 @@ class SmarticleSwarm(object):
         *Returns*
         void
         '''
-        if state is True:
-            stat = 1;
-        else:
-            stat = 0;
-        msg = ':LP:{}\n'.format(stat)
+
+        msg_code = self.msg_code_dict['toggle_light_plank']
+        if state != 1:
+            state = 0
+        msg = self.format_msg(bytearray([msg_code,self.ASCII_OFFSET+state]))
         self.xb.command(msg, remote_device)
 
     def set_sensor_threshold(self, thresh, remote_device = None):
@@ -190,7 +207,11 @@ class SmarticleSwarm(object):
         void
         '''
         assert len(thresh)==4, 'Threshold list must be 4 elements'
-        msg = ':ST:{},{},{},{}\n'.format(thresh[0], thresh[1], thresh[2], thresh[3])
+        msg_code = self.msg_code_dict['set_light_plank_threshold']
+        val = bytearray()
+        for t in thresh:
+            val+= self.convert_to_2_chars(t)
+        msg = self.format_msg(bytearray([msg_code]+val))
         self.xb.command(msg, remote_device)
 
 
@@ -202,7 +223,7 @@ class SmarticleSwarm(object):
         *Arguments*
         | Argument        | Type                                          | Description                                                              | Default Value  |
         | :------:        | :--:                                          | :---------:                                                              | :-----------:  |
-        | state           | `bool`                                        | Value: 1 or 0. enables/disables reading sensors                          | N/A            |
+        | state           | `int`                                        | Value: 1 or 0. enables/disables reading sensors                          | N/A            |
         | remote_device   | `RemoteXbeeDevice` Object or `None` or `bool` | Argument value and type determines communication mode as described above | `None`         |
 
         *remote_device*
@@ -217,10 +238,10 @@ class SmarticleSwarm(object):
         *Returns*
         void
         '''
-        if (state==True):
-            msg = ':R:1\n'
-        else:
-            msg = ':R:0\n'
+        msg_code = self.msg_code_dict['toggle_read_sensors']
+        if state != 1:
+            state = 0
+        msg = self.format_msg(bytearray([msg_code,self.ASCII_OFFSET+state]))
         self.xb.command(msg, remote_device)
 
 
@@ -250,7 +271,10 @@ class SmarticleSwarm(object):
         '''
         # ensure eps is between 0 and 1
         eps = 100*round(np.clip(eps,0,1),2)
-        msg = ':SE:{}\n'.format(eps)
+        msg_code = self.msg_code_dict['toggle_light_plank']
+        if state != 1:
+            state = 0
+        msg = self.format_msg(bytearray([msg_code,self.ASCII_OFFSET+eps]))
         self.xb.command(msg, remote_device)
 
     def set_mode(self, state, remote_device = None):
@@ -283,7 +307,8 @@ class SmarticleSwarm(object):
         void
         '''
         assert (state>=0 and state<=2),"Mode must between 0-2"
-        msg = ':M:{}\n'.format(int(state))
+        msg_code = self.msg_code_dict['set_mode']
+        msg = self.format_msg(bytearray([msg_code,self.ASCII_OFFSET+state]))
         self.xb.command(msg, remote_device)
 
     def set_plank(self, state, remote_device = None):
@@ -308,10 +333,10 @@ class SmarticleSwarm(object):
         *Returns*
         void
         '''
-        if (state==True):
-            msg = ':P:1\n'
-        else:
-            msg = ':P:0\n'
+        msg_code = self.msg_code_dict['toggle_plank']
+        if state != 1:
+            state = 0
+        msg = self.format_msg(bytearray([msg_code,self.ASCII_OFFSET+state]))
         self.xb.command(msg, remote_device)
 
     def set_pose(self, posL, posR, remote_device = None):
@@ -337,7 +362,8 @@ class SmarticleSwarm(object):
         *Returns*
         void
         '''
-        msg=':SP:{},{}\n'.format(int(posL),int(posR))
+        msg_code = self.msg_code_dict['set_pose']
+        msg = self.format_msg(bytearray([msg_code,self.ASCII_OFFSET+posL,self.ASCII_OFFSET+posR]))
         self.xb.command(msg, remote_device)
 
     def stream_pose(self, posL, posR, remote_device = None):
@@ -419,7 +445,10 @@ class SmarticleSwarm(object):
         *Returns*
         void
         '''
-        msg=':PN:{}\n'.format(int(2*max_val))
+        assert max_val < 100, 'value must be less than 100'
+        val=int(2*max_val)
+        msg_code = self.msg_code_dict['set_pose_noise']
+        msg = self.format_msg(bytearray([msg_code,self.ASCII_OFFSET+val]))
         self.xb.command(msg, remote_device)
 
 
@@ -445,8 +474,9 @@ class SmarticleSwarm(object):
         *Returns*
         void
         '''
-        timer_counts = int(max_val/0.128)
-        msg=':SN:{}\n'.format(timer_counts)
+        timer_counts = self.convert_to_2_chars(int(max_val/0.128))
+        msg_code = self.msg_code_dict['set_sync_noise']
+        msg = self.format_msg(bytearray([msg_code]+timer_counts))
         self.xb.command(msg, remote_device)
 
 
@@ -479,6 +509,7 @@ class SmarticleSwarm(object):
         *Returns*
         void
         '''
+        msg_code = bytearray([self.msg_code_dict['init_gait']])
         self.delay_ms = delay_ms
         self.gait_len = len(gait[0])
         timer_counts = int(delay_ms/0.128)
@@ -487,15 +518,10 @@ class SmarticleSwarm(object):
         gaitL = [int(x+self.ASCII_OFFSET) for x in gaitL]
         gaitR = [int(x+self.ASCII_OFFSET) for x in gaitR]
         assert len(gaitL)==len(gaitR),'Gait lists must be same length'
-        gait_points = len(gaitL)
-        if gait_points != self.GI_LENGTH:
-            while len(gaitL)!=self.GI_LENGTH:
-                gaitL.append(self.ASCII_OFFSET)
-                gaitR.append(self.ASCII_OFFSET)
-        str = ':GI:{:01},{:02},'.format(gait_num, gait_points)
-        b_str = bytearray(str,'utf-8')
-        b_delay = bytearray(timer_counts.to_bytes(2,'big'))+bytearray(';','utf-8')
-        msg=  b_str+b_delay+bytearray(gaitL)+bytearray(gaitR)+bytearray('\n','utf-8')
+        gait_points = self.gait_len+self.ASCII_OFFSET
+        n = gait_num +self.ASCII_OFFSET
+        delay = self.convert_to_2_chars(timer_counts)
+        msg=  self.format_msg(msg_code+bytearray([n, gait_points]+delay+gaitL+gaitR))
         self.xb.command(msg, remote_device)
         time.sleep(0.1) #ensure messages are not dropped as buffer isn't implemented yet
 
@@ -503,7 +529,8 @@ class SmarticleSwarm(object):
         '''
         DOC
         '''
-        msg = ':GN:{}\n'.format(n)
+        msg_code = self.msg_code_dict['select_gait']
+        msg = self.format_msg(bytearray([msg_code,self.ASCII_OFFSET+n]))
         self.xb.command(msg, remote_device)
 
 

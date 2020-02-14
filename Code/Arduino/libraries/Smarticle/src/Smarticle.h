@@ -83,6 +83,7 @@ class Smarticle
     bool toggle_transmit(char state);
     uint8_t set_gait_epsilon(char eps);
     uint8_t set_pose_noise(char noise_range);
+    bool toggle_light_plank(char state);
 
     void set_pose(int angL, int angR);
     uint16_t set_sync_noise(uint16_t max_noise);
@@ -112,7 +113,7 @@ class Smarticle
     // Private functions
     uint16_t _convert_to_14bit(char val_7bit_1, char val_7bit_2);
     void _interp_msg(volatile char* msg);
-    void _gait_interpolate(int len, volatile uint8_t* servoL_arr, volatile uint8_t* servoR_arr);
+    void _gait_interpolate(int len, uint8_t* servoL_arr, uint8_t* servoR_arr);
 
     // volatile variables used in ISRs
     // rx_interrupt
@@ -126,9 +127,10 @@ class Smarticle
 
     // t4_interrupt
     volatile bool _plank =0;
-    volatile uint8_t _gait_pts[MAX_GAIT_NUM];
-    volatile uint8_t _gaitL[MAX_GAIT_NUM][MAX_GAIT_SIZE];
-    volatile uint8_t _gaitR[MAX_GAIT_NUM][MAX_GAIT_SIZE];
+    // interrupt disabled while modifying these
+    uint8_t _gait_pts[MAX_GAIT_NUM];
+    uint8_t _gaitL[MAX_GAIT_NUM][MAX_GAIT_SIZE];
+    uint8_t _gaitR[MAX_GAIT_NUM][MAX_GAIT_SIZE];
     volatile uint8_t _gait_num = 0;
     volatile uint32_t _index = 0;
     volatile uint8_t _pose_noise = 0;
