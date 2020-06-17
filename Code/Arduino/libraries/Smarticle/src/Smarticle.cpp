@@ -90,18 +90,28 @@ uint8_t Smarticle::set_mode(char m){
 }
 
 void Smarticle::init_mode(){
-  //clear all flags on mode change
+  //reset gait index to zero
   _index = 0;
+  //clear all flags and parameters when switching to IDLE
   if (_mode==IDLE){
+    // turn off t4 interrupt
+    toggle_t4_interrupt(0);
     detach_servos();
-    _transmit = 0;
+    // flags
     _read_sensors = 0;
+    _transmit = 0;
     _plank = 0;
     _light_plank = 0;
+    // parameters
+    _sync_noise = 0;
+    _pose_noise = 0;
     _gait_epsilon = 0;
+    _transmit_counts = 1;
+    _random_stream_delay_max = 0;
+    _sample_time_ms = DEFAULT_SAMPLE_TIME_MS;
     // reset sensor thresholds
     set_light_plank_threshold(_sensor_threshold_constant);
-    //reset gait so that it maintains plank position
+    //reset gait parameters so that gait is just plank position
     _gait_num = 0;
     _t4_TOP = 3906; //delay of 500ms
     for (int ii=0; ii<MAX_GAIT_NUM; ii++){
@@ -122,6 +132,7 @@ bool Smarticle::toggle_t4_interrupt(char state){
     //enable timer4 compare match A interrupt
     TIMSK4 = 1<<OCIE4A;
     TCNT4 = 0;
+    // reset gait index
     _index=0;
     return 1;
   } else{
@@ -236,7 +247,7 @@ void Smarticle::init_gait(volatile char* msg){
   char gait_len = msg[VALUE_OFFSET+1]-ASCII_OFFSET;
   _gait_pts[n]=gait_len;
   //reconstruct 16 bit integer from two 8 bit chars to get gait delay counts for interrupt
-  _t4_TOP = _convert_to_14bit(msg[VALUE_OFFSET+2]-ASCII_OFFSET, msg[VALUE_OFFSET+3]-ASCII_OFFSET);
+  _t4_TOP = _convert_to_16bit(msg[VALUE_OFFSET+2]-ASCII_OFFSET, msg[VALUE_OFFSET+3]-ASCII_OFFSET);
   NeoSerial1.printf("Time Step: %d",_t4_TOP);
   _half_t4_TOP = _t4_TOP/2;
   //read each of the specificed number of gait pts and save to an array of integers
@@ -298,14 +309,19 @@ void Smarticle::manage_msg(void){
 
 uint16_t * Smarticle::read_sensors(void){
   if (_read_sensors ==1){
-    int dat[4]={0,0,0,0};
-    //get maximum value from specified sample window
+    uint16_t dat[4]={0,0,0,0};
     unsigned long startTime= millis();  // Start of sample window
+    // initialize sensor reading
+    dat[0] = analogRead(PRF);
+    dat[1] = analogRead(PRB);
+    dat[2] = analogRead(PRR);
+    dat[3] = analogRead(STRESS);
+    //get moving average over sample time
     while(millis() - startTime < _sample_time_ms) {
-        dat[0] = max(dat[0],analogRead(PRF));
-        dat[1] = max(dat[1],analogRead(PRB));
-        dat[2] = max(dat[2],analogRead(PRR));
-        dat[3] = max(dat[3],analogRead(STRESS));
+        dat[0] = (dat[0]+analogRead(PRF))/2;
+        dat[1] = (dat[1]+analogRead(PRB))/2;
+        dat[2] = (dat[2]+analogRead(PRR))/2;
+        dat[3] = (dat[3]+analogRead(STRESS))/2;
       }
     sensor_dat[0]=dat[0];
     sensor_dat[1]=dat[1];
@@ -330,20 +346,21 @@ uint16_t * Smarticle::read_sensors(void){
 
 void Smarticle::transmit_data(void){
   //send data: sensor_dat[0]= photo_front, sensor_dat[1]= photo_back, sensor_dat[2]= photo_right, sensor_dat[3]= current sense
-  if (_transmit && _mode!=IDLE){
-    _transmit_counts++;
+  static uint16_t count = 0;
+  if (_transmit ==1){
+    count++;
     _transmit_dat[0]+=sensor_dat[0];
     _transmit_dat[1]+=sensor_dat[1];
     _transmit_dat[2]+=sensor_dat[2];
     _transmit_dat[3]+=sensor_dat[3];
 
-    if (_transmit_counts >= 10){
-      NeoSerial1.printf("%d,%d,%d,%d\n",_transmit_dat[0]/_transmit_counts, _transmit_dat[1]/_transmit_counts, _transmit_dat[2]/_transmit_counts,_transmit_dat[3]/_transmit_counts);
+    if (count >= _transmit_counts){
+      NeoSerial1.printf("%d,%d,%d,%d\n",_transmit_dat[0]/count, _transmit_dat[1]/count, _transmit_dat[2]/count,_transmit_dat[3]/count);
       _transmit_dat[0]=0;
       _transmit_dat[1]=0;
       _transmit_dat[2]=0;
       _transmit_dat[3]=0;
-      _transmit_counts = 0;
+      count = 0;
     }
 
   }
@@ -367,7 +384,7 @@ void Smarticle::t4_interrupt(void){
   }
 }
 
-uint16_t Smarticle::_convert_to_14bit(char val_7bit_1, char val_7bit_2){
+uint16_t Smarticle::_convert_to_16bit(char val_7bit_1, char val_7bit_2){
   //reconstruct 14 bit integer from two 7 bit chars to get gait delay counts for interrupt
   uint16_t out= ((val_7bit_1<<7)|(val_7bit_2&0x7f))&0x3fff;
   return out;
@@ -446,13 +463,13 @@ void Smarticle::_interp_msg(volatile char* msg){
         break;
       case 0x31:
         // set sync noise
-        in = _convert_to_14bit(value1, value2);
+        in = _convert_to_16bit(value1, value2);
         ret = set_sync_noise(in);
         if(_debug==1){NeoSerial1.printf("DEBUG: set sync noise: %d\n",ret);}
         break;
       case 0x32:
         // set stream timing noise
-        in = _convert_to_14bit(value1, value2);
+        in = _convert_to_16bit(value1, value2);
         ret = set_stream_timing_noise(in);
         if(_debug==1){NeoSerial1.printf("DEBUG: set streaming timing noise: %d\n",ret);}
         break;
@@ -461,7 +478,7 @@ void Smarticle::_interp_msg(volatile char* msg){
   } else if (msg_code==0x40){
     uint16_t thresh[SENSOR_COUNT], val;
     for(int ii=0; ii<SENSOR_COUNT; ii++){
-      val = _convert_to_14bit(msg[VALUE_OFFSET+ii], msg[VALUE_OFFSET+ii+1]);
+      val = _convert_to_16bit(msg[VALUE_OFFSET+ii], msg[VALUE_OFFSET+ii+1]);
       thresh[ii]=val;
     }
     set_light_plank_threshold(thresh);
