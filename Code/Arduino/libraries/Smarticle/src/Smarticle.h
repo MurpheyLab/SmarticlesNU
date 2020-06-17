@@ -60,6 +60,8 @@
 #define MAX_DATA_PAYLOAD 108
 #define MAX_MSG_SIZE 40
 #define MSG_BUFF_SIZE 4
+//default sensor read time
+#define DEFAULT_SAMPLE_TIME_MS 10
 
 
 enum STATES{IDLE = 0, STREAM=1, INTERP=2};
@@ -111,7 +113,7 @@ class Smarticle
     enum STATES _mode;
 
     // Private functions
-    uint16_t _convert_to_14bit(char val_7bit_1, char val_7bit_2);
+    uint16_t _convert_to_16bit(char val_7bit_1, char val_7bit_2);
     void _interp_msg(volatile char* msg);
     void _gait_interpolate(int len, uint8_t* servoL_arr, uint8_t* servoR_arr);
 
@@ -139,14 +141,14 @@ class Smarticle
     uint32_t _msg_rd=0;
     uint16_t _sensor_threshold_constant[SENSOR_COUNT]={1500,1500,1500,1500};
     uint16_t _sensor_threshold[SENSOR_COUNT]={1500,1500,1500,1500};
-    uint16_t _transmit_dat[4]={0,0,0,0};
-    uint16_t _transmit_counts;
-    uint16_t _random_stream_delay_max  = 50;
+    uint32_t _transmit_dat[4]={0,0,0,0};
+    uint16_t _transmit_counts = 1; // how many times you read before you transmit
+    uint16_t _random_stream_delay_max  = 0;
     bool _debug=0;
     bool _read_sensors=0;
     bool _transmit=0;
     bool _light_plank=0;
-    uint8_t _sample_time_ms=10;
+    uint8_t _sample_time_ms= DEFAULT_SAMPLE_TIME_MS;
     bool _servos_attached= 0;
     uint16_t _t4_TOP = 3906; //500ms
 
