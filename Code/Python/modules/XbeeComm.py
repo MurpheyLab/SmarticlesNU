@@ -137,7 +137,7 @@ class XbeeComm(object):
             time.sleep(0.1)
 
 
-    def send(self, remote_device, msg, asynck = False):
+    def send(self, remote_device, msg, asynch = False):
         '''
         Sends message to remote xbee and receives acknowledgement on sucess.
         modified from digi's example SendDataSample.py
@@ -147,7 +147,7 @@ class XbeeComm(object):
         | :------:        | :--:                      | :---------:                                                                   | :-----------: |
         | remote_device   | `RemoteXbeeDevice` Object | Stores info such as ID and address; see Digi Xbee Documentation for more info | N/A           |
         | msg             | `string` or `bytearray`   | Message to send to XBee. Maximum of 108 bytes                                 | N/A           |
-        | async           | `bool`                    | Determines whether to send asynchronously (without ack) or not                | False         |
+        | asynch           | `bool`                    | Determines whether to send asynchronously (without ack) or not                | False         |
 
         *Returns*
         void
@@ -163,7 +163,7 @@ class XbeeComm(object):
         if self.debug:
             print("Sending data to {} >> {}...".format(remote_device.get_node_id(), msg))
 
-        if asynck is True:
+        if asynch is True:
             self.base.send_data_async(remote_device, msg)
         else:
             self.base.send_data(remote_device, msg)
@@ -229,7 +229,7 @@ class XbeeComm(object):
             self.send(remote_dev,msg)
 
 
-    def command(self, msg, remote_device = None, asynck = False):
+    def command(self, msg, remote_device = None, asynch = False):
         '''
         Sends message to remote Xbee in one of three ways depending on the `remote_device` argument
             1. remote_device == `None`:
@@ -244,7 +244,7 @@ class XbeeComm(object):
         | :------:        | :--:                                          | :---------:                                                              | :-----------:    |
         | msg             | `string` or `bytearray`                       | Message to send to XBee. Maximum of 108 bytes                            | N/A              |
         | remote_device   | `RemoteXbeeDevice` Object or `None` or `bool` | Argument value and type determines communication mode as described above | `None`           |
-        | async           | `bool`                                        | Determines whether to send asynchronously (without ack) or not           | False            |
+        | asynch           | `bool`                                        | Determines whether to send asynchronously (without ack) or not           | False            |
 
         *Returns*
         void
@@ -256,7 +256,7 @@ class XbeeComm(object):
             self.ack_broadcast(msg)
         else:
             assert remote_device in self.devices.values(),"Remote Device not found in active devices"
-            self.send(remote_device,msg, asynck)
+            self.send(remote_device,msg, asynch)
 
     def add_rx_callback(self, callback_fun):
         '''
