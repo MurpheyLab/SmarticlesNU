@@ -12,7 +12,7 @@ import numpy as np
 
 class SmarticleSwarm(object):
     '''
-    Class that Utilizies XbeeCom class for performing smarticle operations
+    Class that Utilizies XbeeComm class for performing smarticle operations
     coordinated with Smarticle.h and Smarticle.cpp used on the Smarticle microcontrollers
     '''
     msg_code_dict = {'toggle_led': 0x20, 'set_mode': 0x21, 'toggle_t4_interrupt': 0x22,\
@@ -56,7 +56,7 @@ class SmarticleSwarm(object):
         return [c1,c2]
 
 
-    def build_network(self, exp_no_smarticles=None):
+    def build_network(self, exp_n_smarticles=None):
         '''
         Clears `devices` dictionary as well as all devices on network.
         Discovers remote devices on network, initializes dictionary of all connected devices.
@@ -66,17 +66,17 @@ class SmarticleSwarm(object):
         *Arguments*
         | Argument                        | Type     | Description                                | Default Value    |
         | :------:                        | :--:     | :---------:                                | :-----------:    |
-        | exp_no_smarticles               | `int`    | Expected number of smarticles to discover  | None             |
+        | exp_n_smarticles               | `int`    | Expected number of smarticles to discover  | None             |
 
         *Returns*
         void
         '''
         self.xb.discover()
-        if exp_no_smarticles != None:
-            if (len(self.xb.devices))<exp_no_smarticles:
-                inp= input('Only discovered {} out of {} expected Smarticles. Retry discovery (Y/N)\n'.format(len(self.xb.devices),exp_no_smarticles))
+        if exp_n_smarticles != None:
+            if (len(self.xb.devices))<exp_n_smarticles:
+                inp= input('Only discovered {} out of {} expected Smarticles. Retry discovery (Y/N)\n'.format(len(self.xb.devices),exp_n_smarticles))
                 if inp[0].upper()=='Y':
-                    self.build_network(exp_no_smarticles)
+                    self.build_network(exp_n_smarticles)
                 else:
                     #purge Smarticle Xbee buffer
                     time.sleep(0.5)
@@ -85,7 +85,7 @@ class SmarticleSwarm(object):
                     print('Network Discovery Ended\n')
             else:
                 #purge Smarticle Xbee buffer
-                print('Successfully discovered {} out of {} expected Smarticles\n'.format(len(self.xb.devices),exp_no_smarticles))
+                print('Successfully discovered {} out of {} expected Smarticles\n'.format(len(self.xb.devices),exp_n_smarticles))
                 time.sleep(0.5)
                 self.xb.broadcast('\n')
                 time.sleep(0.5)
@@ -186,7 +186,7 @@ class SmarticleSwarm(object):
 
     def set_sensor_threshold(self, thresh, remote_device = None):
         '''
-        Enables/disables smarticle reading sensors
+        Sets sensor threshold that triggers planking
 
         *Arguments*
         | Argument        | Type                                          | Description                                                              | Default Value  |
@@ -547,7 +547,6 @@ class SmarticleSwarm(object):
                     t = time.time()
                     with self.lock:
                         self.sync_time_list.append(t)
-
 
 
 
