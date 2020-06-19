@@ -49,7 +49,7 @@ After Installing all these dependencies you will have to move the files from the
         **1.**  Move the programmable_smarticle folder into your Arduino directory (should be then documents/Arduino/programmable_smarticle)  
         **2.**  Move the contents of the repo Arduino/libraries folder into your local Arduino/libraries folder  
     
-You will have to restart the Arduino IDE and then you should be able to open the programmable_smarticle.ino sketch and you should see PWMServo, NeoSWSerial, and Smarticle in the Sketch->Include Library file menu.
+You will have to restart the Arduino IDE and then you should be able to open the programmable_smarticle.ino sketch and you should see PWMServo, NeoHWSerial, and Smarticle in the Sketch->Include Library file menu.
 
 To upload the program to the smarticle, use the follow board configuration under the tools file menu:  
 
