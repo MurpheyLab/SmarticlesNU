@@ -203,7 +203,7 @@ bool Smarticle::toggle_light_plank(char state){
   return _light_plank;
 }
 
-void Smarticle::set_pose(int angL, int angR){
+void Smarticle::set_pose(uint8_t angL, uint8_t angR){
   //interpret random angle commands
   if (angL == 190){
     angL = 180*random(2);
@@ -462,14 +462,14 @@ void Smarticle::_interp_msg(volatile char* msg){
         break;
     }
   } else if ((msg_code >= 0x30) && (msg_code <= 0x34)){
-    char value1 = msg[VALUE_OFFSET]-ASCII_OFFSET;
-    char value2 = msg[1+VALUE_OFFSET]-ASCII_OFFSET;
+    uint8_t value1 = msg[VALUE_OFFSET]-ASCII_OFFSET;
+    uint8_t value2 = msg[1+VALUE_OFFSET]-ASCII_OFFSET;
     int ret;
     uint16_t in;
     switch (msg_code) {
       case 0x30:
         // set pose
-        set_pose( (int) value1, (int) value2);
+        set_pose(value1, value2);
         if(_debug>=1){NeoSerial1.printf("DEBUG: set pose: (%d,%d)\n", value1, value2);}
         break;
       case 0x31:

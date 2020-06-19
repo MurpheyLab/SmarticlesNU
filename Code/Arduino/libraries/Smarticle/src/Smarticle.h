@@ -87,7 +87,7 @@ class Smarticle
     uint8_t set_pose_noise(char noise_range);
     bool toggle_light_plank(char state);
 
-    void set_pose(int angL, int angR);
+    void set_pose(uint8_t angL, uint8_t angR);
     uint16_t set_sync_noise(uint16_t max_noise);
     uint16_t set_stream_timing_noise(uint16_t max_delay_val);
     uint8_t set_transmit_counts(uint8_t counts);
@@ -101,7 +101,7 @@ class Smarticle
 
     uint16_t * read_sensors(void);
     void transmit_data(void);
-    void stream_servo(void);
+    void stream_servo(uint8_t* msg);
 
     void t4_interrupt(void);
 
@@ -123,7 +123,6 @@ class Smarticle
     // rx_interrupt
     volatile char _input_msg[MSG_BUFF_SIZE][MAX_MSG_SIZE];
     volatile uint32_t _msg_rx = 0;
-    volatile uint8_t _stream_arr[2]={0,0};
     volatile bool _stream_cmd=0;
     volatile uint16_t _half_t4_TOP = 1953;
     volatile uint16_t _sync_noise = 0;
@@ -140,6 +139,8 @@ class Smarticle
     volatile uint8_t _pose_noise = 0;
     volatile uint8_t _gait_epsilon = 0;
 
+
+    uint8_t _stream_arr[20];
     uint32_t _msg_rd=0;
     uint16_t _sensor_threshold_constant[SENSOR_COUNT]={1500,1500,1500,1500};
     uint16_t _sensor_threshold[SENSOR_COUNT]={1500,1500,1500,1500};
