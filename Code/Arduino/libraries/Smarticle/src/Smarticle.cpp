@@ -420,9 +420,9 @@ void Smarticle::_interp_msg(volatile char* msg){
         if(_debug>=1){NeoSerial1.printf("DEBUG: toggle t4 interrupt: %d\n", ret);}
         break;
       case 0x23:
-        // toggle plank
-        ret = toggle_plank(value1);
-        if(_debug>=1){NeoSerial1.printf("DEBUG: toggle plank: %d\n", ret);}
+        // set transmit counts
+        ret = set_transmit_counts(value1);
+        if(_debug>=1){NeoSerial1.printf("DEBUG: set transmit counts: %d\n",ret);}
         break;
       case 0x24:
         // select gait
@@ -455,11 +455,6 @@ void Smarticle::_interp_msg(volatile char* msg){
         if(_debug>=1){NeoSerial1.printf("DEBUG: toggle light plank: %d\n",ret);}
         break;
       case 0x2A:
-        // set transmit counts
-        ret = set_transmit_counts(value1);
-        if(_debug>=1){NeoSerial1.printf("DEBUG: set transmit counts: %d\n",ret);}
-        break;
-      case 0x2B:
         // set debug
         ret = set_debug(value1);
         if(_debug>=1){NeoSerial1.printf("DEBUG: set debug: %d\n",ret);}
