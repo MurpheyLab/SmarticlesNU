@@ -90,6 +90,8 @@ class Smarticle
     void set_pose(int angL, int angR);
     uint16_t set_sync_noise(uint16_t max_noise);
     uint16_t set_stream_timing_noise(uint16_t max_delay_val);
+    uint8_t set_transmit_counts(uint8_t counts);
+    uint8_t set_debug(uint8_t debug);
 
     void set_light_plank_threshold(uint16_t* thresh);
     void init_gait(volatile char* msg);
@@ -142,9 +144,9 @@ class Smarticle
     uint16_t _sensor_threshold_constant[SENSOR_COUNT]={1500,1500,1500,1500};
     uint16_t _sensor_threshold[SENSOR_COUNT]={1500,1500,1500,1500};
     uint32_t _transmit_dat[4]={0,0,0,0};
-    uint16_t _transmit_counts = 1; // how many times you read before you transmit
+    uint16_t _transmit_counts = 10; // how many times you read before you transmit
     uint16_t _random_stream_delay_max  = 0;
-    bool _debug=0;
+    uint8_t _debug=0;
     bool _read_sensors=0;
     bool _transmit=0;
     bool _light_plank=0;

@@ -229,6 +229,16 @@ uint16_t Smarticle::set_stream_timing_noise(uint16_t max_delay_val){
   return _random_stream_delay_max;
 }
 
+uint8_t Smarticle::set_transmit_counts(uint8_t counts){
+  _transmit_counts=counts;
+  return _transmit_counts;
+}
+
+uint8_t Smarticle::set_debug(uint8_t debug){
+  _debug=debug;
+  return _debug;
+}
+
 uint16_t Smarticle::set_sync_noise(uint16_t max_noise_val){
   _sync_noise = max_noise_val;
   return _sync_noise;
@@ -254,7 +264,7 @@ void Smarticle::init_gait(volatile char* msg){
   for (int ii=0; ii<_gait_pts[n]; ii++){
     _gaitL[n][ii]=msg[GAIT_OFFSET+ii]-ASCII_OFFSET;
     _gaitR[n][ii]=msg[GAIT_OFFSET+gait_len+ii]-ASCII_OFFSET;
-    if (_debug==1){NeoSerial1.printf("Number:%d\tIndex:%d\tL:%d\tR:%d\n",n,ii,_gaitL[n][ii],_gaitR[n][ii]);}
+    if (_debug>=1){NeoSerial1.printf("Number:%d\tIndex:%d \tL:%d\tR:%d\n",n,ii,_gaitL[n][ii],_gaitR[n][ii]);}
   }
   //set compare match value to delay counts
   OCR4A = _t4_TOP;
@@ -295,12 +305,12 @@ void Smarticle::manage_msg(void){
   if ((_msg_rx-_msg_rd)>0){
     int ind = (_msg_rd)%MSG_BUFF_SIZE;
     _msg_rd++;
-    if(_debug==1){NeoSerial1.printf("msg!>>");}
+    if(_debug>=2){NeoSerial1.printf("msg!>>");}
     //ensure message matches command structure of leading with a colon ':'
     // typical message structure example '':M:0' set to mode 0
     if (_input_msg[ind][0]==0x13 && _input_msg[ind][1]==0x13){
       _interp_msg(_input_msg[ind]);
-    }else if (_debug == 1){
+    }else if (_debug >=2){
       NeoSerial1.printf("DEBUG: wrong format >>");
       NeoSerial1.printf("%s",_input_msg[ind]);
     }
@@ -309,24 +319,19 @@ void Smarticle::manage_msg(void){
 
 uint16_t * Smarticle::read_sensors(void){
   if (_read_sensors ==1){
-    uint16_t dat[4]={0,0,0,0};
     unsigned long startTime= millis();  // Start of sample window
     // initialize sensor reading
-    dat[0] = analogRead(PRF);
-    dat[1] = analogRead(PRB);
-    dat[2] = analogRead(PRR);
-    dat[3] = analogRead(STRESS);
+    sensor_dat[0] = analogRead(PRF);
+    sensor_dat[1] = analogRead(PRB);
+    sensor_dat[2] = analogRead(PRR);
+    sensor_dat[3] = analogRead(STRESS);
     //get moving average over sample time
     while(millis() - startTime < _sample_time_ms) {
-        dat[0] = (dat[0]+analogRead(PRF))/2;
-        dat[1] = (dat[1]+analogRead(PRB))/2;
-        dat[2] = (dat[2]+analogRead(PRR))/2;
-        dat[3] = (dat[3]+analogRead(STRESS))/2;
+        sensor_dat[0] = (sensor_dat[0]+analogRead(PRF))/2;
+        sensor_dat[1] = (sensor_dat[1]+analogRead(PRB))/2;
+        sensor_dat[2] = (sensor_dat[2]+analogRead(PRR))/2;
+        sensor_dat[3] = (sensor_dat[3]+analogRead(STRESS))/2;
       }
-    sensor_dat[0]=dat[0];
-    sensor_dat[1]=dat[1];
-    sensor_dat[2]=dat[2];
-    sensor_dat[3]=dat[3];
     if (_light_plank==1 && _mode==INTERP){
       bool trigger = (sensor_dat[0]>=_sensor_threshold[0]||
                      sensor_dat[1]>=_sensor_threshold[1]||
@@ -349,17 +354,9 @@ void Smarticle::transmit_data(void){
   static uint16_t count = 0;
   if (_transmit ==1){
     count++;
-    _transmit_dat[0]+=sensor_dat[0];
-    _transmit_dat[1]+=sensor_dat[1];
-    _transmit_dat[2]+=sensor_dat[2];
-    _transmit_dat[3]+=sensor_dat[3];
 
     if (count >= _transmit_counts){
-      NeoSerial1.printf("%d,%d,%d,%d\n",_transmit_dat[0]/count, _transmit_dat[1]/count, _transmit_dat[2]/count,_transmit_dat[3]/count);
-      _transmit_dat[0]=0;
-      _transmit_dat[1]=0;
-      _transmit_dat[2]=0;
-      _transmit_dat[3]=0;
+      NeoSerial1.printf("%d,%d,%d,%d\n",sensor_dat[0], sensor_dat[1], sensor_dat[2],sensor_dat[3]);
       count = 0;
     }
 
@@ -391,63 +388,73 @@ uint16_t Smarticle::_convert_to_16bit(char val_7bit_1, char val_7bit_2){
 }
 
 void Smarticle::_interp_msg(volatile char* msg){
-  if(_debug==1){NeoSerial1.printf("%s\n>>",msg);}
+  if(_debug>=2){NeoSerial1.printf("%s\n>>",msg);}
   //determine which command to exectue
   char msg_code = msg[2];
-  if ((msg_code >= 0x20) && (msg_code <= 0x29)){
+  if ((msg_code >= 0x20) && (msg_code < 0x30)){
     char value1 = msg[VALUE_OFFSET]-ASCII_OFFSET;
     int ret;
     switch (msg_code) {
       case 0x20:
         // toggle LED
         ret = toggle_led(value1);
-        if(_debug==1){NeoSerial1.printf("DEBUG: toggle LED: %d\n",ret);}
+        if(_debug>=1){NeoSerial1.printf("DEBUG: toggle LED: %d\n",ret);}
         break;
 
       case 0x21:
         // select mode
         ret = set_mode(value1);
-        if(_debug==1){NeoSerial1.printf("DEBUG: set mode: %d\n",ret);}
+        if(_debug>=1){NeoSerial1.printf("DEBUG: set mode: %d\n",ret);}
         break;
       case 0x22:
         // toggle t4 interrupt
         ret = toggle_t4_interrupt(value1);
-        if(_debug==1){NeoSerial1.printf("DEBUG: toggle t4 interrupt: %d\n", ret);}
+        if(_debug>=1){NeoSerial1.printf("DEBUG: toggle t4 interrupt: %d\n", ret);}
         break;
       case 0x23:
         // toggle plank
         ret = toggle_plank(value1);
-        if(_debug==1){NeoSerial1.printf("DEBUG: toggle plank: %d\n", ret);}
+        if(_debug>=1){NeoSerial1.printf("DEBUG: toggle plank: %d\n", ret);}
         break;
       case 0x24:
         // select gait
         ret = select_gait(value1);
-        if(_debug==1){NeoSerial1.printf("DEBUG: select gait: %d\n", ret);}
+        if(_debug>=1){NeoSerial1.printf("DEBUG: select gait: %d\n", ret);}
         break;
       case 0x25:
         // toggle read sensors
         ret = toggle_read_sensors(value1);
-        if(_debug==1){NeoSerial1.printf("DEBUG: toggle read sensors: %d\n",ret);}
+        if(_debug>=1){NeoSerial1.printf("DEBUG: toggle read sensors: %d\n",ret);}
         break;
       case 0x26:
         // toggle transmit
         ret = toggle_transmit(value1);
-        if(_debug==1){NeoSerial1.printf("DEBUG: toggle transmit sensor values: %d\n",ret);}
+        if(_debug>=1){NeoSerial1.printf("DEBUG: toggle transmit sensor values: %d\n",ret);}
         break;
       case 0x27:
         // set gait epsilon
         ret = set_gait_epsilon(value1);
-        if(_debug==1){NeoSerial1.printf("DEBUG: set gait epsilon: %d\n",ret);}
+        if(_debug>=1){NeoSerial1.printf("DEBUG: set gait epsilon: %d\n",ret);}
         break;
       case 0x28:
         // set pose noise
         ret = set_pose_noise(value1);
-        if(_debug==1){NeoSerial1.printf("DEBUG: set pose noise: %d\n",ret);}
+        if(_debug>=1){NeoSerial1.printf("DEBUG: set pose noise: %d\n",ret);}
         break;
       case 0x29:
-        // set pose noise
+        // toggle light plank
         ret = toggle_light_plank(value1);
-        if(_debug==1){NeoSerial1.printf("DEBUG: toggle light plank: %d\n",ret);}
+        if(_debug>=1){NeoSerial1.printf("DEBUG: toggle light plank: %d\n",ret);}
+        break;
+      case 0x2A:
+        // set transmit counts
+        ret = set_transmit_counts(value1);
+        if(_debug>=1){NeoSerial1.printf("DEBUG: set transmit counts: %d\n",ret);}
+        break;
+      case 0x2B:
+        // set debug
+        ret = set_debug(value1);
+        if(_debug>=1){NeoSerial1.printf("DEBUG: set debug: %d\n",ret);}
         break;
     }
   } else if ((msg_code >= 0x30) && (msg_code <= 0x34)){
@@ -459,19 +466,19 @@ void Smarticle::_interp_msg(volatile char* msg){
       case 0x30:
         // set pose
         set_pose( (int) value1, (int) value2);
-        if(_debug==1){NeoSerial1.printf("DEBUG: set pose: (%d,%d)\n", value1, value2);}
+        if(_debug>=1){NeoSerial1.printf("DEBUG: set pose: (%d,%d)\n", value1, value2);}
         break;
       case 0x31:
         // set sync noise
         in = _convert_to_16bit(value1, value2);
         ret = set_sync_noise(in);
-        if(_debug==1){NeoSerial1.printf("DEBUG: set sync noise: %d\n",ret);}
+        if(_debug>=1){NeoSerial1.printf("DEBUG: set sync noise: %d\n",ret);}
         break;
       case 0x32:
         // set stream timing noise
         in = _convert_to_16bit(value1, value2);
         ret = set_stream_timing_noise(in);
-        if(_debug==1){NeoSerial1.printf("DEBUG: set streaming timing noise: %d\n",ret);}
+        if(_debug>=1){NeoSerial1.printf("DEBUG: set streaming timing noise: %d\n",ret);}
         break;
 
     }
@@ -485,7 +492,7 @@ void Smarticle::_interp_msg(volatile char* msg){
   } else if (msg_code==0x41){
     init_gait(msg);
   } else {
-    if(_debug==1){
+    if(_debug>=1){
       NeoSerial1.printf("DEBUG: no match :(\n");
     }
   }
