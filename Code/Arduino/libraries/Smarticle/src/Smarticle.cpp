@@ -203,7 +203,20 @@ bool Smarticle::toggle_light_plank(char state){
 }
 
 void Smarticle::set_pose(int angL, int angR){
-  //sets smarticle to given arm angles
+  //interpret random angle commands
+  if (angL == 190){
+    angL = 180*random(2)
+  }
+  else if (angL == 200){
+    angL = random(181)
+  }
+  if (angR == 190){
+    angR = 180*random(2)
+  }
+  else if (angR == 200){
+    angR = random(181)
+  }
+
   if (_gait_epsilon==0){
     ServoL.write(angL-_pose_noise/2+random(_pose_noise+1));
     ServoR.write(angR-_pose_noise/2+random(_pose_noise+1));
@@ -278,14 +291,7 @@ void Smarticle::rx_interrupt(uint8_t c){
   //runs on every received byte
   static int len=0;
   int ind =(_msg_rx)%MSG_BUFF_SIZE;
-  //if stream servo command
-  if (c==0x12){
-    _stream_arr[0]=_input_msg[ind][0];
-    _stream_arr[1]=_input_msg[ind][1];
-    _stream_cmd=1;
-    _input_msg[ind][0]='\0';
-    len =0;
-  } else if (c==0x11){  //if sync character 0x11
+  if (c==0x11){  //if sync character 0x11
     //set timer counter to half of its TOP value that triggers the interrupt
     TCNT4 = _half_t4_TOP+random(_sync_noise+1);
   //else if end of message character '\n'
@@ -363,15 +369,17 @@ void Smarticle::transmit_data(void){
   }
 }
 
-void Smarticle::stream_servo(void){
-  if (_mode==STREAM & _stream_cmd==1){
-    _stream_cmd=0;
-    delay(random(_random_stream_delay_max+1));
-    if (_stream_arr[0]==200+ASCII_OFFSET && _stream_arr[1]==200+ASCII_OFFSET){
-      set_pose(random(181),random(181));
-    }else if(_stream_arr[0]==190+ASCII_OFFSET && _stream_arr[1]==190+ASCII_OFFSET) {
-      set_pose(180*random(2),180*random(2));
-    }else{set_pose(_stream_arr[0]-ASCII_OFFSET,_stream_arr[1]-ASCII_OFFSET);}
+void Smarticle::stream_servo(uint8_t* msg){
+  if (_mode==STREAM){
+    uint8_t msg_len = msg[VALUE_OFFSET]
+    for(int ii=VALUE_OFFSET+1, ii<(3*msg_len+VALUE_OFFSET+1); ii=ii+3){
+      val = msg[ii]-ASCII_OFFSET
+      if (val==0||val==id){
+        set_pose(msg[ii+1]-ASCII_OFFSET,msg[ii+2]-ASCII_OFFSET)
+        break;
+      }
+    }
+    
   }
 }
 
