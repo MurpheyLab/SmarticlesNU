@@ -35,6 +35,7 @@ Smarticle:: Smarticle(int debug){
   _debug = debug;
   _mode = IDLE;
   NeoSerial1.begin(9600);
+
 }
 
 void Smarticle::init_t4(void){
@@ -205,16 +206,16 @@ bool Smarticle::toggle_light_plank(char state){
 void Smarticle::set_pose(int angL, int angR){
   //interpret random angle commands
   if (angL == 190){
-    angL = 180*random(2)
+    angL = 180*random(2);
   }
   else if (angL == 200){
-    angL = random(181)
+    angL = random(181);
   }
   if (angR == 190){
-    angR = 180*random(2)
+    angR = 180*random(2);
   }
   else if (angR == 200){
-    angR = random(181)
+    angR = random(181);
   }
 
   if (_gait_epsilon==0){
@@ -371,11 +372,11 @@ void Smarticle::transmit_data(void){
 
 void Smarticle::stream_servo(uint8_t* msg){
   if (_mode==STREAM){
-    uint8_t msg_len = msg[VALUE_OFFSET]
-    for(int ii=VALUE_OFFSET+1, ii<(3*msg_len+VALUE_OFFSET+1); ii=ii+3){
-      val = msg[ii]-ASCII_OFFSET
+    uint8_t msg_len = msg[VALUE_OFFSET];
+    for(int ii=VALUE_OFFSET+1; ii<(3*msg_len+VALUE_OFFSET+1); ii=ii+3){
+      uint8_t val = msg[ii]-ASCII_OFFSET;
       if (val==0||val==id){
-        set_pose(msg[ii+1]-ASCII_OFFSET,msg[ii+2]-ASCII_OFFSET)
+        set_pose(msg[ii+1]-ASCII_OFFSET,msg[ii+2]-ASCII_OFFSET);
         break;
       }
     }
