@@ -198,6 +198,19 @@ uint8_t Smarticle::set_pose_noise(char noise_range){
   return _pose_noise;
 }
 
+void Smarticle::set_plank(uint8_t state)
+{
+  //sets servos to plank position
+  if (state ==1)
+  {
+    _plank=1;
+    ServoL.write(90);
+    ServoR.write(90);
+  }else{
+    _plank=0;
+  }
+}
+
 bool Smarticle::toggle_light_plank(char state){
   _light_plank = state;
   return _light_plank;
@@ -251,6 +264,11 @@ uint8_t Smarticle::set_transmit_counts(uint8_t counts){
 uint8_t Smarticle::set_debug(uint8_t debug){
   _debug=debug;
   return _debug;
+}
+
+uint8_t Smarticle::set_id(uint8_t val){
+  id=val;
+  return id;
 }
 
 uint16_t Smarticle::set_sync_noise(uint16_t max_noise_val){
@@ -370,17 +388,39 @@ void Smarticle::transmit_data(void){
   }
 }
 
-void Smarticle::stream_servo(uint8_t* msg){
+void Smarticle::interp_stream_cmd(volatile char* msg){
+
   if (_mode==STREAM){
-    uint8_t msg_len = msg[VALUE_OFFSET];
+    uint8_t msg_len = msg[VALUE_OFFSET]-ASCII_OFFSET;
     for(int ii=VALUE_OFFSET+1; ii<(3*msg_len+VALUE_OFFSET+1); ii=ii+3){
       uint8_t val = msg[ii]-ASCII_OFFSET;
       if (val==0||val==id){
-        set_pose(msg[ii+1]-ASCII_OFFSET,msg[ii+2]-ASCII_OFFSET);
+        uint8_t angL = msg[ii+1]-ASCII_OFFSET;
+        uint8_t angR = msg[ii+2]-ASCII_OFFSET;
+        set_pose(angL, angR);
+        if (_debug>0){
+          NeoSerial1.printf("DEBUG: stream pose L:%d, R:%d",angL,angR);
+        }
         break;
       }
     }
     
+  }
+}
+
+void Smarticle::interp_plank_cmd(volatile char* msg){
+
+  uint8_t msg_len = msg[VALUE_OFFSET]-ASCII_OFFSET;
+  for(int ii=VALUE_OFFSET+1; ii<(2*msg_len+VALUE_OFFSET+1); ii=ii+2){
+    uint8_t val = msg[ii]-ASCII_OFFSET;
+    if (val==0||val==id){
+      uint8_t state = msg[ii+1]-ASCII_OFFSET;
+      set_plank(state);
+      if (_debug>0){
+        NeoSerial1.printf("DEBUG: set plank: %d",state);
+      }
+      break;
+    }
   }
 }
 
@@ -400,6 +440,7 @@ void Smarticle::_interp_msg(volatile char* msg){
   if(_debug>=2){NeoSerial1.printf("%s\n>>",msg);}
   //determine which command to exectue
   char msg_code = msg[2];
+
   if ((msg_code >= 0x20) && (msg_code < 0x30)){
     char value1 = msg[VALUE_OFFSET]-ASCII_OFFSET;
     int ret;
@@ -460,6 +501,11 @@ void Smarticle::_interp_msg(volatile char* msg){
         ret = set_debug(value1);
         if(_debug>=1){NeoSerial1.printf("DEBUG: set debug: %d\n",ret);}
         break;
+      case 0x2B:
+        // set id
+        ret = set_id(value1);
+        if(_debug>=1){NeoSerial1.printf("DEBUG: set id: %d\n",ret);}
+        break;
     }
   } else if ((msg_code >= 0x30) && (msg_code <= 0x34)){
     uint8_t value1 = msg[VALUE_OFFSET]-ASCII_OFFSET;
@@ -486,15 +532,27 @@ void Smarticle::_interp_msg(volatile char* msg){
         break;
 
     }
-  } else if (msg_code==0x40){
-    uint16_t thresh[SENSOR_COUNT], val;
-    for(int ii=0; ii<SENSOR_COUNT; ii++){
-      val = _convert_to_16bit(msg[VALUE_OFFSET+ii], msg[VALUE_OFFSET+ii+1]);
-      thresh[ii]=val;
-    }
-    set_light_plank_threshold(thresh);
-  } else if (msg_code==0x41){
-    init_gait(msg);
+  } else if (msg_code>=0x40){
+      switch (msg_code) {
+        case 0x40:
+          uint16_t thresh[SENSOR_COUNT], val;
+          for(int ii=0; ii<SENSOR_COUNT; ii++){
+            val = _convert_to_16bit(msg[VALUE_OFFSET+ii], msg[VALUE_OFFSET+ii+1]);
+            thresh[ii]=val;
+          }
+          set_light_plank_threshold(thresh);
+          break;
+        case 0x41:
+          init_gait(msg);
+          break;
+        case 0x42:
+          // stream command
+          interp_stream_cmd(msg);
+          break;
+        case 0x43:
+          interp_plank_cmd(msg);
+          break;
+      }
   } else {
     if(_debug>=1){
       NeoSerial1.printf("DEBUG: no match :(\n");

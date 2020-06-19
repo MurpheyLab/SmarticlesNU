@@ -172,30 +172,6 @@ class XbeeComm(object):
                 print("Success")
 
 
-    def format_stream_msg(self, pose):
-        '''
-        takes in list of arm angles and returns string in form of stream command
-        to be sent to Smarticle in stream mode
-
-        *Arguments*
-        | Argument  | Type                  | Description                | Default Value |
-        | :------:  | :--:                  | :---------:                | :-----------: |
-        | pose      | 2 element list of int | pose angles to set arms to | N/A           |
-
-        *Returns*
-        void
-
-        More info on RemoteXbeeDevice:
-        https://xbplib.readthedocs.io/en/stable/api/digi.xbee.devices.html#digi.xbee.devices.RemoteXBeeDevice
-        '''
-        pose = [int(pose[0]), int(pose[1])]
-        pose = np.clip(pose, 0, 254-self.ascii_offset) + self.ascii_offset #clip values outside of 0-180 and add ASCII_OFFSET
-        b_stream = bytearray([18]) # Decimal 18, hex 0x12 is stream character
-        msg = bytearray(list(pose))+b_stream
-
-        return msg
-
-
     def broadcast(self, msg):
         '''
         Broadcasts to all xbees on network. NOTE: there are no acknowledgements when using broadcast

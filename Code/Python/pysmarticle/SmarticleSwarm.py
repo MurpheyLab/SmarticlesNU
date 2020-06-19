@@ -20,7 +20,7 @@ class SmarticleSwarm(object):
         'toggle_transmit': 0x26, 'set_gait_epsilon': 0x27, 'set_pose_noise': 0x28,\
         'toggle_light_plank': 0x29, 'set_debug': 0x2A, 'set_id': 0x2B, 'set_pose': 0x30,\
         'set_sync_noise': 0x31, 'set_stream_timing_noise': 0x32,\
-        'set_light_plank_threshold': 0x40, 'init_gait': 0x41}
+        'set_light_plank_threshold': 0x40, 'init_gait': 0x41, 'stream_pose': 0x42, 'set_plank': 0x43}
     msg_prefix = bytearray([0x13,0x13])
     msg_end = bytearray([0x0A])
 
@@ -99,14 +99,22 @@ class SmarticleSwarm(object):
             time.sleep(0.5)
             print('Network Discovery Ended\n')
 
-    def send_ids(self):
+    def send_ids(self,asynch=False):
         '''
         Sends IDs to smarticles
+
+        *Arguments*
+        | Argument        | Type                      | Description                                                                   | Default Value |
+        | :------:        | :--:                      | :---------:                                                                   | :-----------: |
+        | asynch           | `bool`                    | Determines whether to send asynchronously (without ack) or not                | False         |
+
+        *Returns*
+        void
         '''
         msg_code = self.msg_code_dict['set_id']
         for id in self.xb.devices.keys():
             msg = self.format_msg(bytearray([msg_code,self.ASCII_OFFSET+id]))
-            self.xb.send(self.xb.devices[id],msg)
+            self.xb.send(self.xb.devices[id],msg,asynch=False)
 
 
     def close(self):
@@ -381,7 +389,7 @@ class SmarticleSwarm(object):
         msg = self.format_msg(bytearray([msg_code,self.ASCII_OFFSET+state]))
         self.xb.command(msg, remote_device)
 
-    def set_plank(self, state, remote_device = None):
+    def set_plank(self, state_arr, remote_device = None):
         '''
         Sets smarticle to plank or deplank Note: only active when set_servos  == 1
 
@@ -403,10 +411,10 @@ class SmarticleSwarm(object):
         *Returns*
         `None`
         '''
-        msg_code = self.msg_code_dict['toggle_plank']
-        if state != 1:
-            state = 0
-        msg = self.format_msg(bytearray([msg_code,self.ASCII_OFFSET+state]))
+        msg_code = self.msg_code_dict['set_plank']
+        l = len(state_arr)+self.ASCII_OFFSET
+        state_arr = list((state_arr+self.ASCII_OFFSET).flatten())
+        msg = self.format_msg(bytearray([msg_code,l]+state_arr))
         self.xb.command(msg, remote_device)
 
     def set_pose(self, posL, posR, remote_device = None):
@@ -436,11 +444,11 @@ class SmarticleSwarm(object):
         msg = self.format_msg(bytearray([msg_code,self.ASCII_OFFSET+posL,self.ASCII_OFFSET+posR]))
         self.xb.command(msg, remote_device)
 
-    def stream_pose(self, posL, posR, remote_device = None):
+    def stream_pose(self, poses, remote_device=None):
         '''
         Sets smarticle to specified servo positions. Differs from set_pose in
-        that it sends angles over the streaming pipeline, which requires the
-        smarticles be in stream mode
+        that it sends angles over the streaming pipeline, which sends a batch message that can specify 
+        separate commands for each smarticle in the same message. Specify id as zero to broadcast servo command to whole swarm.
 
         *remote_device*
         Sends message to remote Xbee in one of three ways depending on the `remote_device` argument
@@ -451,17 +459,19 @@ class SmarticleSwarm(object):
             3. remote_device in values of devices dictionary:
                 send message to single Xbee using `send()`
 
+
         *Arguments*
         | Argument        | Type                                          | Description                                                                | Default Value  |
         | :------:        | :--:                                          | :---------:                                                                | :-----------:  |
-        | posL            | `int`                                         | Left servo angle: 0-180 deg                                                | N/A            |
-        | posR            | `int`                                         | Right servo angle: 0-180 deg                                               | N/A            |
-        | remote_device   | `RemoteXbeeDevice` Object or `None` or `bool` | Argument value and type determines communication mode as described above   | `None`         |
+        | poses            | `np.array`                                   | Nx3 array of servo commands. Each row specifies [id, angL, angR]     | N/A            |
 
         *Returns*
         `None`
         '''
-        msg = self.xb.format_stream_msg([posL, posR])
+        msg_code = self.msg_code_dict['stream_pose']
+        l = len(poses)+self.ASCII_OFFSET
+        poses = list((poses+self.ASCII_OFFSET).flatten())
+        msg = self.format_msg(bytearray([msg_code,l]+poses))
         self.xb.command(msg,remote_device)
 
 

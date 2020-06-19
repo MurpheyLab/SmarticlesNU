@@ -85,6 +85,7 @@ class Smarticle
     bool toggle_transmit(char state);
     uint8_t set_gait_epsilon(char eps);
     uint8_t set_pose_noise(char noise_range);
+    void set_plank(uint8_t);
     bool toggle_light_plank(char state);
 
     void set_pose(uint8_t angL, uint8_t angR);
@@ -92,6 +93,7 @@ class Smarticle
     uint16_t set_stream_timing_noise(uint16_t max_delay_val);
     uint8_t set_transmit_counts(uint8_t counts);
     uint8_t set_debug(uint8_t debug);
+    uint8_t set_id(uint8_t val);
 
     void set_light_plank_threshold(uint16_t* thresh);
     void init_gait(volatile char* msg);
@@ -101,7 +103,8 @@ class Smarticle
 
     uint16_t * read_sensors(void);
     void transmit_data(void);
-    void stream_servo(uint8_t* msg);
+    void interp_stream_cmd(volatile char* msg);
+    void interp_plank_cmd(volatile char* msg);
 
     void t4_interrupt(void);
 
@@ -111,6 +114,7 @@ class Smarticle
     PWMServo ServoL;
     PWMServo ServoR;
     uint16_t sensor_dat[SENSOR_COUNT]={0,0,0,0};
+    uint8_t id = 0;
   private:
     enum STATES _mode;
 
