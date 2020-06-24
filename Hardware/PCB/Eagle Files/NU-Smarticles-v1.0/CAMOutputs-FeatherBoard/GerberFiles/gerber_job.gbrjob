@@ -1,0 +1,24 @@
+{
+    "Header": {
+        "Comment": "All values are metric (mm)",
+        "CreationDate": "2019-06-03T06:18:08Z",
+        "GenerationSoftware": {
+            "Application": "EAGLE",
+            "Vendor": "Autodesk",
+            "Version": "9.4.0"
+        },
+        "Part": "Single"
+    },
+    "Overall": {
+        "BoardThickness": 1.99,
+        "LayerNumber": 4,
+        "Name": {
+            "ProjectId": "NU-Smarticle v2"
+        },
+        "Owner": "Alex Samland <alexsamland@u.northwestern.edu>",
+        "Size": {
+            "X": 48.260944,
+            "Y": 22.86
+        }
+    }
+}
