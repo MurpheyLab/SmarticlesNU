@@ -2,7 +2,7 @@
 
 This repository includes all the hardware design and software files for the smarticle system. Examples can be found in Code/Python/Examples. See [Smarticle Tracking](https://github.com/murpheylab/SmarticleTracking) for the a python AprilTag tracking library and [SmarticleSimulation](https://github.com/asamland/SmarticleSimulation) for a PyBullet simulator of the system.  
 
-All documentation for the python modules in this repository is available [here](https://murpheylab.github.io/SmarticlesNU)
+All documentation for the python modules in this repository is available [here](https://murpheylab.github.io/SmarticlesNU/)
 
 Installing Python Dependencies
 ------------
