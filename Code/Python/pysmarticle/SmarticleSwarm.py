@@ -12,6 +12,8 @@ import numpy as np
 
 class SmarticleSwarm(object):
     '''
+    ## Description
+    ---
     Class that Utilizies XbeeComm class for performing smarticle operations
     coordinated with Smarticle.h and Smarticle.cpp used on the Smarticle microcontrollers
     '''
@@ -29,6 +31,8 @@ class SmarticleSwarm(object):
 
     def __init__(self, port='/dev/tty.usbserial-DN050I6Q', baud_rate = 9600, debug = 0):
         '''
+        ## Description
+        ---
         Initalizes and opens local base xbee (connected via USB) with given port and baud rate and adds it to attribute `base`
 
         **Arguments**
@@ -60,12 +64,16 @@ class SmarticleSwarm(object):
 
     def build_network(self, exp_n_smarticles=None):
         '''
+        ## Description
+        ---
         Clears `devices` dictionary as well as all devices on network.
         Discovers remote devices on network, initializes dictionary of all connected devices.
         Will ask for retries if expected no of smarticles is not discovered
         modified from Digi XBee example DiscoverDevicesSample.py
 
-        *Arguments*
+        ## Arguments
+        ---
+
         | Argument                        | Type     | Description                                | Default Value    |
         | :------:                        | :--:     | :---------:                                | :-----------:    |
         | exp_n_smarticles               | `int`    | Expected number of smarticles to discover  | None             |
@@ -101,6 +109,8 @@ class SmarticleSwarm(object):
 
     def send_ids(self,asynch=False):
         '''
+        ## Description
+        ---
         Sends IDs to smarticles
 
         *Arguments*
@@ -118,7 +128,11 @@ class SmarticleSwarm(object):
 
 
     def close(self):
-        '''closes serial connection to XBee'''
+        '''
+        ## Description
+        ---
+        closes serial connection to XBee
+        '''
         self.xb.close_base()
 
 
@@ -126,6 +140,8 @@ class SmarticleSwarm(object):
 
     def set_servos(self, state, remote_device = None):
         '''
+        ## Description
+        ---
         Enables/disables updating of servos. When enabled it also resets the gait interpolation sequence back to its first initial point
         When set_servos ==0, servos can still be controlled using set_pose()
 
@@ -147,6 +163,8 @@ class SmarticleSwarm(object):
 
     def set_transmit(self, state, remote_device = None):
         '''
+        ## Description
+        ---
         Enables/disables smarticle transmitting data.
         Data sent in following format: '{int Photo_front}, {int photo_back}, {int photo_right} {int current_sense}'(values between 0-1023)
 
@@ -176,6 +194,8 @@ class SmarticleSwarm(object):
 
     def set_light_plank(self, state, remote_device = None):
         '''
+        ## Description
+        ---
         Enables/Disables light plank (i.e. smarticles planking when light sensors are above set threshold)
 
         *Arguments*
@@ -205,6 +225,8 @@ class SmarticleSwarm(object):
 
     def set_sensor_threshold(self, thresh, remote_device = None):
         '''
+        ## Description
+        ---
         Sets sensor threshold that triggers planking
 
         *Arguments*
@@ -237,6 +259,8 @@ class SmarticleSwarm(object):
 
     def set_read_sensors(self, state, remote_device = None):
         '''
+        ## Description
+        ---
         Enables/disables smarticle reading sensors
 
         *Arguments*
@@ -265,6 +289,8 @@ class SmarticleSwarm(object):
 
     def set_transmit_period(self, period_ms, remote_device=None):
         '''
+        ## Description
+        ---
         Sets approximate data transmit period of smarticles
 
         *Arguments*
@@ -295,6 +321,8 @@ class SmarticleSwarm(object):
 
     def set_debug(self, state, remote_device=None):
         '''
+        ## Description
+        ---
         Sets debug level of smarticle
 
         *Arguments*
@@ -325,6 +353,8 @@ class SmarticleSwarm(object):
 
     def set_pose_epsilon(self, eps, remote_device = None):
         '''
+        ## Description
+        ---
         Sets epsilon value for smarticle poses. The smarticle will move the arm
         randomly propoportional to epsilon (0-1). For example, if epsilon is 0.1,
         the smarticle will move its arm to a random angle 10% of the time
@@ -357,6 +387,8 @@ class SmarticleSwarm(object):
 
     def set_mode(self, state, remote_device = None):
         '''
+        ## Description
+        ---
         Changes operating mode of smarticle(s)
 
         *States*
@@ -391,6 +423,8 @@ class SmarticleSwarm(object):
 
     def set_plank(self, state_arr, remote_device = None):
         '''
+        ## Description
+        ---
         Sets smarticle to plank or deplank Note: only active when set_servos  == 1
 
         *remote_device*
@@ -419,6 +453,8 @@ class SmarticleSwarm(object):
 
     def set_pose(self, posL, posR, remote_device = None):
         '''
+        ## Description
+        ---
         Sets smarticle to specified servo positions
 
         *remote_device*
@@ -446,6 +482,8 @@ class SmarticleSwarm(object):
 
     def stream_pose(self, poses, remote_device=None):
         '''
+        ## Description
+        ---
         Sets smarticle to specified servo positions. Differs from set_pose in
         that it sends angles over the streaming pipeline, which sends a batch message that can specify 
         separate commands for each smarticle in the same message. Specify id as zero to broadcast servo command to whole swarm.
@@ -477,6 +515,8 @@ class SmarticleSwarm(object):
 
     def set_delay(self, state=-1, max_val=-1, remote_device = None):
         '''
+        ## Description
+        ---
         Enables/disables random delay in stream servo mode for smarticles.
         Writing  value of negative  one (-1) leaves that  field as is on the smarticle
 
@@ -505,6 +545,8 @@ class SmarticleSwarm(object):
 
     def set_pose_noise(self, max_val, remote_device = None):
         '''
+        ## Description
+        ---
         Sets noise on servo positions (noisy arm angles)
 
         *remote_device*
@@ -534,6 +576,8 @@ class SmarticleSwarm(object):
 
     def set_sync_noise(self, max_val, remote_device = None):
         '''
+        ## Description
+        ---
         Sets noise on synchronization time for gait interp mode
 
         *remote_device*
@@ -562,6 +606,8 @@ class SmarticleSwarm(object):
 
     def gait_init(self, gait, delay_ms, gait_num=0, remote_device = None):
         '''
+        ## Description
+        ---
         Sends gait interpolation data to remote smarticles including:
             1. left and right servo interpolation points (max 15 points each)
             2. data length
@@ -616,6 +662,8 @@ class SmarticleSwarm(object):
 
     def sync_thread_target(self,sync_period_s, keep_time):
         '''
+        ## Description
+        ---
         Thread to keep gaits in sync
         '''
         time_adjust_s=sync_period_s-0.0357 #subtract 35ms based on results from timing experiments
@@ -631,7 +679,11 @@ class SmarticleSwarm(object):
 
 
     def init_sync_thread(self, keep_time=False):
-        '''Initializes gait sync thread. Must be called every time the gait sequence is updated'''
+        '''
+        ## Description
+        ---
+        Initializes gait sync thread. Must be called every time the gait sequence is updated
+        '''
         # calculate sync period: approximately 3s but must be a multiple of the gait delay
         self.sync_period_s = (self.gait_len*self.delay_ms)/1000
         print('sync_period: {}'.format(self.sync_period_s))
@@ -643,7 +695,11 @@ class SmarticleSwarm(object):
         self.sync_thread.start()
 
     def start_sync(self):
-        '''starts gait sequence and sync thread'''
+        '''
+        ## Description
+        ---
+        starts gait sequence and sync thread
+        '''
         delay_t = self.delay_ms/3000
         #starts gait sequence
         self.set_servos(1)
@@ -653,7 +709,11 @@ class SmarticleSwarm(object):
         self.sync_flag.set()
 
     def stop_sync(self):
-        '''stops gait sequence and pauses gait sync thread'''
+        '''
+        ## Description
+        ---
+        stops gait sequence and pauses gait sync thread
+        '''
         #stop gait sequence
         self.set_servos(0)
         #cause sync_flag.wait() to block

@@ -11,13 +11,18 @@ from digi.xbee.devices import Raw802Device
 default_port = '/dev/tty.usbserial-DN050I6Q'
 
 class XbeeComm(object):
-    ''''Class for simplified XBee communication with remote Smarticles
-        Built on top of Digi XBee python library:
-            https://github.com/digidotcom/xbee-python'''
+    ''''
+    ## Description
+    ---
+    Class for simplified XBee communication with remote Smarticles
+    Built on top of Digi XBee python library:
+        https://github.com/digidotcom/xbee-python'''
 
 
     def __init__(self, port='/dev/tty.usbserial-DN050I6Q', baud_rate = 9600, debug = 0):
         '''
+        ## Description
+        ---
         Initalizes and opens local base xbee (connected via USB) with given port and baud rate and adds it to attribute `base`
 
         *Arguments*
@@ -40,6 +45,8 @@ class XbeeComm(object):
 
     def open_base(self):
         '''
+        ## Description
+        ---
         Opens local xbee defined by attribute 'base' which is set in `__init__`
 
         *Arguments*
@@ -58,6 +65,8 @@ class XbeeComm(object):
 
     def close_base(self):
         '''
+        ## Description
+        ---
         Closes local xbee defined by attribute 'base' which is set in `__init__`
 
         *Arguments*
@@ -70,7 +79,11 @@ class XbeeComm(object):
             self.base.close()
 
     def add_callbacks(self):
-        '''adds callback functions for discovery processess'''
+        '''
+        ## Description
+        ---
+        adds callback functions for discovery processess
+        '''
         # Callback for discovered devices.
         def callback_device_discovered(remote):
             print("Device discovered: %s" % remote)
@@ -91,6 +104,8 @@ class XbeeComm(object):
 
     def add_remote(self,remote_device):
         '''
+        ## Description
+        ---
         takes in RemoteXbee Object and creates an attribute for it based on its NodeID and adds it to the device dictionary
 
         *Arguments*
@@ -111,6 +126,8 @@ class XbeeComm(object):
 
     def discover(self):
         '''
+        ## Description
+        ---
         Clears `devices` dictionary as well as all devices on network.
         Discovers remote devices on network, initializes dictionary of all connected devices.
         modified from Digi XBee example DiscoverDevicesSample.py
@@ -139,6 +156,8 @@ class XbeeComm(object):
 
     def send(self, remote_device, msg, asynch = False):
         '''
+        ## Description
+        ---
         Sends message to remote xbee and receives acknowledgement on sucess.
         modified from digi's example SendDataSample.py
 
@@ -174,6 +193,8 @@ class XbeeComm(object):
 
     def broadcast(self, msg):
         '''
+        ## Description
+        ---
         Broadcasts to all xbees on network. NOTE: there are no acknowledgements when using broadcast
 
         *Arguments*
@@ -189,6 +210,8 @@ class XbeeComm(object):
 
     def ack_broadcast(self,msg):
         '''
+        ## Description
+        ---
         Broadcasts to all xbees on network by sending message individually to each remote xbee in `devices` dictionary.
         This broadcast includes acknowledgements.
 
@@ -207,6 +230,8 @@ class XbeeComm(object):
 
     def command(self, msg, remote_device = None, asynch = False):
         '''
+        ## Description
+        ---
         Sends message to remote Xbee in one of three ways depending on the `remote_device` argument
             1. remote_device == `None`:
                 broadcasts message without acks using `broadcast()`
@@ -236,6 +261,8 @@ class XbeeComm(object):
 
     def add_rx_callback(self, callback_fun):
         '''
+        ## Description
+        ---
         Adds a data received callback function that is called everytime a message is received
 
         *Arguments*
@@ -248,14 +275,3 @@ class XbeeComm(object):
         '''
         self.base.add_data_received_callback(callback_fun)
 
-
-
-
-
-
-
-# def example_data_receive_callback(xbee_message):
-#     '''DOC'''
-#
-#     print("From {} >> {}".format(xbee_message.remote_device.get_node_id(),
-#                              xbee_message.data.decode()))
