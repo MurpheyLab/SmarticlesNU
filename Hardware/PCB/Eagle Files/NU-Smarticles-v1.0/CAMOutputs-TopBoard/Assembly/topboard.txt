@@ -1,0 +1,15 @@
+Partlist exported from /Users/alexsamland/Documents/EAGLE/projects/Smarticles v2/topboard.sch at 6/3/19 12:36 AM
+
+Qty Value        Device                      Package           Parts         Description                              PROD_ID    SF_SKU   
+1                SWITCH-SPDT-SMD-RIGHT-ANGLE SWITCH_SPST_SMD_A S1            Single Pole, Double Throw (SPDT) Switch  SWCH-10651 COM-10860
+1   0.1          RESISTOR_0603MP             _0603MP           R1            Resistors                                                    
+1   0.1uF        CAP_CERAMIC_0603MP          _0603MP           C1            Ceramic Capacitors                                           
+1   1.0uF        CAP_CERAMIC_0603MP          _0603MP           C3            Ceramic Capacitors                                           
+3   10k          RESISTOR_0603MP             _0603MP           R2, R3, R4    Resistors                                                    
+1   12XFFCEXTEND 12XFFCEXTEND                15166-0117_XTEND  CON2                                                                       
+1   9.0pF        CAP_CERAMIC_0603MP          _0603MP           C2            Ceramic Capacitors                                           
+3   A10          A10                         PHOTORESISTOR     PH1, PH2, PH3 Sensor Robust Light Sensing Applications                     
+1   INA180B2     INA180B2                    SOT23-5           U2            50x gain current sense amplifier                             
+1   LI-PO        LI-PO                       1X02_BATT         CON1          Pins connecting to LiPo Battery                              
+2   SERVO        SERVO                       1X03_SERVO        M1, M2                                                                     
+1   XBEE3        XBEE3                       XBEE3_MICRO       U1            XBee 3 802.15                                                

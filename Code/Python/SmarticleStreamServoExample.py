@@ -64,7 +64,7 @@ gaitf = lambda t: [190,190] #[190,190] signifies unique random corners
 # discover smarticles on network; by default has 15s timeout
 swarm.build_network(3)
 swarm.set_mode(2)
-swarm.set_delay(1,100);
+swarm.set_delay(1,100)
 #send all smarticles the same random gait
 n=15
 L = [0,180,180,0]

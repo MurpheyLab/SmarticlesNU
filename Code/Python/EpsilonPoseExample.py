@@ -1,6 +1,6 @@
 # SmarticleSyncExample.py
 import sys
-sys.path.append('modules')
+sys.path.append('pysmarticle')
 
 from SmarticleSwarm import *
 from random import randint
