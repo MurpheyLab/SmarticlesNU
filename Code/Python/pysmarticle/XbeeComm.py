@@ -16,24 +16,25 @@ class XbeeComm(object):
     ---
     Class for simplified XBee communication with remote Smarticles
     Built on top of Digi XBee python library:
-        https://github.com/digidotcom/xbee-python'''
+        https://github.com/digidotcom/xbee-python
+        <br/>
+        
+    The Constructor initalizes and opens local base xbee (connected via USB) with given port and baud rate and adds it to attribute `base`'''
 
 
     def __init__(self, port='/dev/tty.usbserial-DN050I6Q', baud_rate = 9600, debug = 0):
         '''
-        ## Description
-        ---
-        Initalizes and opens local base xbee (connected via USB) with given port and baud rate and adds it to attribute `base`
 
-        *Arguments*
+        ## Arguments
+        ---
+
         | Argument  | Type     | Description                                | Default Value                       |
         | :------:  | :--:     | :---------:                                | :-----------:                       |
-        | port      | `string` | USB port to open for local XBee            | please set for your own convenience |
+        | port      | `string` | USB port to open for local XBee            | set for your own convenience |
         | baud_rate | `int`    | Baud rate to use for USB serial port       | 9600                                |
         | debug     | `int`    | Enables/disables print statements in class | 0                                   |
+        |<img width=400/>|<img width=250/>|<img width=1000/>|<img width=550/>|
 
-        *Returns*
-        void
         '''
 
         self.base = Raw802Device(port, baud_rate)
@@ -49,10 +50,13 @@ class XbeeComm(object):
         ---
         Opens local xbee defined by attribute 'base' which is set in `__init__`
 
-        *Arguments*
+        ## Arguments
+        ---
+
         None
 
-        *Returns*
+        ## Returns
+        ---
         This function returns a 1 if it successfully opens the local port and a 0 otherwise.
         '''
         success = 0
@@ -69,11 +73,14 @@ class XbeeComm(object):
         ---
         Closes local xbee defined by attribute 'base' which is set in `__init__`
 
-        *Arguments*
+        ## Arguments
+        ---
+
         None
 
-        *Returns*
-        void
+        ## Returns
+        ---
+        `None`
         '''
         if self.base is not None and self.base.is_open():
             self.base.close()
@@ -108,13 +115,17 @@ class XbeeComm(object):
         ---
         takes in RemoteXbee Object and creates an attribute for it based on its NodeID and adds it to the device dictionary
 
-        *Arguments*
+        ## Arguments
+        ---
+
         | Argument        | Type                      | Description                                                                   | Default Value |
         | :------:        | :--:                      | :---------:                                                                   | :-----------: |
         | remote_device   | `RemoteXbeeDevice` Object | Stores info such as ID and address; see Digi Xbee Documentation for more info | N/A           |
+        |<img width=400/>|<img width=250/>|<img width=1000/>|<img width=550/>|
 
-        *Returns*
-        void
+        ## Returns
+        ---
+        `None`
 
         More info on RemoteXbeeDevice:
         https://xbplib.readthedocs.io/en/stable/api/digi.xbee.devices.html#digi.xbee.devices.RemoteXBeeDevice
@@ -132,11 +143,14 @@ class XbeeComm(object):
         Discovers remote devices on network, initializes dictionary of all connected devices.
         modified from Digi XBee example DiscoverDevicesSample.py
 
-        *Arguments*
+        ## Arguments
+        ---
+
         None
 
-        *Returns*
-        void
+        ## Returns
+        ---
+        `None`
         '''
         self.devices ={}
         self.network = self.base.get_network()
@@ -161,15 +175,19 @@ class XbeeComm(object):
         Sends message to remote xbee and receives acknowledgement on sucess.
         modified from digi's example SendDataSample.py
 
-        *Arguments*
+        ## Arguments
+        ---
+
         | Argument        | Type                      | Description                                                                   | Default Value |
         | :------:        | :--:                      | :---------:                                                                   | :-----------: |
         | remote_device   | `RemoteXbeeDevice` Object | Stores info such as ID and address; see Digi Xbee Documentation for more info | N/A           |
         | msg             | `string` or `bytearray`   | Message to send to XBee. Maximum of 108 bytes                                 | N/A           |
         | asynch           | `bool`                    | Determines whether to send asynchronously (without ack) or not                | False         |
+        |<img width=400/>|<img width=250/>|<img width=1000/>|<img width=550/>|
 
-        *Returns*
-        void
+        ## Returns
+        ---
+        `None`
 
         More info on RemoteXbeeDevice:
         https://xbplib.readthedocs.io/en/stable/api/digi.xbee.devices.html#digi.xbee.devices.RemoteXBeeDevice
@@ -197,13 +215,17 @@ class XbeeComm(object):
         ---
         Broadcasts to all xbees on network. NOTE: there are no acknowledgements when using broadcast
 
-        *Arguments*
+        ## Arguments
+        ---
+
         | Argument        | Type                      | Description                                                                   | Default Value |
         | :------:        | :--:                      | :---------:                                                                   | :-----------: |
         | msg             | `string` or `bytearray`   | Message to send to XBee. Maximum of 108 bytes                                 | N/A           |
+        |<img width=400/>|<img width=250/>|<img width=1000/>|<img width=550/>|
 
-        *Returns*
-        void
+        ## Returns
+        ---
+        `None`
         '''
         self.base.send_data_broadcast(msg)
 
@@ -215,13 +237,17 @@ class XbeeComm(object):
         Broadcasts to all xbees on network by sending message individually to each remote xbee in `devices` dictionary.
         This broadcast includes acknowledgements.
 
-        *Arguments*
+        ## Arguments
+        ---
+
         | Argument        | Type                      | Description                                                                   | Default Value |
         | :------:        | :--:                      | :---------:                                                                   | :-----------: |
         | msg             | `string` or `bytearray`   | Message to send to XBee. Maximum of 108 bytes                                 | N/A           |
+        |<img width=400/>|<img width=250/>|<img width=1000/>|<img width=550/>|
 
-        *Returns*
-        void
+        ## Returns
+        ---
+        `None`
         '''
 
         for remote_dev in list(self.devices.values()):
@@ -232,23 +258,21 @@ class XbeeComm(object):
         '''
         ## Description
         ---
-        Sends message to remote Xbee in one of three ways depending on the `remote_device` argument
-            1. remote_device == `None`:
-                broadcasts message without acks using `broadcast()`
-            2. remote_device == `True`:
-                broadcasts message with acks using `ack_broadcast()`
-            3. remote_device in values of devices dictionary:
-                send message to single Xbee using `send()`
+        Sends message to remote Xbee in one of three ways depending on the `remote_device` argument. see `SmarticleSwarm` class description
 
-        *Arguments*
+        ## Arguments
+        ---
+
         | Argument        | Type                                          | Description                                                              | Default Value    |
         | :------:        | :--:                                          | :---------:                                                              | :-----------:    |
         | msg             | `string` or `bytearray`                       | Message to send to XBee. Maximum of 108 bytes                            | N/A              |
-        | remote_device   | `RemoteXbeeDevice` Object or `None` or `bool` | Argument value and type determines communication mode as described above | `None`           |
+        | remote_device   | -- | see class description | `None`           |
         | asynch           | `bool`                                        | Determines whether to send asynchronously (without ack) or not           | False            |
+        |<img width=400/>|<img width=250/>|<img width=1000/>|<img width=550/>|
 
-        *Returns*
-        void
+        ## Returns
+        ---
+        `None`
         '''
 
         if remote_device == None:
@@ -265,13 +289,17 @@ class XbeeComm(object):
         ---
         Adds a data received callback function that is called everytime a message is received
 
-        *Arguments*
+        ## Arguments
+        ---
+
         | Argument        | Type                                          | Description                                                              | Default Value    |
         | :------:        | :--:                                          | :---------:                                                              | :-----------:    |
-        | callback_fun    | function                                      | Function that takes 'XbeeMessage' as input                               | N/A              |
+        | callback_fun    | function                                      | Function that takes 'XbeeMessage' as input                               | N/A              |`
+        |<img width=400/>|<img width=250/>|<img width=1000/>|<img width=550/>|
 
-        *Returns*
-        void
+        ## Returns
+        ---
+        `None`
         '''
         self.base.add_data_received_callback(callback_fun)
 

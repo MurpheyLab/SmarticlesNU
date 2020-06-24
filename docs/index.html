@@ -1,0 +1,4439 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
+<meta name="generator" content="pdoc 0.8.1" />
+<title>pysmarticle API documentation</title>
+<meta name="description" content="" />
+<link href='https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.0/normalize.min.css' rel='stylesheet'>
+<link href='https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/8.0.0/sanitize.min.css' rel='stylesheet'>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css" rel="stylesheet">
+<style>.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:30px;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:1em 0 .50em 0}h3{font-size:1.4em;margin:25px 0 10px 0}h4{margin:0;font-size:105%}a{color:#058;text-decoration:none;transition:color .3s ease-in-out}a:hover{color:#e82}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900}pre code{background:#f8f8f8;font-size:.8em;line-height:1.4em}code{background:#f2f2f1;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{background:#f8f8f8;border:0;border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0;padding:1ex}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-weight:bold;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}.admonition{padding:.1em .5em;margin-bottom:1em}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.item .name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul{padding-left:1.5em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Module <code>pysmarticle</code></h1>
+</header>
+<section id="section-intro">
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python"># SmarticleSwarm.py
+# Alex Samland
+# August 13, 2019
+# Module for communicating with smarticle swarm over Xbee3s
+
+# import time
+# from .XbeeComm import XbeeComm
+# from .StreamThread import StreamThread
+# import threading
+# import numpy as np
+
+
+class SmarticleSwarm(object):
+    &#39;&#39;&#39;
+    ## Description
+    ---
+    Class that Utilizies XbeeComm class for performing smarticle operations
+    coordinated with Smarticle.h and Smarticle.cpp used on the Smarticle microcontrollers
+
+    Constructor initalizes and opens local base xbee (connected via USB) with given port and baud rate and adds it to attribute `base`
+    &#39;&#39;&#39;
+    # msg_code_dict = {&#39;toggle_led&#39;: 0x20, &#39;set_mode&#39;: 0x21, &#39;toggle_t4_interrupt&#39;: 0x22,\
+    #     &#39;set_transmit_counts&#39;: 0x23, &#39;select_gait&#39;: 0x24, &#39;toggle_read_sensors&#39;: 0x25,\
+    #     &#39;toggle_transmit&#39;: 0x26, &#39;set_gait_epsilon&#39;: 0x27, &#39;set_pose_noise&#39;: 0x28,\
+    #     &#39;toggle_light_plank&#39;: 0x29, &#39;set_debug&#39;: 0x2A, &#39;set_id&#39;: 0x2B, &#39;set_pose&#39;: 0x30,\
+    #     &#39;set_sync_noise&#39;: 0x31, &#39;set_stream_timing_noise&#39;: 0x32,\
+    #     &#39;set_light_plank_threshold&#39;: 0x40, &#39;init_gait&#39;: 0x41, &#39;stream_pose&#39;: 0x42, &#39;set_plank&#39;: 0x43}
+    # msg_prefix = bytearray([0x13,0x13])
+    # msg_end = bytearray([0x0A])
+
+    # ASCII_OFFSET = 32
+    # SAMPLE_TIME_MS = 10
+
+    def __init__(self, port=&#39;/dev/tty.usbserial-DN050I6Q&#39;, baud_rate = 9600, debug = 0):
+        &#39;&#39;&#39;
+        ## Remote Device
+        ---
+        Many methods take in a `remote_device` argument.The XBee sends message to the remote Xbee(s) in one of three ways depending on the `remote_device` argument&lt;br/&gt;
+            &amp;emsp; &lt;b&gt;1.&lt;/b&gt; remote_device == `None`:&lt;br/&gt;
+                &amp;emsp; &amp;emsp; broadcasts message without acks using `broadcast()`&lt;br/&gt;
+            &amp;emsp; &lt;b&gt;2.&lt;/b&gt; remote_device == `True`:&lt;br/&gt;
+                &amp;emsp; &amp;emsp; broadcasts message with acks using `ack_broadcast()`&lt;br/&gt;
+            &amp;emsp; &lt;b&gt;3.&lt;/b&gt; remote_device == element of `self.xb.devices.values()`:&lt;br/&gt;
+                &amp;emsp; &amp;emsp; send message to single Xbee using `send()`&lt;br/&gt;
+
+        ## Arguments
+        ---
+
+
+        | Argument            | Type       | Description                                | Default Value                       |
+        | :------             | :--        | :---------                                 | :-----------                        |
+        | port                | `string`   | USB port to open for local XBee            | set for your own convenience        |
+        | baud_rate           | `int`      | Baud rate to use for USB serial port       | 9600                                |
+        | debug               | `int`      | Enables/disables print statements in class | 0                                   |
+        |&lt;img width=400/&gt;|&lt;img width=250/&gt;|&lt;img width=1000/&gt;|&lt;img width=550/&gt;|
+
+        &#39;&#39;&#39;
+        self.xb = XbeeComm(port,baud_rate,debug)
+        self.lock = threading.Lock()
+
+    @classmethod
+    def _format_msg(self, msg):
+        return self.msg_prefix+msg+self.msg_end
+
+    @classmethod
+    def _convert_to_2_chars(self, val):
+        val = val&amp;0x3ffff
+        c1 = (val&gt;&gt;7)+self.ASCII_OFFSET
+        c2 = (val&amp;0x7f)+self.ASCII_OFFSET
+        return [c1,c2]
+
+
+    def build_network(self, exp_n_smarticles=None):
+        &#39;&#39;&#39;
+        ## Description
+        ---
+        Clears `devices` dictionary as well as all devices on network.
+        Discovers remote devices on network, initializes dictionary of all connected devices.
+        Will ask for retries if expected no of smarticles is not discovered
+        modified from Digi XBee example DiscoverDevicesSample.py
+
+        ## Arguments
+        ---
+
+        | Argument                        | Type     | Description                                | Default Value    |
+        | :------:                        | :--:     | :---------:                                | :-----------:    |
+        | exp_n_smarticles               | `int`    | Expected number of smarticles to discover  | None             |
+        |&lt;img width=400/&gt;|&lt;img width=250/&gt;|&lt;img width=1000/&gt;|&lt;img width=550/&gt;|
+
+        ## Returns
+        ---
+        `None`
+        &#39;&#39;&#39;
+        self.xb.discover()
+        if exp_n_smarticles != None:
+            if (len(self.xb.devices))&lt;exp_n_smarticles:
+                inp= input(&#39;Only discovered {} out of {} expected Smarticles. Retry discovery (Y/N)\n&#39;.format(len(self.xb.devices),exp_n_smarticles))
+                if inp[0].upper()==&#39;Y&#39;:
+                    self.build_network(exp_n_smarticles)
+                else:
+                    #purge Smarticle Xbee buffer
+                    time.sleep(0.5)
+                    self.xb.broadcast(&#39;\n&#39;)
+                    time.sleep(0.5)
+                    print(&#39;Network Discovery Ended\n&#39;)
+            else:
+                #purge Smarticle Xbee buffer
+                print(&#39;Successfully discovered {} out of {} expected Smarticles\n&#39;.format(len(self.xb.devices),exp_n_smarticles))
+                time.sleep(0.5)
+                self.xb.broadcast(&#39;\n&#39;)
+                time.sleep(0.5)
+                print(&#39;Network Discovery Ended\n&#39;)
+        else:
+            #purge Smarticle Xbee buffer
+            time.sleep(0.5)
+            self.xb.broadcast(&#39;\n&#39;)
+            time.sleep(0.5)
+            print(&#39;Network Discovery Ended\n&#39;)
+
+    def send_ids(self,asynch=False):
+        &#39;&#39;&#39;
+        ## Description
+        ---
+        Sends IDs to smarticles
+
+        ## Arguments
+        ---
+
+        | Argument        | Type                      | Description                                                                   | Default Value |
+        | :------:        | :--:                      | :---------:                                                                   | :-----------: |
+        | asynch           | `bool`                    | Determines whether to send asynchronously (without ack)  | False         |
+        |&lt;img width=400/&gt;|&lt;img width=250/&gt;|&lt;img width=1000/&gt;|&lt;img width=550/&gt;|
+
+        ## Returns
+        ---
+        `None`
+        &#39;&#39;&#39;
+        msg_code = self.msg_code_dict[&#39;set_id&#39;]
+        for id in self.xb.devices.keys():
+            msg = self.format_msg(bytearray([msg_code,self.ASCII_OFFSET+id]))
+            self.xb.send(self.xb.devices[id],msg,asynch=False)
+
+
+    def close(self):
+        &#39;&#39;&#39;
+        ## Description
+        ---
+        closes serial connection to XBee
+
+        ## Returns
+        ---
+        `None`
+        &#39;&#39;&#39;
+        self.xb.close_base()
+
+
+
+
+    def set_servos(self, state, remote_device = None):
+        &#39;&#39;&#39;
+        ## Description
+        ---
+        Enables/disables updating of servos. When enabled it also resets the gait interpolation sequence back to its first initial point
+        When set_servos ==0, servos can still be controlled using set_pose()
+
+        ## Arguments
+        ---
+
+        | Argument        | Type                                          | Description                                                              | Default Value  |
+        | :------:        | :--:                                          | :---------:                                                              | :-----------:  |
+        | state           | `int`                                         | Value: 1 or 0. enables/disables updating servos in timer interrupt       | N/A            |
+        | remote_device   | -- | see class description | `None`         |
+        |&lt;img width=400/&gt;|&lt;img width=250/&gt;|&lt;img width=1000/&gt;|&lt;img width=550/&gt;|
+
+        ## Returns
+        ---
+        `None`
+        &#39;&#39;&#39;
+        msg_code = self.msg_code_dict[&#39;toggle_t4_interrupt&#39;]
+        if state != 1:
+            state = 0
+        msg = self.format_msg(bytearray([msg_code,self.ASCII_OFFSET+state]))
+        self.xb.command(msg, remote_device)
+
+
+    def set_transmit(self, state, remote_device = None):
+        &#39;&#39;&#39;
+        ## Description
+        ---
+        Enables/disables smarticle transmitting data.
+        Data sent in following format: &#39;{int Photo_front}, {int photo_back}, {int photo_right} {int current_sense}&#39;(values between 0-1023)
+
+        ## Arguments
+        ---
+
+        | Argument        | Type                                          | Description                                                              | Default Value  |
+        | :------:        | :--:                                          | :---------:                                                              | :-----------:  |
+        | state           | `int`                                         | Value: 1 or 0. enables/disables transmitting Data                        | N/A            |
+        | remote_device   | -- | see class description | `None`         |
+        |&lt;img width=400/&gt;|&lt;img width=250/&gt;|&lt;img width=1000/&gt;|&lt;img width=550/&gt;|
+
+        ## Returns
+        ---
+        `None`
+        &#39;&#39;&#39;
+        msg_code = self.msg_code_dict[&#39;toggle_transmit&#39;]
+        if state != 1:
+            state = 0
+        msg = self.format_msg(bytearray([msg_code,self.ASCII_OFFSET+state]))
+        self.xb.command(msg, remote_device)
+
+    def set_light_plank(self, state, remote_device = None):
+        &#39;&#39;&#39;
+        ## Description
+        ---
+        Enables/Disables light plank (i.e. smarticles planking when light sensors are above set threshold)
+
+        ## Arguments
+        ---
+
+        | Argument        | Type                                          | Description                                                              | Default Value  |
+        | :------:        | :--:                                          | :---------:                                                              | :-----------:  |
+        | state           | `bool`                                         | Value: 1 or 0. enables/disables light planking                          | N/A            |
+        | remote_device   | -- | see class description | `None`         |
+        |&lt;img width=400/&gt;|&lt;img width=250/&gt;|&lt;img width=1000/&gt;|&lt;img width=550/&gt;|
+
+        ## Returns
+        ---
+        `None`
+        &#39;&#39;&#39;
+
+        msg_code = self.msg_code_dict[&#39;toggle_light_plank&#39;]
+        if state != 1:
+            state = 0
+        msg = self.format_msg(bytearray([msg_code,self.ASCII_OFFSET+state]))
+        self.xb.command(msg, remote_device)
+
+    def set_sensor_threshold(self, thresh, remote_device = None):
+        &#39;&#39;&#39;
+        ## Description
+        ---
+        Sets sensor threshold that triggers planking
+
+        ## Arguments
+        ---
+
+        | Argument        | Type                                          | Description                                                              | Default Value  |
+        | :------:        | :--:                                          | :---------:                                                              | :-----------:  |
+        | thresh          | `list of int`                                 | Threshold values for PR_front, PR_back, PR_right, current sense          | N/A            |
+        | remote_device   | -- | see class description | `None`         |
+        |&lt;img width=400/&gt;|&lt;img width=250/&gt;|&lt;img width=1000/&gt;|&lt;img width=550/&gt;|
+
+
+        ## Returns
+        ---
+        `None`
+        &#39;&#39;&#39;
+        assert len(thresh)==4, &#39;Threshold list must be 4 elements&#39;
+        msg_code = self.msg_code_dict[&#39;set_light_plank_threshold&#39;]
+        val = bytearray()
+        for t in thresh:
+            val+= self.convert_to_2_chars(t)
+        msg = self.format_msg(bytearray([msg_code]+val))
+        self.xb.command(msg, remote_device)
+
+
+
+    def set_read_sensors(self, state, remote_device = None):
+        &#39;&#39;&#39;
+        ## Description
+        ---
+        Enables/disables smarticle reading sensors
+
+        ## Arguments
+        ---
+
+        | Argument        | Type                                          | Description                                                              | Default Value  |
+        | :------:        | :--:                                          | :---------:                                                              | :-----------:  |
+        | state           | `int`                                        | Value: 1 or 0. enables/disables reading sensors                          | N/A            |
+        | remote_device   | -- | see class description | `None`         |
+        |&lt;img width=400/&gt;|&lt;img width=250/&gt;|&lt;img width=1000/&gt;|&lt;img width=550/&gt;|
+
+
+        ## Returns
+        ---
+        `None`
+        &#39;&#39;&#39;
+        msg_code = self.msg_code_dict[&#39;toggle_read_sensors&#39;]
+        if state != 1:
+            state = 0
+        msg = self.format_msg(bytearray([msg_code,self.ASCII_OFFSET+state]))
+        self.xb.command(msg, remote_device)
+
+    def set_transmit_period(self, period_ms, remote_device=None):
+        &#39;&#39;&#39;
+        ## Description
+        ---
+        Sets approximate data transmit period of smarticles
+
+        ## Arguments
+        ---
+
+        | Argument        | Type                                          | Description                                                              | Default Value  |
+        | :------:        | :--:                                          | :---------:                                                              | :-----------:  |
+        | period_ms       | `int`                                         |  transmit period in ms. Max value of 2000s                               | N/A            |
+        | remote_device   | --| see class description | `None`         |
+        |&lt;img width=400/&gt;|&lt;img width=250/&gt;|&lt;img width=1000/&gt;|&lt;img width=550/&gt;|
+
+
+        ## Returns
+        ---
+        `None`
+        &#39;&#39;&#39;
+        msg_code = self.msg_code_dict[&#39;set_transmit_counts&#39;]
+        counts = period_ms//self.SAMPLE_TIME_MS
+        counts = np.clip(counts, 1, 200)
+        msg = self.format_msg(bytearray([msg_code,self.ASCII_OFFSET+counts]))
+        self.xb.command(msg, remote_device)
+
+
+
+    def set_debug(self, state, remote_device=None):
+        &#39;&#39;&#39;
+        ## Description
+        ---
+        Sets debug level of smarticle
+
+        ## Arguments
+        ---
+
+        | Argument        | Type                                          | Description                                                              | Default Value  |
+        | :------:        | :--:                                          | :---------:                                                              | :-----------:  |
+        | debug          | `int`                                        | Value: 0,1,2. Sets level of debug output. 0 is no output, 1 is limited output, 2 is full output | N/A            |
+        | remote_device   | -- | see class description | `None`         |
+        |&lt;img width=400/&gt;|&lt;img width=250/&gt;|&lt;img width=1000/&gt;|&lt;img width=550/&gt;|
+
+
+
+        ## Returns
+        ---
+        `None`
+        &#39;&#39;&#39;
+        msg_code = self.msg_code_dict[&#39;set_debug&#39;]
+        if state not in [0,1,2]:
+            state = 0
+        msg = self.format_msg(bytearray([msg_code,self.ASCII_OFFSET+state]))
+        self.xb.command(msg, remote_device)
+
+
+
+    def set_pose_epsilon(self, eps, remote_device = None):
+        &#39;&#39;&#39;
+        ## Description
+        ---
+        Sets epsilon value for smarticle poses. The smarticle will move the arm
+        randomly propoportional to epsilon (0-1). For example, if epsilon is 0.1,
+        the smarticle will move its arm to a random angle 10% of the time
+
+        ## Arguments
+        ---
+
+        | Argument        | Type                                          | Description                                                              | Default Value  |
+        | :------:        | :--:                                          | :---------:                                                              | :-----------:  |
+        | eps             | &#39;float&#39;                                       | Value: 0-1, determines proportion of random arm movements                | N/A            |
+        | remote_device   | -- | see class description | `None`         |
+        |&lt;img width=400/&gt;|&lt;img width=250/&gt;|&lt;img width=1000/&gt;|&lt;img width=550/&gt;|
+
+
+        ## Returns
+        ---
+        `None`
+        &#39;&#39;&#39;
+        # ensure eps is between 0 and 1
+        eps = 100*round(np.clip(eps,0,1),2)
+        msg_code = self.msg_code_dict[&#39;toggle_light_plank&#39;]
+        if state != 1:
+            state = 0
+        msg = self.format_msg(bytearray([msg_code,self.ASCII_OFFSET+eps]))
+        self.xb.command(msg, remote_device)
+
+    def set_mode(self, state, remote_device = None):
+        &#39;&#39;&#39;
+        ## Description
+        ---
+        Changes operating mode of smarticle(s)
+
+        ## Values
+        ---
+
+        | Value | Mode             | Description                                                      |
+        | :---: | :--:             | :---------:                                                      |
+        | 0     | Idle             | Smarticle does nothing. Servos detach and no data is transmitted |
+        | 1     | Stream servos    | Servo points streamed (still in development)                     |
+        | 2     | Gait interpolate | Iterate through interpolated points sent to smarticle            |
+        |&lt;img width=250/&gt;|&lt;img width=400/&gt;|&lt;img width=1000/&gt;|
+
+
+        ## Arguments
+        ---
+
+        | Argument        | Type                                          | Description                                                                | Default Value  |
+        | :------:        | :--:                                          | :---------:                                                                | :-----------:  |
+        | state           | `int`                                         | Values: 0-2. 0: inactive, 1: stream servo (unfinished), 2:gait interpolate | N/A            |
+        | remote_device   | -- | see class description   | `None`         |
+        |&lt;img width=400/&gt;|&lt;img width=250/&gt;|&lt;img width=1000/&gt;|&lt;img width=550/&gt;|
+
+        ## Returns
+        ---
+        `None`
+        &#39;&#39;&#39;
+        assert (state&gt;=0 and state&lt;=2),&#34;Mode must between 0-2&#34;
+        msg_code = self.msg_code_dict[&#39;set_mode&#39;]
+        msg = self.format_msg(bytearray([msg_code,self.ASCII_OFFSET+state]))
+        self.xb.command(msg, remote_device)
+
+    def set_plank(self, state_arr, remote_device = None):
+        &#39;&#39;&#39;
+        ## Description
+        ---
+        Sets smarticle to plank or deplank Note: only active when set_servos  == 1
+
+        ## Arguments
+        ---
+
+        | Argument        | Type                                          | Description                                                                | Default Value  |
+        | :------:        | :--:                                          | :---------:                                                                | :-----------:  |
+        | state           | `bool`                                         | Values: 0,1. 0: deplank 1: plank                                           | N/A            |
+        | remote_device   | -- | see class description   | `None`         |
+        |&lt;img width=400/&gt;|&lt;img width=250/&gt;|&lt;img width=1000/&gt;|&lt;img width=550/&gt;|
+
+        ## Returns
+        ---
+        `None`
+        &#39;&#39;&#39;
+        msg_code = self.msg_code_dict[&#39;set_plank&#39;]
+        l = len(state_arr)+self.ASCII_OFFSET
+        state_arr = list((state_arr+self.ASCII_OFFSET).flatten())
+        msg = self.format_msg(bytearray([msg_code,l]+state_arr))
+        self.xb.command(msg, remote_device)
+
+    def set_pose(self, posL, posR, remote_device = None):
+        &#39;&#39;&#39;
+        ## Description
+        ---
+        Sets smarticle to specified servo positions
+
+        ## Arguments
+        ---
+
+        | Argument        | Type                                          | Description                                                                | Default Value  |
+        | :------:        | :--:                                          | :---------:                                                                | :-----------:  |
+        | posL            | `int`                                         | Left servo angle: 0-180 deg                                                | N/A            |
+        | posR            | `int`                                         | Right servo angle: 0-180 deg                                               | N/A            |
+        | remote_device   | -- | see class description   | `None`         |
+        |&lt;img width=400/&gt;|&lt;img width=250/&gt;|&lt;img width=1000/&gt;|&lt;img width=550/&gt;|
+
+        ## Returns
+        ---
+        `None`
+        &#39;&#39;&#39;
+        msg_code = self.msg_code_dict[&#39;set_pose&#39;]
+        msg = self.format_msg(bytearray([msg_code,self.ASCII_OFFSET+posL,self.ASCII_OFFSET+posR]))
+        self.xb.command(msg, remote_device)
+
+    def stream_pose(self, poses, remote_device=None):
+        &#39;&#39;&#39;
+        ## Description
+        ---
+        Sets smarticle to specified servo positions. Differs from set_pose in
+        that it sends angles over the streaming pipeline, which sends a batch message that can specify 
+        separate commands for each smarticle in the same message. Specify id as zero to broadcast servo command to whole swarm.
+
+        ## Arguments
+        ---
+
+        | Argument        | Type                                          | Description                                                                | Default Value  |
+        | :------:        | :--:                                          | :---------:                                                                | :-----------:  |
+        | poses            | `np.array`                                   | Nx3 array of servo commands. Each row specifies [id, angL, angR]     | N/A            |
+        | remote_device   | -- | see class description   | `None`         |
+        |&lt;img width=400/&gt;|&lt;img width=250/&gt;|&lt;img width=1000/&gt;|&lt;img width=550/&gt;|
+
+        ## Returns
+        ---
+        `None`
+        &#39;&#39;&#39;
+        msg_code = self.msg_code_dict[&#39;stream_pose&#39;]
+        l = len(poses)+self.ASCII_OFFSET
+        poses = list((poses+self.ASCII_OFFSET).flatten())
+        msg = self.format_msg(bytearray([msg_code,l]+poses))
+        self.xb.command(msg,remote_device)
+
+
+    def set_delay(self, state=-1, max_val=-1, remote_device = None):
+        &#39;&#39;&#39;
+        ## Description
+        ---
+        Enables/disables random delay in stream servo mode for smarticles.
+        Writing  value of negative  one (-1) leaves that  field as is on the smarticle
+
+        ## Arguments
+        ---
+
+        | Argument        | Type                                          | Description                                                                | Default Value  |
+        | :------:        | :--:                                          | :---------:                                                                | :-----------:  |
+        | state           | `int`                                         | Values: 0,1 see note about negative values above                           | -1             |
+        | max_val         | `int`                                         | Maximum value of random delay                                              | -1             |
+        | remote_device   | -- | see class description   | `None`         |
+        |&lt;img width=400/&gt;|&lt;img width=250/&gt;|&lt;img width=1000/&gt;|&lt;img width=550/&gt;|
+
+        ## Returns
+        ---
+        `None`
+        &#39;&#39;&#39;
+        msg=&#39;:SD:{},{}\n&#39;.format(int(state),int(max_val))
+        self.xb.command(msg, remote_device)
+
+
+    def set_pose_noise(self, max_val, remote_device = None):
+        &#39;&#39;&#39;
+        ## Description
+        ---
+        Sets noise on servo positions (noisy arm angles)
+
+        ## Arguments
+        ---
+
+        | Argument        | Type                                          | Description                                                                | Default Value  |
+        | :------:        | :--:                                          | :---------:                                                                | :-----------:  |
+        | max_val         | `int`                                         | Maximum value of random noise                                              | N/A            |
+        | remote_device   | -- | see class description   | `None`         |
+        |&lt;img width=400/&gt;|&lt;img width=250/&gt;|&lt;img width=1000/&gt;|&lt;img width=550/&gt;|
+
+        ## Returns
+        ---
+        `None`
+        &#39;&#39;&#39;
+        assert max_val &lt; 100, &#39;value must be less than 100&#39;
+        val=int(2*max_val)
+        msg_code = self.msg_code_dict[&#39;set_pose_noise&#39;]
+        msg = self.format_msg(bytearray([msg_code,self.ASCII_OFFSET+val]))
+        self.xb.command(msg, remote_device)
+
+
+    def set_sync_noise(self, max_val, remote_device = None):
+        &#39;&#39;&#39;
+        ## Description
+        ---
+        Sets noise on synchronization time for gait interp mode
+
+        ## Arguments
+        ---
+
+        | Argument        | Type                                          | Description                                                                | Default Value  |
+        | :------:        | :--:                                          | :---------:                                                                | :-----------:  |
+        | max_val         | `int`                                         | Maximum value of random delay                                              | N/A            |
+        | remote_device   | -- | see class description   | `None`         |
+        |&lt;img width=400/&gt;|&lt;img width=250/&gt;|&lt;img width=1000/&gt;|&lt;img width=550/&gt;|
+
+        ## Returns
+        ---
+        `None`
+        &#39;&#39;&#39;
+        timer_counts = self.convert_to_2_chars(int(max_val/0.128))
+        msg_code = self.msg_code_dict[&#39;set_sync_noise&#39;]
+        msg = self.format_msg(bytearray([msg_code]+timer_counts))
+        self.xb.command(msg, remote_device)
+
+
+    def gait_init(self, gait, delay_ms, gait_num=0, remote_device = None):
+        &#39;&#39;&#39;
+        ## Description
+        ---
+        Sends gait interpolation data to remote smarticles including:
+            1. left and right servo interpolation points (max 15 points each)
+            2. data length
+            3. period between interpolation points
+
+        ## Gait
+        ---
+        Lists of two lists: gaitLpoints and gaitRpoints. These lists must be equal in length and contain at most 15 points
+
+        ## Arguments
+        ---
+
+        | Argument        | Type                                          | Description                                                                | Default Value  |
+        | :------:        | :--:                                          | :---------:                                                                | :-----------:  |
+        | gait            | list of lists of int                          | [gaitLpoints, gaitRpoints]                                                 | N/A            |
+        | period_ms       | `int`                                         | period (ms) between gait points                                            | N/A            |
+        | remote_device   | -- | see class description   | `None`         |
+        |&lt;img width=400/&gt;|&lt;img width=250/&gt;|&lt;img width=1000/&gt;|&lt;img width=550/&gt;|
+
+        ## Returns
+        ---
+        `None`
+        &#39;&#39;&#39;
+        msg_code = bytearray([self.msg_code_dict[&#39;init_gait&#39;]])
+        self.delay_ms = delay_ms
+        self.gait_len = len(gait[0])
+        timer_counts = int(delay_ms/0.128)
+        gaitL=gait[0]
+        gaitR=gait[1]
+        gaitL = [int(x+self.ASCII_OFFSET) for x in gaitL]
+        gaitR = [int(x+self.ASCII_OFFSET) for x in gaitR]
+        assert len(gaitL)==len(gaitR),&#39;Gait lists must be same length&#39;
+        gait_points = self.gait_len+self.ASCII_OFFSET
+        n = gait_num +self.ASCII_OFFSET
+        delay = self.convert_to_2_chars(timer_counts)
+        msg=  self.format_msg(msg_code+bytearray([n, gait_points]+delay+gaitL+gaitR))
+        self.xb.command(msg, remote_device)
+        time.sleep(0.1) #ensure messages are not dropped as buffer isn&#39;t implemented yet
+
+    def select_gait(self, n, remote_device = None):
+        &#39;&#39;&#39;
+        ## Description
+        ---
+        Selects gait number of smarticle to execute
+
+        ## Arguments
+        ---
+
+        | Argument        | Type                                          | Description                                                                | Default Value  |
+        | :------:        | :--:                                          | :---------:                                                                | :-----------:  |
+        | n       | `int`                                         | gait number for smarticle to execute                                           | N/A            |
+        | remote_device   | -- | see class description   | `None`         |
+        |&lt;img width=400/&gt;|&lt;img width=250/&gt;|&lt;img width=1000/&gt;|&lt;img width=550/&gt;|
+
+        ## Returns
+        ---
+        `None`
+        &#39;&#39;&#39;
+        msg_code = self.msg_code_dict[&#39;select_gait&#39;]
+        msg = self.format_msg(bytearray([msg_code,self.ASCII_OFFSET+n]))
+        self.xb.command(msg, remote_device)
+
+
+    def sync_thread_target(self,sync_period_s, keep_time):
+        &#39;&#39;&#39;
+        ## Description
+        ---
+        Thread to keep gaits in sync. Not used directly by user but called in `init_sync_thread`
+        
+        &#39;&#39;&#39;
+        time_adjust_s=sync_period_s-0.0357 #subtract 35ms based on results from timing experiments
+        msg = bytearray(b&#39;\x11&#39;)
+        #threading.event.wait() blocks until it is a) set and then returns True or b) the specified timeout elapses in which it retrusn nothing
+        while self.sync_flag.wait() and not self.timer_counts.wait(timeout=(time_adjust_s)):
+                self.xb.broadcast(msg)
+                if keep_time:
+                    t = time.time()
+                    with self.lock:
+                        self.sync_time_list.append(t)
+
+
+
+    def init_sync_thread(self, keep_time=False):
+        &#39;&#39;&#39;
+        ## Description
+        ---
+        Initializes gait sync thread. Must be called every time the gait sequence is updated
+        &#39;&#39;&#39;
+        # calculate sync period: approximately 3s but must be a multiple of the gait delay
+        self.sync_period_s = (self.gait_len*self.delay_ms)/1000
+        print(&#39;sync_period: {}&#39;.format(self.sync_period_s))
+        if keep_time:
+            self.sync_time_list =[]
+        self.sync_thread = threading.Thread(target=self.sync_thread_target, args= (self.sync_period_s,keep_time),  daemon = True)
+        self.timer_counts = threading.Event()
+        self.sync_flag = threading.Event()
+        self.sync_thread.start()
+
+    def start_sync(self):
+        &#39;&#39;&#39;
+        ## Description
+        ---
+        starts gait sequence and sync thread
+
+        ## Returns
+        ---
+        `None`
+        &#39;&#39;&#39;
+        delay_t = self.delay_ms/3000
+        #starts gait sequence
+        self.set_servos(1)
+        #wait 1/3 of gait delay to begin sync sequene
+        time.sleep(delay_t)
+        #set sync flag so that it returns True and stops blocking
+        self.sync_flag.set()
+
+    def stop_sync(self):
+        &#39;&#39;&#39;
+        ## Description
+        ---
+        stops gait sequence and pauses gait sync thread
+
+        ## Returns
+        ---
+        `None`
+        &#39;&#39;&#39;
+        #stop gait sequence
+        self.set_servos(0)
+        #cause sync_flag.wait() to block
+        self.sync_flag.clear()
+
+
+class XbeeComm(object):
+    &#39;&#39;&#39;&#39;
+    ## Description
+    ---
+    Class for simplified XBee communication with remote Smarticles
+    Built on top of Digi XBee python library:
+        https://github.com/digidotcom/xbee-python
+        &lt;br/&gt;
+        
+    The Constructor initalizes and opens local base xbee (connected via USB) with given port and baud rate and adds it to attribute `base`&#39;&#39;&#39;
+
+
+    def __init__(self, port=&#39;/dev/tty.usbserial-DN050I6Q&#39;, baud_rate = 9600, debug = 0):
+        &#39;&#39;&#39;
+
+        ## Arguments
+        ---
+
+        | Argument  | Type     | Description                                | Default Value                       |
+        | :------:  | :--:     | :---------:                                | :-----------:                       |
+        | port      | `string` | USB port to open for local XBee            | set for your own convenience |
+        | baud_rate | `int`    | Baud rate to use for USB serial port       | 9600                                |
+        | debug     | `int`    | Enables/disables print statements in class | 0                                   |
+        |&lt;img width=400/&gt;|&lt;img width=250/&gt;|&lt;img width=1000/&gt;|&lt;img width=550/&gt;|
+
+        &#39;&#39;&#39;
+
+        self.base = Raw802Device(port, baud_rate)
+        self.debug = debug
+        self.open_base()
+        self.callbacks_added = False
+        self.ascii_offset = 32
+
+
+    def open_base(self):
+        &#39;&#39;&#39;
+        ## Description
+        ---
+        Opens local xbee defined by attribute &#39;base&#39; which is set in `__init__`
+
+        ## Arguments
+        ---
+
+        None
+
+        ## Returns
+        ---
+        This function returns a 1 if it successfully opens the local port and a 0 otherwise.
+        &#39;&#39;&#39;
+        success = 0
+        self.base.open()
+        if self.base is not None and self.base.is_open():
+            success = 1
+        elif self.debug:
+            print(&#34;Failed to open device&#34;)
+        return success
+
+    def close_base(self):
+        &#39;&#39;&#39;
+        ## Description
+        ---
+        Closes local xbee defined by attribute &#39;base&#39; which is set in `__init__`
+
+        ## Arguments
+        ---
+
+        None
+
+        ## Returns
+        ---
+        `None`
+        &#39;&#39;&#39;
+        if self.base is not None and self.base.is_open():
+            self.base.close()
+
+    def add_callbacks(self):
+        &#39;&#39;&#39;
+        ## Description
+        ---
+        adds callback functions for discovery processess
+        &#39;&#39;&#39;
+        # Callback for discovered devices.
+        def callback_device_discovered(remote):
+            print(&#34;Device discovered: %s&#34; % remote)
+            self.add_remote(remote)
+
+        # Callback for discovery finished.
+        def callback_discovery_finished(status):
+            if status == NetworkDiscoveryStatus.SUCCESS:
+                # print(&#34;Discovery process finished successfully.\nDevices: {}&#34;.format(self.devices))
+                print(&#34;Discovery cycle finished\n&#34;)
+            else:
+                print(&#34;There was an error discovering devices: %s&#34; % status.description)
+
+        self.network.add_device_discovered_callback(callback_device_discovered)
+
+        self.network.add_discovery_process_finished_callback(callback_discovery_finished)
+
+
+    def add_remote(self,remote_device):
+        &#39;&#39;&#39;
+        ## Description
+        ---
+        takes in RemoteXbee Object and creates an attribute for it based on its NodeID and adds it to the device dictionary
+
+        ## Arguments
+        ---
+
+        | Argument        | Type                      | Description                                                                   | Default Value |
+        | :------:        | :--:                      | :---------:                                                                   | :-----------: |
+        | remote_device   | `RemoteXbeeDevice` Object | Stores info such as ID and address; see Digi Xbee Documentation for more info | N/A           |
+        |&lt;img width=400/&gt;|&lt;img width=250/&gt;|&lt;img width=1000/&gt;|&lt;img width=550/&gt;|
+
+        ## Returns
+        ---
+        `None`
+
+        More info on RemoteXbeeDevice:
+        https://xbplib.readthedocs.io/en/stable/api/digi.xbee.devices.html#digi.xbee.devices.RemoteXBeeDevice
+        &#39;&#39;&#39;
+        smarticle_number = int(&#39;&#39;.join([s for s in remote_device.get_node_id() if s.isdigit()]))
+        setattr(self,remote_device.get_node_id(),remote_device)
+        self.devices[smarticle_number]=remote_device
+
+
+    def discover(self):
+        &#39;&#39;&#39;
+        ## Description
+        ---
+        Clears `devices` dictionary as well as all devices on network.
+        Discovers remote devices on network, initializes dictionary of all connected devices.
+        modified from Digi XBee example DiscoverDevicesSample.py
+
+        ## Arguments
+        ---
+
+        None
+
+        ## Returns
+        ---
+        `None`
+        &#39;&#39;&#39;
+        self.devices ={}
+        self.network = self.base.get_network()
+        self.network.clear()
+        self.network.set_discovery_timeout(15)  # 15 seconds.
+
+        if self.callbacks_added == False:
+            self.add_callbacks()
+            self.callbacks_added = True
+
+        self.network.start_discovery_process()
+        print(&#34;Discovering remote XBee devices...&#34;)
+
+        while self.network.is_discovery_running():
+            time.sleep(0.1)
+
+
+    def send(self, remote_device, msg, asynch = False):
+        &#39;&#39;&#39;
+        ## Description
+        ---
+        Sends message to remote xbee and receives acknowledgement on sucess.
+        modified from digi&#39;s example SendDataSample.py
+
+        ## Arguments
+        ---
+
+        | Argument        | Type                      | Description                                                                   | Default Value |
+        | :------:        | :--:                      | :---------:                                                                   | :-----------: |
+        | remote_device   | `RemoteXbeeDevice` Object | Stores info such as ID and address; see Digi Xbee Documentation for more info | N/A           |
+        | msg             | `string` or `bytearray`   | Message to send to XBee. Maximum of 108 bytes                                 | N/A           |
+        | asynch           | `bool`                    | Determines whether to send asynchronously (without ack) or not                | False         |
+        |&lt;img width=400/&gt;|&lt;img width=250/&gt;|&lt;img width=1000/&gt;|&lt;img width=550/&gt;|
+
+        ## Returns
+        ---
+        `None`
+
+        More info on RemoteXbeeDevice:
+        https://xbplib.readthedocs.io/en/stable/api/digi.xbee.devices.html#digi.xbee.devices.RemoteXBeeDevice
+        &#39;&#39;&#39;
+
+        if remote_device is None:
+            if self.debug():
+                print(&#34;Could not find the remote device&#34;)
+            exit(1)
+        if self.debug:
+            print(&#34;Sending data to {} &gt;&gt; {}...&#34;.format(remote_device.get_node_id(), msg))
+
+        if asynch is True:
+            self.base.send_data_async(remote_device, msg)
+        else:
+            self.base.send_data(remote_device, msg)
+
+            if self.debug:
+                print(&#34;Success&#34;)
+
+
+    def broadcast(self, msg):
+        &#39;&#39;&#39;
+        ## Description
+        ---
+        Broadcasts to all xbees on network. NOTE: there are no acknowledgements when using broadcast
+
+        ## Arguments
+        ---
+
+        | Argument        | Type                      | Description                                                                   | Default Value |
+        | :------:        | :--:                      | :---------:                                                                   | :-----------: |
+        | msg             | `string` or `bytearray`   | Message to send to XBee. Maximum of 108 bytes                                 | N/A           |
+        |&lt;img width=400/&gt;|&lt;img width=250/&gt;|&lt;img width=1000/&gt;|&lt;img width=550/&gt;|
+
+        ## Returns
+        ---
+        `None`
+        &#39;&#39;&#39;
+        self.base.send_data_broadcast(msg)
+
+
+    def ack_broadcast(self,msg):
+        &#39;&#39;&#39;
+        ## Description
+        ---
+        Broadcasts to all xbees on network by sending message individually to each remote xbee in `devices` dictionary.
+        This broadcast includes acknowledgements.
+
+        ## Arguments
+        ---
+
+        | Argument        | Type                      | Description                                                                   | Default Value |
+        | :------:        | :--:                      | :---------:                                                                   | :-----------: |
+        | msg             | `string` or `bytearray`   | Message to send to XBee. Maximum of 108 bytes                                 | N/A           |
+        |&lt;img width=400/&gt;|&lt;img width=250/&gt;|&lt;img width=1000/&gt;|&lt;img width=550/&gt;|
+
+        ## Returns
+        ---
+        `None`
+        &#39;&#39;&#39;
+
+        for remote_dev in list(self.devices.values()):
+            self.send(remote_dev,msg)
+
+
+    def command(self, msg, remote_device = None, asynch = False):
+        &#39;&#39;&#39;
+        ## Description
+        ---
+        Sends message to remote Xbee in one of three ways depending on the `remote_device` argument. see `SmarticleSwarm` class description
+
+        ## Arguments
+        ---
+
+        | Argument        | Type                                          | Description                                                              | Default Value    |
+        | :------:        | :--:                                          | :---------:                                                              | :-----------:    |
+        | msg             | `string` or `bytearray`                       | Message to send to XBee. Maximum of 108 bytes                            | N/A              |
+        | remote_device   | -- | see class description | `None`           |
+        | asynch           | `bool`                                        | Determines whether to send asynchronously (without ack) or not           | False            |
+        |&lt;img width=400/&gt;|&lt;img width=250/&gt;|&lt;img width=1000/&gt;|&lt;img width=550/&gt;|
+
+        ## Returns
+        ---
+        `None`
+        &#39;&#39;&#39;
+
+        if remote_device == None:
+            self.broadcast(msg)
+        elif (isinstance(remote_device,bool) and remote_device==True):
+            self.ack_broadcast(msg)
+        else:
+            assert remote_device in self.devices.values(),&#34;Remote Device not found in active devices&#34;
+            self.send(remote_device,msg, asynch)
+
+    def add_rx_callback(self, callback_fun):
+        &#39;&#39;&#39;
+        ## Description
+        ---
+        Adds a data received callback function that is called everytime a message is received
+
+        ## Arguments
+        ---
+
+        | Argument        | Type                                          | Description                                                              | Default Value    |
+        | :------:        | :--:                                          | :---------:                                                              | :-----------:    |
+        | callback_fun    | function                                      | Function that takes &#39;XbeeMessage&#39; as input                               | N/A              |`
+        |&lt;img width=400/&gt;|&lt;img width=250/&gt;|&lt;img width=1000/&gt;|&lt;img width=550/&gt;|
+
+        ## Returns
+        ---
+        `None`
+        &#39;&#39;&#39;
+        self.base.add_data_received_callback(callback_fun)</code></pre>
+</details>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-classes">Classes</h2>
+<dl>
+<dt id="pysmarticle.SmarticleSwarm"><code class="flex name class">
+<span>class <span class="ident">SmarticleSwarm</span></span>
+<span>(</span><span>port='/dev/tty.usbserial-DN050I6Q', baud_rate=9600, debug=0)</span>
+</code></dt>
+<dd>
+<div class="desc"><h2 id="description">Description</h2>
+<hr>
+<p>Class that Utilizies XbeeComm class for performing smarticle operations
+coordinated with Smarticle.h and Smarticle.cpp used on the Smarticle microcontrollers</p>
+<p>Constructor initalizes and opens local base xbee (connected via USB) with given port and baud rate and adds it to attribute <code>base</code></p>
+<h2 id="remote-device">Remote Device</h2>
+<hr>
+<p>Many methods take in a <code>remote_device</code> argument.The XBee sends message to the remote Xbee(s) in one of three ways depending on the <code>remote_device</code> argument<br/>
+&emsp; <b>1.</b> remote_device == <code>None</code>:<br/>
+&emsp; &emsp; broadcasts message without acks using <code>broadcast()</code><br/>
+&emsp; <b>2.</b> remote_device == <code>True</code>:<br/>
+&emsp; &emsp; broadcasts message with acks using <code>ack_broadcast()</code><br/>
+&emsp; <b>3.</b> remote_device == element of <code>self.xb.devices.values()</code>:<br/>
+&emsp; &emsp; send message to single Xbee using <code>send()</code><br/></p>
+<h2 id="arguments">Arguments</h2>
+<hr>
+<table>
+<thead>
+<tr>
+<th align="left">Argument</th>
+<th align="left">Type</th>
+<th align="left">Description</th>
+<th align="left">Default Value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left">port</td>
+<td align="left"><code>string</code></td>
+<td align="left">USB port to open for local XBee</td>
+<td align="left">set for your own convenience</td>
+</tr>
+<tr>
+<td align="left">baud_rate</td>
+<td align="left"><code>int</code></td>
+<td align="left">Baud rate to use for USB serial port</td>
+<td align="left">9600</td>
+</tr>
+<tr>
+<td align="left">debug</td>
+<td align="left"><code>int</code></td>
+<td align="left">Enables/disables print statements in class</td>
+<td align="left">0</td>
+</tr>
+<tr>
+<td align="left"><img width=400/></td>
+<td align="left"><img width=250/></td>
+<td align="left"><img width=1000/></td>
+<td align="left"><img width=550/></td>
+</tr>
+</tbody>
+</table></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class SmarticleSwarm(object):
+    &#39;&#39;&#39;
+    ## Description
+    ---
+    Class that Utilizies XbeeComm class for performing smarticle operations
+    coordinated with Smarticle.h and Smarticle.cpp used on the Smarticle microcontrollers
+
+    Constructor initalizes and opens local base xbee (connected via USB) with given port and baud rate and adds it to attribute `base`
+    &#39;&#39;&#39;
+    # msg_code_dict = {&#39;toggle_led&#39;: 0x20, &#39;set_mode&#39;: 0x21, &#39;toggle_t4_interrupt&#39;: 0x22,\
+    #     &#39;set_transmit_counts&#39;: 0x23, &#39;select_gait&#39;: 0x24, &#39;toggle_read_sensors&#39;: 0x25,\
+    #     &#39;toggle_transmit&#39;: 0x26, &#39;set_gait_epsilon&#39;: 0x27, &#39;set_pose_noise&#39;: 0x28,\
+    #     &#39;toggle_light_plank&#39;: 0x29, &#39;set_debug&#39;: 0x2A, &#39;set_id&#39;: 0x2B, &#39;set_pose&#39;: 0x30,\
+    #     &#39;set_sync_noise&#39;: 0x31, &#39;set_stream_timing_noise&#39;: 0x32,\
+    #     &#39;set_light_plank_threshold&#39;: 0x40, &#39;init_gait&#39;: 0x41, &#39;stream_pose&#39;: 0x42, &#39;set_plank&#39;: 0x43}
+    # msg_prefix = bytearray([0x13,0x13])
+    # msg_end = bytearray([0x0A])
+
+    # ASCII_OFFSET = 32
+    # SAMPLE_TIME_MS = 10
+
+    def __init__(self, port=&#39;/dev/tty.usbserial-DN050I6Q&#39;, baud_rate = 9600, debug = 0):
+        &#39;&#39;&#39;
+        ## Remote Device
+        ---
+        Many methods take in a `remote_device` argument.The XBee sends message to the remote Xbee(s) in one of three ways depending on the `remote_device` argument&lt;br/&gt;
+            &amp;emsp; &lt;b&gt;1.&lt;/b&gt; remote_device == `None`:&lt;br/&gt;
+                &amp;emsp; &amp;emsp; broadcasts message without acks using `broadcast()`&lt;br/&gt;
+            &amp;emsp; &lt;b&gt;2.&lt;/b&gt; remote_device == `True`:&lt;br/&gt;
+                &amp;emsp; &amp;emsp; broadcasts message with acks using `ack_broadcast()`&lt;br/&gt;
+            &amp;emsp; &lt;b&gt;3.&lt;/b&gt; remote_device == element of `self.xb.devices.values()`:&lt;br/&gt;
+                &amp;emsp; &amp;emsp; send message to single Xbee using `send()`&lt;br/&gt;
+
+        ## Arguments
+        ---
+
+
+        | Argument            | Type       | Description                                | Default Value                       |
+        | :------             | :--        | :---------                                 | :-----------                        |
+        | port                | `string`   | USB port to open for local XBee            | set for your own convenience        |
+        | baud_rate           | `int`      | Baud rate to use for USB serial port       | 9600                                |
+        | debug               | `int`      | Enables/disables print statements in class | 0                                   |
+        |&lt;img width=400/&gt;|&lt;img width=250/&gt;|&lt;img width=1000/&gt;|&lt;img width=550/&gt;|
+
+        &#39;&#39;&#39;
+        self.xb = XbeeComm(port,baud_rate,debug)
+        self.lock = threading.Lock()
+
+    @classmethod
+    def _format_msg(self, msg):
+        return self.msg_prefix+msg+self.msg_end
+
+    @classmethod
+    def _convert_to_2_chars(self, val):
+        val = val&amp;0x3ffff
+        c1 = (val&gt;&gt;7)+self.ASCII_OFFSET
+        c2 = (val&amp;0x7f)+self.ASCII_OFFSET
+        return [c1,c2]
+
+
+    def build_network(self, exp_n_smarticles=None):
+        &#39;&#39;&#39;
+        ## Description
+        ---
+        Clears `devices` dictionary as well as all devices on network.
+        Discovers remote devices on network, initializes dictionary of all connected devices.
+        Will ask for retries if expected no of smarticles is not discovered
+        modified from Digi XBee example DiscoverDevicesSample.py
+
+        ## Arguments
+        ---
+
+        | Argument                        | Type     | Description                                | Default Value    |
+        | :------:                        | :--:     | :---------:                                | :-----------:    |
+        | exp_n_smarticles               | `int`    | Expected number of smarticles to discover  | None             |
+        |&lt;img width=400/&gt;|&lt;img width=250/&gt;|&lt;img width=1000/&gt;|&lt;img width=550/&gt;|
+
+        ## Returns
+        ---
+        `None`
+        &#39;&#39;&#39;
+        self.xb.discover()
+        if exp_n_smarticles != None:
+            if (len(self.xb.devices))&lt;exp_n_smarticles:
+                inp= input(&#39;Only discovered {} out of {} expected Smarticles. Retry discovery (Y/N)\n&#39;.format(len(self.xb.devices),exp_n_smarticles))
+                if inp[0].upper()==&#39;Y&#39;:
+                    self.build_network(exp_n_smarticles)
+                else:
+                    #purge Smarticle Xbee buffer
+                    time.sleep(0.5)
+                    self.xb.broadcast(&#39;\n&#39;)
+                    time.sleep(0.5)
+                    print(&#39;Network Discovery Ended\n&#39;)
+            else:
+                #purge Smarticle Xbee buffer
+                print(&#39;Successfully discovered {} out of {} expected Smarticles\n&#39;.format(len(self.xb.devices),exp_n_smarticles))
+                time.sleep(0.5)
+                self.xb.broadcast(&#39;\n&#39;)
+                time.sleep(0.5)
+                print(&#39;Network Discovery Ended\n&#39;)
+        else:
+            #purge Smarticle Xbee buffer
+            time.sleep(0.5)
+            self.xb.broadcast(&#39;\n&#39;)
+            time.sleep(0.5)
+            print(&#39;Network Discovery Ended\n&#39;)
+
+    def send_ids(self,asynch=False):
+        &#39;&#39;&#39;
+        ## Description
+        ---
+        Sends IDs to smarticles
+
+        ## Arguments
+        ---
+
+        | Argument        | Type                      | Description                                                                   | Default Value |
+        | :------:        | :--:                      | :---------:                                                                   | :-----------: |
+        | asynch           | `bool`                    | Determines whether to send asynchronously (without ack)  | False         |
+        |&lt;img width=400/&gt;|&lt;img width=250/&gt;|&lt;img width=1000/&gt;|&lt;img width=550/&gt;|
+
+        ## Returns
+        ---
+        `None`
+        &#39;&#39;&#39;
+        msg_code = self.msg_code_dict[&#39;set_id&#39;]
+        for id in self.xb.devices.keys():
+            msg = self.format_msg(bytearray([msg_code,self.ASCII_OFFSET+id]))
+            self.xb.send(self.xb.devices[id],msg,asynch=False)
+
+
+    def close(self):
+        &#39;&#39;&#39;
+        ## Description
+        ---
+        closes serial connection to XBee
+
+        ## Returns
+        ---
+        `None`
+        &#39;&#39;&#39;
+        self.xb.close_base()
+
+
+
+
+    def set_servos(self, state, remote_device = None):
+        &#39;&#39;&#39;
+        ## Description
+        ---
+        Enables/disables updating of servos. When enabled it also resets the gait interpolation sequence back to its first initial point
+        When set_servos ==0, servos can still be controlled using set_pose()
+
+        ## Arguments
+        ---
+
+        | Argument        | Type                                          | Description                                                              | Default Value  |
+        | :------:        | :--:                                          | :---------:                                                              | :-----------:  |
+        | state           | `int`                                         | Value: 1 or 0. enables/disables updating servos in timer interrupt       | N/A            |
+        | remote_device   | -- | see class description | `None`         |
+        |&lt;img width=400/&gt;|&lt;img width=250/&gt;|&lt;img width=1000/&gt;|&lt;img width=550/&gt;|
+
+        ## Returns
+        ---
+        `None`
+        &#39;&#39;&#39;
+        msg_code = self.msg_code_dict[&#39;toggle_t4_interrupt&#39;]
+        if state != 1:
+            state = 0
+        msg = self.format_msg(bytearray([msg_code,self.ASCII_OFFSET+state]))
+        self.xb.command(msg, remote_device)
+
+
+    def set_transmit(self, state, remote_device = None):
+        &#39;&#39;&#39;
+        ## Description
+        ---
+        Enables/disables smarticle transmitting data.
+        Data sent in following format: &#39;{int Photo_front}, {int photo_back}, {int photo_right} {int current_sense}&#39;(values between 0-1023)
+
+        ## Arguments
+        ---
+
+        | Argument        | Type                                          | Description                                                              | Default Value  |
+        | :------:        | :--:                                          | :---------:                                                              | :-----------:  |
+        | state           | `int`                                         | Value: 1 or 0. enables/disables transmitting Data                        | N/A            |
+        | remote_device   | -- | see class description | `None`         |
+        |&lt;img width=400/&gt;|&lt;img width=250/&gt;|&lt;img width=1000/&gt;|&lt;img width=550/&gt;|
+
+        ## Returns
+        ---
+        `None`
+        &#39;&#39;&#39;
+        msg_code = self.msg_code_dict[&#39;toggle_transmit&#39;]
+        if state != 1:
+            state = 0
+        msg = self.format_msg(bytearray([msg_code,self.ASCII_OFFSET+state]))
+        self.xb.command(msg, remote_device)
+
+    def set_light_plank(self, state, remote_device = None):
+        &#39;&#39;&#39;
+        ## Description
+        ---
+        Enables/Disables light plank (i.e. smarticles planking when light sensors are above set threshold)
+
+        ## Arguments
+        ---
+
+        | Argument        | Type                                          | Description                                                              | Default Value  |
+        | :------:        | :--:                                          | :---------:                                                              | :-----------:  |
+        | state           | `bool`                                         | Value: 1 or 0. enables/disables light planking                          | N/A            |
+        | remote_device   | -- | see class description | `None`         |
+        |&lt;img width=400/&gt;|&lt;img width=250/&gt;|&lt;img width=1000/&gt;|&lt;img width=550/&gt;|
+
+        ## Returns
+        ---
+        `None`
+        &#39;&#39;&#39;
+
+        msg_code = self.msg_code_dict[&#39;toggle_light_plank&#39;]
+        if state != 1:
+            state = 0
+        msg = self.format_msg(bytearray([msg_code,self.ASCII_OFFSET+state]))
+        self.xb.command(msg, remote_device)
+
+    def set_sensor_threshold(self, thresh, remote_device = None):
+        &#39;&#39;&#39;
+        ## Description
+        ---
+        Sets sensor threshold that triggers planking
+
+        ## Arguments
+        ---
+
+        | Argument        | Type                                          | Description                                                              | Default Value  |
+        | :------:        | :--:                                          | :---------:                                                              | :-----------:  |
+        | thresh          | `list of int`                                 | Threshold values for PR_front, PR_back, PR_right, current sense          | N/A            |
+        | remote_device   | -- | see class description | `None`         |
+        |&lt;img width=400/&gt;|&lt;img width=250/&gt;|&lt;img width=1000/&gt;|&lt;img width=550/&gt;|
+
+
+        ## Returns
+        ---
+        `None`
+        &#39;&#39;&#39;
+        assert len(thresh)==4, &#39;Threshold list must be 4 elements&#39;
+        msg_code = self.msg_code_dict[&#39;set_light_plank_threshold&#39;]
+        val = bytearray()
+        for t in thresh:
+            val+= self.convert_to_2_chars(t)
+        msg = self.format_msg(bytearray([msg_code]+val))
+        self.xb.command(msg, remote_device)
+
+
+
+    def set_read_sensors(self, state, remote_device = None):
+        &#39;&#39;&#39;
+        ## Description
+        ---
+        Enables/disables smarticle reading sensors
+
+        ## Arguments
+        ---
+
+        | Argument        | Type                                          | Description                                                              | Default Value  |
+        | :------:        | :--:                                          | :---------:                                                              | :-----------:  |
+        | state           | `int`                                        | Value: 1 or 0. enables/disables reading sensors                          | N/A            |
+        | remote_device   | -- | see class description | `None`         |
+        |&lt;img width=400/&gt;|&lt;img width=250/&gt;|&lt;img width=1000/&gt;|&lt;img width=550/&gt;|
+
+
+        ## Returns
+        ---
+        `None`
+        &#39;&#39;&#39;
+        msg_code = self.msg_code_dict[&#39;toggle_read_sensors&#39;]
+        if state != 1:
+            state = 0
+        msg = self.format_msg(bytearray([msg_code,self.ASCII_OFFSET+state]))
+        self.xb.command(msg, remote_device)
+
+    def set_transmit_period(self, period_ms, remote_device=None):
+        &#39;&#39;&#39;
+        ## Description
+        ---
+        Sets approximate data transmit period of smarticles
+
+        ## Arguments
+        ---
+
+        | Argument        | Type                                          | Description                                                              | Default Value  |
+        | :------:        | :--:                                          | :---------:                                                              | :-----------:  |
+        | period_ms       | `int`                                         |  transmit period in ms. Max value of 2000s                               | N/A            |
+        | remote_device   | --| see class description | `None`         |
+        |&lt;img width=400/&gt;|&lt;img width=250/&gt;|&lt;img width=1000/&gt;|&lt;img width=550/&gt;|
+
+
+        ## Returns
+        ---
+        `None`
+        &#39;&#39;&#39;
+        msg_code = self.msg_code_dict[&#39;set_transmit_counts&#39;]
+        counts = period_ms//self.SAMPLE_TIME_MS
+        counts = np.clip(counts, 1, 200)
+        msg = self.format_msg(bytearray([msg_code,self.ASCII_OFFSET+counts]))
+        self.xb.command(msg, remote_device)
+
+
+
+    def set_debug(self, state, remote_device=None):
+        &#39;&#39;&#39;
+        ## Description
+        ---
+        Sets debug level of smarticle
+
+        ## Arguments
+        ---
+
+        | Argument        | Type                                          | Description                                                              | Default Value  |
+        | :------:        | :--:                                          | :---------:                                                              | :-----------:  |
+        | debug          | `int`                                        | Value: 0,1,2. Sets level of debug output. 0 is no output, 1 is limited output, 2 is full output | N/A            |
+        | remote_device   | -- | see class description | `None`         |
+        |&lt;img width=400/&gt;|&lt;img width=250/&gt;|&lt;img width=1000/&gt;|&lt;img width=550/&gt;|
+
+
+
+        ## Returns
+        ---
+        `None`
+        &#39;&#39;&#39;
+        msg_code = self.msg_code_dict[&#39;set_debug&#39;]
+        if state not in [0,1,2]:
+            state = 0
+        msg = self.format_msg(bytearray([msg_code,self.ASCII_OFFSET+state]))
+        self.xb.command(msg, remote_device)
+
+
+
+    def set_pose_epsilon(self, eps, remote_device = None):
+        &#39;&#39;&#39;
+        ## Description
+        ---
+        Sets epsilon value for smarticle poses. The smarticle will move the arm
+        randomly propoportional to epsilon (0-1). For example, if epsilon is 0.1,
+        the smarticle will move its arm to a random angle 10% of the time
+
+        ## Arguments
+        ---
+
+        | Argument        | Type                                          | Description                                                              | Default Value  |
+        | :------:        | :--:                                          | :---------:                                                              | :-----------:  |
+        | eps             | &#39;float&#39;                                       | Value: 0-1, determines proportion of random arm movements                | N/A            |
+        | remote_device   | -- | see class description | `None`         |
+        |&lt;img width=400/&gt;|&lt;img width=250/&gt;|&lt;img width=1000/&gt;|&lt;img width=550/&gt;|
+
+
+        ## Returns
+        ---
+        `None`
+        &#39;&#39;&#39;
+        # ensure eps is between 0 and 1
+        eps = 100*round(np.clip(eps,0,1),2)
+        msg_code = self.msg_code_dict[&#39;toggle_light_plank&#39;]
+        if state != 1:
+            state = 0
+        msg = self.format_msg(bytearray([msg_code,self.ASCII_OFFSET+eps]))
+        self.xb.command(msg, remote_device)
+
+    def set_mode(self, state, remote_device = None):
+        &#39;&#39;&#39;
+        ## Description
+        ---
+        Changes operating mode of smarticle(s)
+
+        ## Values
+        ---
+
+        | Value | Mode             | Description                                                      |
+        | :---: | :--:             | :---------:                                                      |
+        | 0     | Idle             | Smarticle does nothing. Servos detach and no data is transmitted |
+        | 1     | Stream servos    | Servo points streamed (still in development)                     |
+        | 2     | Gait interpolate | Iterate through interpolated points sent to smarticle            |
+        |&lt;img width=250/&gt;|&lt;img width=400/&gt;|&lt;img width=1000/&gt;|
+
+
+        ## Arguments
+        ---
+
+        | Argument        | Type                                          | Description                                                                | Default Value  |
+        | :------:        | :--:                                          | :---------:                                                                | :-----------:  |
+        | state           | `int`                                         | Values: 0-2. 0: inactive, 1: stream servo (unfinished), 2:gait interpolate | N/A            |
+        | remote_device   | -- | see class description   | `None`         |
+        |&lt;img width=400/&gt;|&lt;img width=250/&gt;|&lt;img width=1000/&gt;|&lt;img width=550/&gt;|
+
+        ## Returns
+        ---
+        `None`
+        &#39;&#39;&#39;
+        assert (state&gt;=0 and state&lt;=2),&#34;Mode must between 0-2&#34;
+        msg_code = self.msg_code_dict[&#39;set_mode&#39;]
+        msg = self.format_msg(bytearray([msg_code,self.ASCII_OFFSET+state]))
+        self.xb.command(msg, remote_device)
+
+    def set_plank(self, state_arr, remote_device = None):
+        &#39;&#39;&#39;
+        ## Description
+        ---
+        Sets smarticle to plank or deplank Note: only active when set_servos  == 1
+
+        ## Arguments
+        ---
+
+        | Argument        | Type                                          | Description                                                                | Default Value  |
+        | :------:        | :--:                                          | :---------:                                                                | :-----------:  |
+        | state           | `bool`                                         | Values: 0,1. 0: deplank 1: plank                                           | N/A            |
+        | remote_device   | -- | see class description   | `None`         |
+        |&lt;img width=400/&gt;|&lt;img width=250/&gt;|&lt;img width=1000/&gt;|&lt;img width=550/&gt;|
+
+        ## Returns
+        ---
+        `None`
+        &#39;&#39;&#39;
+        msg_code = self.msg_code_dict[&#39;set_plank&#39;]
+        l = len(state_arr)+self.ASCII_OFFSET
+        state_arr = list((state_arr+self.ASCII_OFFSET).flatten())
+        msg = self.format_msg(bytearray([msg_code,l]+state_arr))
+        self.xb.command(msg, remote_device)
+
+    def set_pose(self, posL, posR, remote_device = None):
+        &#39;&#39;&#39;
+        ## Description
+        ---
+        Sets smarticle to specified servo positions
+
+        ## Arguments
+        ---
+
+        | Argument        | Type                                          | Description                                                                | Default Value  |
+        | :------:        | :--:                                          | :---------:                                                                | :-----------:  |
+        | posL            | `int`                                         | Left servo angle: 0-180 deg                                                | N/A            |
+        | posR            | `int`                                         | Right servo angle: 0-180 deg                                               | N/A            |
+        | remote_device   | -- | see class description   | `None`         |
+        |&lt;img width=400/&gt;|&lt;img width=250/&gt;|&lt;img width=1000/&gt;|&lt;img width=550/&gt;|
+
+        ## Returns
+        ---
+        `None`
+        &#39;&#39;&#39;
+        msg_code = self.msg_code_dict[&#39;set_pose&#39;]
+        msg = self.format_msg(bytearray([msg_code,self.ASCII_OFFSET+posL,self.ASCII_OFFSET+posR]))
+        self.xb.command(msg, remote_device)
+
+    def stream_pose(self, poses, remote_device=None):
+        &#39;&#39;&#39;
+        ## Description
+        ---
+        Sets smarticle to specified servo positions. Differs from set_pose in
+        that it sends angles over the streaming pipeline, which sends a batch message that can specify 
+        separate commands for each smarticle in the same message. Specify id as zero to broadcast servo command to whole swarm.
+
+        ## Arguments
+        ---
+
+        | Argument        | Type                                          | Description                                                                | Default Value  |
+        | :------:        | :--:                                          | :---------:                                                                | :-----------:  |
+        | poses            | `np.array`                                   | Nx3 array of servo commands. Each row specifies [id, angL, angR]     | N/A            |
+        | remote_device   | -- | see class description   | `None`         |
+        |&lt;img width=400/&gt;|&lt;img width=250/&gt;|&lt;img width=1000/&gt;|&lt;img width=550/&gt;|
+
+        ## Returns
+        ---
+        `None`
+        &#39;&#39;&#39;
+        msg_code = self.msg_code_dict[&#39;stream_pose&#39;]
+        l = len(poses)+self.ASCII_OFFSET
+        poses = list((poses+self.ASCII_OFFSET).flatten())
+        msg = self.format_msg(bytearray([msg_code,l]+poses))
+        self.xb.command(msg,remote_device)
+
+
+    def set_delay(self, state=-1, max_val=-1, remote_device = None):
+        &#39;&#39;&#39;
+        ## Description
+        ---
+        Enables/disables random delay in stream servo mode for smarticles.
+        Writing  value of negative  one (-1) leaves that  field as is on the smarticle
+
+        ## Arguments
+        ---
+
+        | Argument        | Type                                          | Description                                                                | Default Value  |
+        | :------:        | :--:                                          | :---------:                                                                | :-----------:  |
+        | state           | `int`                                         | Values: 0,1 see note about negative values above                           | -1             |
+        | max_val         | `int`                                         | Maximum value of random delay                                              | -1             |
+        | remote_device   | -- | see class description   | `None`         |
+        |&lt;img width=400/&gt;|&lt;img width=250/&gt;|&lt;img width=1000/&gt;|&lt;img width=550/&gt;|
+
+        ## Returns
+        ---
+        `None`
+        &#39;&#39;&#39;
+        msg=&#39;:SD:{},{}\n&#39;.format(int(state),int(max_val))
+        self.xb.command(msg, remote_device)
+
+
+    def set_pose_noise(self, max_val, remote_device = None):
+        &#39;&#39;&#39;
+        ## Description
+        ---
+        Sets noise on servo positions (noisy arm angles)
+
+        ## Arguments
+        ---
+
+        | Argument        | Type                                          | Description                                                                | Default Value  |
+        | :------:        | :--:                                          | :---------:                                                                | :-----------:  |
+        | max_val         | `int`                                         | Maximum value of random noise                                              | N/A            |
+        | remote_device   | -- | see class description   | `None`         |
+        |&lt;img width=400/&gt;|&lt;img width=250/&gt;|&lt;img width=1000/&gt;|&lt;img width=550/&gt;|
+
+        ## Returns
+        ---
+        `None`
+        &#39;&#39;&#39;
+        assert max_val &lt; 100, &#39;value must be less than 100&#39;
+        val=int(2*max_val)
+        msg_code = self.msg_code_dict[&#39;set_pose_noise&#39;]
+        msg = self.format_msg(bytearray([msg_code,self.ASCII_OFFSET+val]))
+        self.xb.command(msg, remote_device)
+
+
+    def set_sync_noise(self, max_val, remote_device = None):
+        &#39;&#39;&#39;
+        ## Description
+        ---
+        Sets noise on synchronization time for gait interp mode
+
+        ## Arguments
+        ---
+
+        | Argument        | Type                                          | Description                                                                | Default Value  |
+        | :------:        | :--:                                          | :---------:                                                                | :-----------:  |
+        | max_val         | `int`                                         | Maximum value of random delay                                              | N/A            |
+        | remote_device   | -- | see class description   | `None`         |
+        |&lt;img width=400/&gt;|&lt;img width=250/&gt;|&lt;img width=1000/&gt;|&lt;img width=550/&gt;|
+
+        ## Returns
+        ---
+        `None`
+        &#39;&#39;&#39;
+        timer_counts = self.convert_to_2_chars(int(max_val/0.128))
+        msg_code = self.msg_code_dict[&#39;set_sync_noise&#39;]
+        msg = self.format_msg(bytearray([msg_code]+timer_counts))
+        self.xb.command(msg, remote_device)
+
+
+    def gait_init(self, gait, delay_ms, gait_num=0, remote_device = None):
+        &#39;&#39;&#39;
+        ## Description
+        ---
+        Sends gait interpolation data to remote smarticles including:
+            1. left and right servo interpolation points (max 15 points each)
+            2. data length
+            3. period between interpolation points
+
+        ## Gait
+        ---
+        Lists of two lists: gaitLpoints and gaitRpoints. These lists must be equal in length and contain at most 15 points
+
+        ## Arguments
+        ---
+
+        | Argument        | Type                                          | Description                                                                | Default Value  |
+        | :------:        | :--:                                          | :---------:                                                                | :-----------:  |
+        | gait            | list of lists of int                          | [gaitLpoints, gaitRpoints]                                                 | N/A            |
+        | period_ms       | `int`                                         | period (ms) between gait points                                            | N/A            |
+        | remote_device   | -- | see class description   | `None`         |
+        |&lt;img width=400/&gt;|&lt;img width=250/&gt;|&lt;img width=1000/&gt;|&lt;img width=550/&gt;|
+
+        ## Returns
+        ---
+        `None`
+        &#39;&#39;&#39;
+        msg_code = bytearray([self.msg_code_dict[&#39;init_gait&#39;]])
+        self.delay_ms = delay_ms
+        self.gait_len = len(gait[0])
+        timer_counts = int(delay_ms/0.128)
+        gaitL=gait[0]
+        gaitR=gait[1]
+        gaitL = [int(x+self.ASCII_OFFSET) for x in gaitL]
+        gaitR = [int(x+self.ASCII_OFFSET) for x in gaitR]
+        assert len(gaitL)==len(gaitR),&#39;Gait lists must be same length&#39;
+        gait_points = self.gait_len+self.ASCII_OFFSET
+        n = gait_num +self.ASCII_OFFSET
+        delay = self.convert_to_2_chars(timer_counts)
+        msg=  self.format_msg(msg_code+bytearray([n, gait_points]+delay+gaitL+gaitR))
+        self.xb.command(msg, remote_device)
+        time.sleep(0.1) #ensure messages are not dropped as buffer isn&#39;t implemented yet
+
+    def select_gait(self, n, remote_device = None):
+        &#39;&#39;&#39;
+        ## Description
+        ---
+        Selects gait number of smarticle to execute
+
+        ## Arguments
+        ---
+
+        | Argument        | Type                                          | Description                                                                | Default Value  |
+        | :------:        | :--:                                          | :---------:                                                                | :-----------:  |
+        | n       | `int`                                         | gait number for smarticle to execute                                           | N/A            |
+        | remote_device   | -- | see class description   | `None`         |
+        |&lt;img width=400/&gt;|&lt;img width=250/&gt;|&lt;img width=1000/&gt;|&lt;img width=550/&gt;|
+
+        ## Returns
+        ---
+        `None`
+        &#39;&#39;&#39;
+        msg_code = self.msg_code_dict[&#39;select_gait&#39;]
+        msg = self.format_msg(bytearray([msg_code,self.ASCII_OFFSET+n]))
+        self.xb.command(msg, remote_device)
+
+
+    def sync_thread_target(self,sync_period_s, keep_time):
+        &#39;&#39;&#39;
+        ## Description
+        ---
+        Thread to keep gaits in sync. Not used directly by user but called in `init_sync_thread`
+        
+        &#39;&#39;&#39;
+        time_adjust_s=sync_period_s-0.0357 #subtract 35ms based on results from timing experiments
+        msg = bytearray(b&#39;\x11&#39;)
+        #threading.event.wait() blocks until it is a) set and then returns True or b) the specified timeout elapses in which it retrusn nothing
+        while self.sync_flag.wait() and not self.timer_counts.wait(timeout=(time_adjust_s)):
+                self.xb.broadcast(msg)
+                if keep_time:
+                    t = time.time()
+                    with self.lock:
+                        self.sync_time_list.append(t)
+
+
+
+    def init_sync_thread(self, keep_time=False):
+        &#39;&#39;&#39;
+        ## Description
+        ---
+        Initializes gait sync thread. Must be called every time the gait sequence is updated
+        &#39;&#39;&#39;
+        # calculate sync period: approximately 3s but must be a multiple of the gait delay
+        self.sync_period_s = (self.gait_len*self.delay_ms)/1000
+        print(&#39;sync_period: {}&#39;.format(self.sync_period_s))
+        if keep_time:
+            self.sync_time_list =[]
+        self.sync_thread = threading.Thread(target=self.sync_thread_target, args= (self.sync_period_s,keep_time),  daemon = True)
+        self.timer_counts = threading.Event()
+        self.sync_flag = threading.Event()
+        self.sync_thread.start()
+
+    def start_sync(self):
+        &#39;&#39;&#39;
+        ## Description
+        ---
+        starts gait sequence and sync thread
+
+        ## Returns
+        ---
+        `None`
+        &#39;&#39;&#39;
+        delay_t = self.delay_ms/3000
+        #starts gait sequence
+        self.set_servos(1)
+        #wait 1/3 of gait delay to begin sync sequene
+        time.sleep(delay_t)
+        #set sync flag so that it returns True and stops blocking
+        self.sync_flag.set()
+
+    def stop_sync(self):
+        &#39;&#39;&#39;
+        ## Description
+        ---
+        stops gait sequence and pauses gait sync thread
+
+        ## Returns
+        ---
+        `None`
+        &#39;&#39;&#39;
+        #stop gait sequence
+        self.set_servos(0)
+        #cause sync_flag.wait() to block
+        self.sync_flag.clear()</code></pre>
+</details>
+<h3>Methods</h3>
+<dl>
+<dt id="pysmarticle.SmarticleSwarm.build_network"><code class="name flex">
+<span>def <span class="ident">build_network</span></span>(<span>self, exp_n_smarticles=None)</span>
+</code></dt>
+<dd>
+<div class="desc"><h2 id="description">Description</h2>
+<hr>
+<p>Clears <code>devices</code> dictionary as well as all devices on network.
+Discovers remote devices on network, initializes dictionary of all connected devices.
+Will ask for retries if expected no of smarticles is not discovered
+modified from Digi XBee example DiscoverDevicesSample.py</p>
+<h2 id="arguments">Arguments</h2>
+<hr>
+<table>
+<thead>
+<tr>
+<th align="center">Argument</th>
+<th align="center">Type</th>
+<th align="center">Description</th>
+<th align="center">Default Value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="center">exp_n_smarticles</td>
+<td align="center"><code>int</code></td>
+<td align="center">Expected number of smarticles to discover</td>
+<td align="center">None</td>
+</tr>
+<tr>
+<td align="center"><img width=400/></td>
+<td align="center"><img width=250/></td>
+<td align="center"><img width=1000/></td>
+<td align="center"><img width=550/></td>
+</tr>
+</tbody>
+</table>
+<h2 id="returns">Returns</h2>
+<hr>
+<p><code>None</code></p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def build_network(self, exp_n_smarticles=None):
+    &#39;&#39;&#39;
+    ## Description
+    ---
+    Clears `devices` dictionary as well as all devices on network.
+    Discovers remote devices on network, initializes dictionary of all connected devices.
+    Will ask for retries if expected no of smarticles is not discovered
+    modified from Digi XBee example DiscoverDevicesSample.py
+
+    ## Arguments
+    ---
+
+    | Argument                        | Type     | Description                                | Default Value    |
+    | :------:                        | :--:     | :---------:                                | :-----------:    |
+    | exp_n_smarticles               | `int`    | Expected number of smarticles to discover  | None             |
+    |&lt;img width=400/&gt;|&lt;img width=250/&gt;|&lt;img width=1000/&gt;|&lt;img width=550/&gt;|
+
+    ## Returns
+    ---
+    `None`
+    &#39;&#39;&#39;
+    self.xb.discover()
+    if exp_n_smarticles != None:
+        if (len(self.xb.devices))&lt;exp_n_smarticles:
+            inp= input(&#39;Only discovered {} out of {} expected Smarticles. Retry discovery (Y/N)\n&#39;.format(len(self.xb.devices),exp_n_smarticles))
+            if inp[0].upper()==&#39;Y&#39;:
+                self.build_network(exp_n_smarticles)
+            else:
+                #purge Smarticle Xbee buffer
+                time.sleep(0.5)
+                self.xb.broadcast(&#39;\n&#39;)
+                time.sleep(0.5)
+                print(&#39;Network Discovery Ended\n&#39;)
+        else:
+            #purge Smarticle Xbee buffer
+            print(&#39;Successfully discovered {} out of {} expected Smarticles\n&#39;.format(len(self.xb.devices),exp_n_smarticles))
+            time.sleep(0.5)
+            self.xb.broadcast(&#39;\n&#39;)
+            time.sleep(0.5)
+            print(&#39;Network Discovery Ended\n&#39;)
+    else:
+        #purge Smarticle Xbee buffer
+        time.sleep(0.5)
+        self.xb.broadcast(&#39;\n&#39;)
+        time.sleep(0.5)
+        print(&#39;Network Discovery Ended\n&#39;)</code></pre>
+</details>
+</dd>
+<dt id="pysmarticle.SmarticleSwarm.close"><code class="name flex">
+<span>def <span class="ident">close</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"><h2 id="description">Description</h2>
+<hr>
+<p>closes serial connection to XBee</p>
+<h2 id="returns">Returns</h2>
+<hr>
+<p><code>None</code></p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def close(self):
+    &#39;&#39;&#39;
+    ## Description
+    ---
+    closes serial connection to XBee
+
+    ## Returns
+    ---
+    `None`
+    &#39;&#39;&#39;
+    self.xb.close_base()</code></pre>
+</details>
+</dd>
+<dt id="pysmarticle.SmarticleSwarm.gait_init"><code class="name flex">
+<span>def <span class="ident">gait_init</span></span>(<span>self, gait, delay_ms, gait_num=0, remote_device=None)</span>
+</code></dt>
+<dd>
+<div class="desc"><h2 id="description">Description</h2>
+<hr>
+<p>Sends gait interpolation data to remote smarticles including:
+1. left and right servo interpolation points (max 15 points each)
+2. data length
+3. period between interpolation points</p>
+<h2 id="gait">Gait</h2>
+<hr>
+<p>Lists of two lists: gaitLpoints and gaitRpoints. These lists must be equal in length and contain at most 15 points</p>
+<h2 id="arguments">Arguments</h2>
+<hr>
+<table>
+<thead>
+<tr>
+<th align="center">Argument</th>
+<th align="center">Type</th>
+<th align="center">Description</th>
+<th align="center">Default Value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="center">gait</td>
+<td align="center">list of lists of int</td>
+<td align="center">[gaitLpoints, gaitRpoints]</td>
+<td align="center">N/A</td>
+</tr>
+<tr>
+<td align="center">period_ms</td>
+<td align="center"><code>int</code></td>
+<td align="center">period (ms) between gait points</td>
+<td align="center">N/A</td>
+</tr>
+<tr>
+<td align="center">remote_device</td>
+<td align="center">&ndash;</td>
+<td align="center">see class description</td>
+<td align="center"><code>None</code></td>
+</tr>
+<tr>
+<td align="center"><img width=400/></td>
+<td align="center"><img width=250/></td>
+<td align="center"><img width=1000/></td>
+<td align="center"><img width=550/></td>
+</tr>
+</tbody>
+</table>
+<h2 id="returns">Returns</h2>
+<hr>
+<p><code>None</code></p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def gait_init(self, gait, delay_ms, gait_num=0, remote_device = None):
+    &#39;&#39;&#39;
+    ## Description
+    ---
+    Sends gait interpolation data to remote smarticles including:
+        1. left and right servo interpolation points (max 15 points each)
+        2. data length
+        3. period between interpolation points
+
+    ## Gait
+    ---
+    Lists of two lists: gaitLpoints and gaitRpoints. These lists must be equal in length and contain at most 15 points
+
+    ## Arguments
+    ---
+
+    | Argument        | Type                                          | Description                                                                | Default Value  |
+    | :------:        | :--:                                          | :---------:                                                                | :-----------:  |
+    | gait            | list of lists of int                          | [gaitLpoints, gaitRpoints]                                                 | N/A            |
+    | period_ms       | `int`                                         | period (ms) between gait points                                            | N/A            |
+    | remote_device   | -- | see class description   | `None`         |
+    |&lt;img width=400/&gt;|&lt;img width=250/&gt;|&lt;img width=1000/&gt;|&lt;img width=550/&gt;|
+
+    ## Returns
+    ---
+    `None`
+    &#39;&#39;&#39;
+    msg_code = bytearray([self.msg_code_dict[&#39;init_gait&#39;]])
+    self.delay_ms = delay_ms
+    self.gait_len = len(gait[0])
+    timer_counts = int(delay_ms/0.128)
+    gaitL=gait[0]
+    gaitR=gait[1]
+    gaitL = [int(x+self.ASCII_OFFSET) for x in gaitL]
+    gaitR = [int(x+self.ASCII_OFFSET) for x in gaitR]
+    assert len(gaitL)==len(gaitR),&#39;Gait lists must be same length&#39;
+    gait_points = self.gait_len+self.ASCII_OFFSET
+    n = gait_num +self.ASCII_OFFSET
+    delay = self.convert_to_2_chars(timer_counts)
+    msg=  self.format_msg(msg_code+bytearray([n, gait_points]+delay+gaitL+gaitR))
+    self.xb.command(msg, remote_device)
+    time.sleep(0.1) #ensure messages are not dropped as buffer isn&#39;t implemented yet</code></pre>
+</details>
+</dd>
+<dt id="pysmarticle.SmarticleSwarm.init_sync_thread"><code class="name flex">
+<span>def <span class="ident">init_sync_thread</span></span>(<span>self, keep_time=False)</span>
+</code></dt>
+<dd>
+<div class="desc"><h2 id="description">Description</h2>
+<hr>
+<p>Initializes gait sync thread. Must be called every time the gait sequence is updated</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def init_sync_thread(self, keep_time=False):
+    &#39;&#39;&#39;
+    ## Description
+    ---
+    Initializes gait sync thread. Must be called every time the gait sequence is updated
+    &#39;&#39;&#39;
+    # calculate sync period: approximately 3s but must be a multiple of the gait delay
+    self.sync_period_s = (self.gait_len*self.delay_ms)/1000
+    print(&#39;sync_period: {}&#39;.format(self.sync_period_s))
+    if keep_time:
+        self.sync_time_list =[]
+    self.sync_thread = threading.Thread(target=self.sync_thread_target, args= (self.sync_period_s,keep_time),  daemon = True)
+    self.timer_counts = threading.Event()
+    self.sync_flag = threading.Event()
+    self.sync_thread.start()</code></pre>
+</details>
+</dd>
+<dt id="pysmarticle.SmarticleSwarm.select_gait"><code class="name flex">
+<span>def <span class="ident">select_gait</span></span>(<span>self, n, remote_device=None)</span>
+</code></dt>
+<dd>
+<div class="desc"><h2 id="description">Description</h2>
+<hr>
+<p>Selects gait number of smarticle to execute</p>
+<h2 id="arguments">Arguments</h2>
+<hr>
+<table>
+<thead>
+<tr>
+<th align="center">Argument</th>
+<th align="center">Type</th>
+<th align="center">Description</th>
+<th align="center">Default Value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="center">n</td>
+<td align="center"><code>int</code></td>
+<td align="center">gait number for smarticle to execute</td>
+<td align="center">N/A</td>
+</tr>
+<tr>
+<td align="center">remote_device</td>
+<td align="center">&ndash;</td>
+<td align="center">see class description</td>
+<td align="center"><code>None</code></td>
+</tr>
+<tr>
+<td align="center"><img width=400/></td>
+<td align="center"><img width=250/></td>
+<td align="center"><img width=1000/></td>
+<td align="center"><img width=550/></td>
+</tr>
+</tbody>
+</table>
+<h2 id="returns">Returns</h2>
+<hr>
+<p><code>None</code></p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def select_gait(self, n, remote_device = None):
+    &#39;&#39;&#39;
+    ## Description
+    ---
+    Selects gait number of smarticle to execute
+
+    ## Arguments
+    ---
+
+    | Argument        | Type                                          | Description                                                                | Default Value  |
+    | :------:        | :--:                                          | :---------:                                                                | :-----------:  |
+    | n       | `int`                                         | gait number for smarticle to execute                                           | N/A            |
+    | remote_device   | -- | see class description   | `None`         |
+    |&lt;img width=400/&gt;|&lt;img width=250/&gt;|&lt;img width=1000/&gt;|&lt;img width=550/&gt;|
+
+    ## Returns
+    ---
+    `None`
+    &#39;&#39;&#39;
+    msg_code = self.msg_code_dict[&#39;select_gait&#39;]
+    msg = self.format_msg(bytearray([msg_code,self.ASCII_OFFSET+n]))
+    self.xb.command(msg, remote_device)</code></pre>
+</details>
+</dd>
+<dt id="pysmarticle.SmarticleSwarm.send_ids"><code class="name flex">
+<span>def <span class="ident">send_ids</span></span>(<span>self, asynch=False)</span>
+</code></dt>
+<dd>
+<div class="desc"><h2 id="description">Description</h2>
+<hr>
+<p>Sends IDs to smarticles</p>
+<h2 id="arguments">Arguments</h2>
+<hr>
+<table>
+<thead>
+<tr>
+<th align="center">Argument</th>
+<th align="center">Type</th>
+<th align="center">Description</th>
+<th align="center">Default Value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="center">asynch</td>
+<td align="center"><code>bool</code></td>
+<td align="center">Determines whether to send asynchronously (without ack)</td>
+<td align="center">False</td>
+</tr>
+<tr>
+<td align="center"><img width=400/></td>
+<td align="center"><img width=250/></td>
+<td align="center"><img width=1000/></td>
+<td align="center"><img width=550/></td>
+</tr>
+</tbody>
+</table>
+<h2 id="returns">Returns</h2>
+<hr>
+<p><code>None</code></p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def send_ids(self,asynch=False):
+    &#39;&#39;&#39;
+    ## Description
+    ---
+    Sends IDs to smarticles
+
+    ## Arguments
+    ---
+
+    | Argument        | Type                      | Description                                                                   | Default Value |
+    | :------:        | :--:                      | :---------:                                                                   | :-----------: |
+    | asynch           | `bool`                    | Determines whether to send asynchronously (without ack)  | False         |
+    |&lt;img width=400/&gt;|&lt;img width=250/&gt;|&lt;img width=1000/&gt;|&lt;img width=550/&gt;|
+
+    ## Returns
+    ---
+    `None`
+    &#39;&#39;&#39;
+    msg_code = self.msg_code_dict[&#39;set_id&#39;]
+    for id in self.xb.devices.keys():
+        msg = self.format_msg(bytearray([msg_code,self.ASCII_OFFSET+id]))
+        self.xb.send(self.xb.devices[id],msg,asynch=False)</code></pre>
+</details>
+</dd>
+<dt id="pysmarticle.SmarticleSwarm.set_debug"><code class="name flex">
+<span>def <span class="ident">set_debug</span></span>(<span>self, state, remote_device=None)</span>
+</code></dt>
+<dd>
+<div class="desc"><h2 id="description">Description</h2>
+<hr>
+<p>Sets debug level of smarticle</p>
+<h2 id="arguments">Arguments</h2>
+<hr>
+<table>
+<thead>
+<tr>
+<th align="center">Argument</th>
+<th align="center">Type</th>
+<th align="center">Description</th>
+<th align="center">Default Value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="center">debug</td>
+<td align="center"><code>int</code></td>
+<td align="center">Value: 0,1,2. Sets level of debug output. 0 is no output, 1 is limited output, 2 is full output</td>
+<td align="center">N/A</td>
+</tr>
+<tr>
+<td align="center">remote_device</td>
+<td align="center">&ndash;</td>
+<td align="center">see class description</td>
+<td align="center"><code>None</code></td>
+</tr>
+<tr>
+<td align="center"><img width=400/></td>
+<td align="center"><img width=250/></td>
+<td align="center"><img width=1000/></td>
+<td align="center"><img width=550/></td>
+</tr>
+</tbody>
+</table>
+<h2 id="returns">Returns</h2>
+<hr>
+<p><code>None</code></p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def set_debug(self, state, remote_device=None):
+    &#39;&#39;&#39;
+    ## Description
+    ---
+    Sets debug level of smarticle
+
+    ## Arguments
+    ---
+
+    | Argument        | Type                                          | Description                                                              | Default Value  |
+    | :------:        | :--:                                          | :---------:                                                              | :-----------:  |
+    | debug          | `int`                                        | Value: 0,1,2. Sets level of debug output. 0 is no output, 1 is limited output, 2 is full output | N/A            |
+    | remote_device   | -- | see class description | `None`         |
+    |&lt;img width=400/&gt;|&lt;img width=250/&gt;|&lt;img width=1000/&gt;|&lt;img width=550/&gt;|
+
+
+
+    ## Returns
+    ---
+    `None`
+    &#39;&#39;&#39;
+    msg_code = self.msg_code_dict[&#39;set_debug&#39;]
+    if state not in [0,1,2]:
+        state = 0
+    msg = self.format_msg(bytearray([msg_code,self.ASCII_OFFSET+state]))
+    self.xb.command(msg, remote_device)</code></pre>
+</details>
+</dd>
+<dt id="pysmarticle.SmarticleSwarm.set_delay"><code class="name flex">
+<span>def <span class="ident">set_delay</span></span>(<span>self, state=-1, max_val=-1, remote_device=None)</span>
+</code></dt>
+<dd>
+<div class="desc"><h2 id="description">Description</h2>
+<hr>
+<p>Enables/disables random delay in stream servo mode for smarticles.
+Writing
+value of negative
+one (-1) leaves that
+field as is on the smarticle</p>
+<h2 id="arguments">Arguments</h2>
+<hr>
+<table>
+<thead>
+<tr>
+<th align="center">Argument</th>
+<th align="center">Type</th>
+<th align="center">Description</th>
+<th align="center">Default Value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="center">state</td>
+<td align="center"><code>int</code></td>
+<td align="center">Values: 0,1 see note about negative values above</td>
+<td align="center">-1</td>
+</tr>
+<tr>
+<td align="center">max_val</td>
+<td align="center"><code>int</code></td>
+<td align="center">Maximum value of random delay</td>
+<td align="center">-1</td>
+</tr>
+<tr>
+<td align="center">remote_device</td>
+<td align="center">&ndash;</td>
+<td align="center">see class description</td>
+<td align="center"><code>None</code></td>
+</tr>
+<tr>
+<td align="center"><img width=400/></td>
+<td align="center"><img width=250/></td>
+<td align="center"><img width=1000/></td>
+<td align="center"><img width=550/></td>
+</tr>
+</tbody>
+</table>
+<h2 id="returns">Returns</h2>
+<hr>
+<p><code>None</code></p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def set_delay(self, state=-1, max_val=-1, remote_device = None):
+    &#39;&#39;&#39;
+    ## Description
+    ---
+    Enables/disables random delay in stream servo mode for smarticles.
+    Writing  value of negative  one (-1) leaves that  field as is on the smarticle
+
+    ## Arguments
+    ---
+
+    | Argument        | Type                                          | Description                                                                | Default Value  |
+    | :------:        | :--:                                          | :---------:                                                                | :-----------:  |
+    | state           | `int`                                         | Values: 0,1 see note about negative values above                           | -1             |
+    | max_val         | `int`                                         | Maximum value of random delay                                              | -1             |
+    | remote_device   | -- | see class description   | `None`         |
+    |&lt;img width=400/&gt;|&lt;img width=250/&gt;|&lt;img width=1000/&gt;|&lt;img width=550/&gt;|
+
+    ## Returns
+    ---
+    `None`
+    &#39;&#39;&#39;
+    msg=&#39;:SD:{},{}\n&#39;.format(int(state),int(max_val))
+    self.xb.command(msg, remote_device)</code></pre>
+</details>
+</dd>
+<dt id="pysmarticle.SmarticleSwarm.set_light_plank"><code class="name flex">
+<span>def <span class="ident">set_light_plank</span></span>(<span>self, state, remote_device=None)</span>
+</code></dt>
+<dd>
+<div class="desc"><h2 id="description">Description</h2>
+<hr>
+<p>Enables/Disables light plank (i.e. smarticles planking when light sensors are above set threshold)</p>
+<h2 id="arguments">Arguments</h2>
+<hr>
+<table>
+<thead>
+<tr>
+<th align="center">Argument</th>
+<th align="center">Type</th>
+<th align="center">Description</th>
+<th align="center">Default Value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="center">state</td>
+<td align="center"><code>bool</code></td>
+<td align="center">Value: 1 or 0. enables/disables light planking</td>
+<td align="center">N/A</td>
+</tr>
+<tr>
+<td align="center">remote_device</td>
+<td align="center">&ndash;</td>
+<td align="center">see class description</td>
+<td align="center"><code>None</code></td>
+</tr>
+<tr>
+<td align="center"><img width=400/></td>
+<td align="center"><img width=250/></td>
+<td align="center"><img width=1000/></td>
+<td align="center"><img width=550/></td>
+</tr>
+</tbody>
+</table>
+<h2 id="returns">Returns</h2>
+<hr>
+<p><code>None</code></p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def set_light_plank(self, state, remote_device = None):
+    &#39;&#39;&#39;
+    ## Description
+    ---
+    Enables/Disables light plank (i.e. smarticles planking when light sensors are above set threshold)
+
+    ## Arguments
+    ---
+
+    | Argument        | Type                                          | Description                                                              | Default Value  |
+    | :------:        | :--:                                          | :---------:                                                              | :-----------:  |
+    | state           | `bool`                                         | Value: 1 or 0. enables/disables light planking                          | N/A            |
+    | remote_device   | -- | see class description | `None`         |
+    |&lt;img width=400/&gt;|&lt;img width=250/&gt;|&lt;img width=1000/&gt;|&lt;img width=550/&gt;|
+
+    ## Returns
+    ---
+    `None`
+    &#39;&#39;&#39;
+
+    msg_code = self.msg_code_dict[&#39;toggle_light_plank&#39;]
+    if state != 1:
+        state = 0
+    msg = self.format_msg(bytearray([msg_code,self.ASCII_OFFSET+state]))
+    self.xb.command(msg, remote_device)</code></pre>
+</details>
+</dd>
+<dt id="pysmarticle.SmarticleSwarm.set_mode"><code class="name flex">
+<span>def <span class="ident">set_mode</span></span>(<span>self, state, remote_device=None)</span>
+</code></dt>
+<dd>
+<div class="desc"><h2 id="description">Description</h2>
+<hr>
+<p>Changes operating mode of smarticle(s)</p>
+<h2 id="values">Values</h2>
+<hr>
+<table>
+<thead>
+<tr>
+<th align="center">Value</th>
+<th align="center">Mode</th>
+<th align="center">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="center">0</td>
+<td align="center">Idle</td>
+<td align="center">Smarticle does nothing. Servos detach and no data is transmitted</td>
+</tr>
+<tr>
+<td align="center">1</td>
+<td align="center">Stream servos</td>
+<td align="center">Servo points streamed (still in development)</td>
+</tr>
+<tr>
+<td align="center">2</td>
+<td align="center">Gait interpolate</td>
+<td align="center">Iterate through interpolated points sent to smarticle</td>
+</tr>
+<tr>
+<td align="center"><img width=250/></td>
+<td align="center"><img width=400/></td>
+<td align="center"><img width=1000/></td>
+</tr>
+</tbody>
+</table>
+<h2 id="arguments">Arguments</h2>
+<hr>
+<table>
+<thead>
+<tr>
+<th align="center">Argument</th>
+<th align="center">Type</th>
+<th align="center">Description</th>
+<th align="center">Default Value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="center">state</td>
+<td align="center"><code>int</code></td>
+<td align="center">Values: 0-2. 0: inactive, 1: stream servo (unfinished), 2:gait interpolate</td>
+<td align="center">N/A</td>
+</tr>
+<tr>
+<td align="center">remote_device</td>
+<td align="center">&ndash;</td>
+<td align="center">see class description</td>
+<td align="center"><code>None</code></td>
+</tr>
+<tr>
+<td align="center"><img width=400/></td>
+<td align="center"><img width=250/></td>
+<td align="center"><img width=1000/></td>
+<td align="center"><img width=550/></td>
+</tr>
+</tbody>
+</table>
+<h2 id="returns">Returns</h2>
+<hr>
+<p><code>None</code></p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def set_mode(self, state, remote_device = None):
+    &#39;&#39;&#39;
+    ## Description
+    ---
+    Changes operating mode of smarticle(s)
+
+    ## Values
+    ---
+
+    | Value | Mode             | Description                                                      |
+    | :---: | :--:             | :---------:                                                      |
+    | 0     | Idle             | Smarticle does nothing. Servos detach and no data is transmitted |
+    | 1     | Stream servos    | Servo points streamed (still in development)                     |
+    | 2     | Gait interpolate | Iterate through interpolated points sent to smarticle            |
+    |&lt;img width=250/&gt;|&lt;img width=400/&gt;|&lt;img width=1000/&gt;|
+
+
+    ## Arguments
+    ---
+
+    | Argument        | Type                                          | Description                                                                | Default Value  |
+    | :------:        | :--:                                          | :---------:                                                                | :-----------:  |
+    | state           | `int`                                         | Values: 0-2. 0: inactive, 1: stream servo (unfinished), 2:gait interpolate | N/A            |
+    | remote_device   | -- | see class description   | `None`         |
+    |&lt;img width=400/&gt;|&lt;img width=250/&gt;|&lt;img width=1000/&gt;|&lt;img width=550/&gt;|
+
+    ## Returns
+    ---
+    `None`
+    &#39;&#39;&#39;
+    assert (state&gt;=0 and state&lt;=2),&#34;Mode must between 0-2&#34;
+    msg_code = self.msg_code_dict[&#39;set_mode&#39;]
+    msg = self.format_msg(bytearray([msg_code,self.ASCII_OFFSET+state]))
+    self.xb.command(msg, remote_device)</code></pre>
+</details>
+</dd>
+<dt id="pysmarticle.SmarticleSwarm.set_plank"><code class="name flex">
+<span>def <span class="ident">set_plank</span></span>(<span>self, state_arr, remote_device=None)</span>
+</code></dt>
+<dd>
+<div class="desc"><h2 id="description">Description</h2>
+<hr>
+<p>Sets smarticle to plank or deplank Note: only active when set_servos
+== 1</p>
+<h2 id="arguments">Arguments</h2>
+<hr>
+<table>
+<thead>
+<tr>
+<th align="center">Argument</th>
+<th align="center">Type</th>
+<th align="center">Description</th>
+<th align="center">Default Value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="center">state</td>
+<td align="center"><code>bool</code></td>
+<td align="center">Values: 0,1. 0: deplank 1: plank</td>
+<td align="center">N/A</td>
+</tr>
+<tr>
+<td align="center">remote_device</td>
+<td align="center">&ndash;</td>
+<td align="center">see class description</td>
+<td align="center"><code>None</code></td>
+</tr>
+<tr>
+<td align="center"><img width=400/></td>
+<td align="center"><img width=250/></td>
+<td align="center"><img width=1000/></td>
+<td align="center"><img width=550/></td>
+</tr>
+</tbody>
+</table>
+<h2 id="returns">Returns</h2>
+<hr>
+<p><code>None</code></p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def set_plank(self, state_arr, remote_device = None):
+    &#39;&#39;&#39;
+    ## Description
+    ---
+    Sets smarticle to plank or deplank Note: only active when set_servos  == 1
+
+    ## Arguments
+    ---
+
+    | Argument        | Type                                          | Description                                                                | Default Value  |
+    | :------:        | :--:                                          | :---------:                                                                | :-----------:  |
+    | state           | `bool`                                         | Values: 0,1. 0: deplank 1: plank                                           | N/A            |
+    | remote_device   | -- | see class description   | `None`         |
+    |&lt;img width=400/&gt;|&lt;img width=250/&gt;|&lt;img width=1000/&gt;|&lt;img width=550/&gt;|
+
+    ## Returns
+    ---
+    `None`
+    &#39;&#39;&#39;
+    msg_code = self.msg_code_dict[&#39;set_plank&#39;]
+    l = len(state_arr)+self.ASCII_OFFSET
+    state_arr = list((state_arr+self.ASCII_OFFSET).flatten())
+    msg = self.format_msg(bytearray([msg_code,l]+state_arr))
+    self.xb.command(msg, remote_device)</code></pre>
+</details>
+</dd>
+<dt id="pysmarticle.SmarticleSwarm.set_pose"><code class="name flex">
+<span>def <span class="ident">set_pose</span></span>(<span>self, posL, posR, remote_device=None)</span>
+</code></dt>
+<dd>
+<div class="desc"><h2 id="description">Description</h2>
+<hr>
+<p>Sets smarticle to specified servo positions</p>
+<h2 id="arguments">Arguments</h2>
+<hr>
+<table>
+<thead>
+<tr>
+<th align="center">Argument</th>
+<th align="center">Type</th>
+<th align="center">Description</th>
+<th align="center">Default Value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="center">posL</td>
+<td align="center"><code>int</code></td>
+<td align="center">Left servo angle: 0-180 deg</td>
+<td align="center">N/A</td>
+</tr>
+<tr>
+<td align="center">posR</td>
+<td align="center"><code>int</code></td>
+<td align="center">Right servo angle: 0-180 deg</td>
+<td align="center">N/A</td>
+</tr>
+<tr>
+<td align="center">remote_device</td>
+<td align="center">&ndash;</td>
+<td align="center">see class description</td>
+<td align="center"><code>None</code></td>
+</tr>
+<tr>
+<td align="center"><img width=400/></td>
+<td align="center"><img width=250/></td>
+<td align="center"><img width=1000/></td>
+<td align="center"><img width=550/></td>
+</tr>
+</tbody>
+</table>
+<h2 id="returns">Returns</h2>
+<hr>
+<p><code>None</code></p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def set_pose(self, posL, posR, remote_device = None):
+    &#39;&#39;&#39;
+    ## Description
+    ---
+    Sets smarticle to specified servo positions
+
+    ## Arguments
+    ---
+
+    | Argument        | Type                                          | Description                                                                | Default Value  |
+    | :------:        | :--:                                          | :---------:                                                                | :-----------:  |
+    | posL            | `int`                                         | Left servo angle: 0-180 deg                                                | N/A            |
+    | posR            | `int`                                         | Right servo angle: 0-180 deg                                               | N/A            |
+    | remote_device   | -- | see class description   | `None`         |
+    |&lt;img width=400/&gt;|&lt;img width=250/&gt;|&lt;img width=1000/&gt;|&lt;img width=550/&gt;|
+
+    ## Returns
+    ---
+    `None`
+    &#39;&#39;&#39;
+    msg_code = self.msg_code_dict[&#39;set_pose&#39;]
+    msg = self.format_msg(bytearray([msg_code,self.ASCII_OFFSET+posL,self.ASCII_OFFSET+posR]))
+    self.xb.command(msg, remote_device)</code></pre>
+</details>
+</dd>
+<dt id="pysmarticle.SmarticleSwarm.set_pose_epsilon"><code class="name flex">
+<span>def <span class="ident">set_pose_epsilon</span></span>(<span>self, eps, remote_device=None)</span>
+</code></dt>
+<dd>
+<div class="desc"><h2 id="description">Description</h2>
+<hr>
+<p>Sets epsilon value for smarticle poses. The smarticle will move the arm
+randomly propoportional to epsilon (0-1). For example, if epsilon is 0.1,
+the smarticle will move its arm to a random angle 10% of the time</p>
+<h2 id="arguments">Arguments</h2>
+<hr>
+<table>
+<thead>
+<tr>
+<th align="center">Argument</th>
+<th align="center">Type</th>
+<th align="center">Description</th>
+<th align="center">Default Value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="center">eps</td>
+<td align="center">'float'</td>
+<td align="center">Value: 0-1, determines proportion of random arm movements</td>
+<td align="center">N/A</td>
+</tr>
+<tr>
+<td align="center">remote_device</td>
+<td align="center">&ndash;</td>
+<td align="center">see class description</td>
+<td align="center"><code>None</code></td>
+</tr>
+<tr>
+<td align="center"><img width=400/></td>
+<td align="center"><img width=250/></td>
+<td align="center"><img width=1000/></td>
+<td align="center"><img width=550/></td>
+</tr>
+</tbody>
+</table>
+<h2 id="returns">Returns</h2>
+<hr>
+<p><code>None</code></p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def set_pose_epsilon(self, eps, remote_device = None):
+    &#39;&#39;&#39;
+    ## Description
+    ---
+    Sets epsilon value for smarticle poses. The smarticle will move the arm
+    randomly propoportional to epsilon (0-1). For example, if epsilon is 0.1,
+    the smarticle will move its arm to a random angle 10% of the time
+
+    ## Arguments
+    ---
+
+    | Argument        | Type                                          | Description                                                              | Default Value  |
+    | :------:        | :--:                                          | :---------:                                                              | :-----------:  |
+    | eps             | &#39;float&#39;                                       | Value: 0-1, determines proportion of random arm movements                | N/A            |
+    | remote_device   | -- | see class description | `None`         |
+    |&lt;img width=400/&gt;|&lt;img width=250/&gt;|&lt;img width=1000/&gt;|&lt;img width=550/&gt;|
+
+
+    ## Returns
+    ---
+    `None`
+    &#39;&#39;&#39;
+    # ensure eps is between 0 and 1
+    eps = 100*round(np.clip(eps,0,1),2)
+    msg_code = self.msg_code_dict[&#39;toggle_light_plank&#39;]
+    if state != 1:
+        state = 0
+    msg = self.format_msg(bytearray([msg_code,self.ASCII_OFFSET+eps]))
+    self.xb.command(msg, remote_device)</code></pre>
+</details>
+</dd>
+<dt id="pysmarticle.SmarticleSwarm.set_pose_noise"><code class="name flex">
+<span>def <span class="ident">set_pose_noise</span></span>(<span>self, max_val, remote_device=None)</span>
+</code></dt>
+<dd>
+<div class="desc"><h2 id="description">Description</h2>
+<hr>
+<p>Sets noise on servo positions (noisy arm angles)</p>
+<h2 id="arguments">Arguments</h2>
+<hr>
+<table>
+<thead>
+<tr>
+<th align="center">Argument</th>
+<th align="center">Type</th>
+<th align="center">Description</th>
+<th align="center">Default Value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="center">max_val</td>
+<td align="center"><code>int</code></td>
+<td align="center">Maximum value of random noise</td>
+<td align="center">N/A</td>
+</tr>
+<tr>
+<td align="center">remote_device</td>
+<td align="center">&ndash;</td>
+<td align="center">see class description</td>
+<td align="center"><code>None</code></td>
+</tr>
+<tr>
+<td align="center"><img width=400/></td>
+<td align="center"><img width=250/></td>
+<td align="center"><img width=1000/></td>
+<td align="center"><img width=550/></td>
+</tr>
+</tbody>
+</table>
+<h2 id="returns">Returns</h2>
+<hr>
+<p><code>None</code></p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def set_pose_noise(self, max_val, remote_device = None):
+    &#39;&#39;&#39;
+    ## Description
+    ---
+    Sets noise on servo positions (noisy arm angles)
+
+    ## Arguments
+    ---
+
+    | Argument        | Type                                          | Description                                                                | Default Value  |
+    | :------:        | :--:                                          | :---------:                                                                | :-----------:  |
+    | max_val         | `int`                                         | Maximum value of random noise                                              | N/A            |
+    | remote_device   | -- | see class description   | `None`         |
+    |&lt;img width=400/&gt;|&lt;img width=250/&gt;|&lt;img width=1000/&gt;|&lt;img width=550/&gt;|
+
+    ## Returns
+    ---
+    `None`
+    &#39;&#39;&#39;
+    assert max_val &lt; 100, &#39;value must be less than 100&#39;
+    val=int(2*max_val)
+    msg_code = self.msg_code_dict[&#39;set_pose_noise&#39;]
+    msg = self.format_msg(bytearray([msg_code,self.ASCII_OFFSET+val]))
+    self.xb.command(msg, remote_device)</code></pre>
+</details>
+</dd>
+<dt id="pysmarticle.SmarticleSwarm.set_read_sensors"><code class="name flex">
+<span>def <span class="ident">set_read_sensors</span></span>(<span>self, state, remote_device=None)</span>
+</code></dt>
+<dd>
+<div class="desc"><h2 id="description">Description</h2>
+<hr>
+<p>Enables/disables smarticle reading sensors</p>
+<h2 id="arguments">Arguments</h2>
+<hr>
+<table>
+<thead>
+<tr>
+<th align="center">Argument</th>
+<th align="center">Type</th>
+<th align="center">Description</th>
+<th align="center">Default Value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="center">state</td>
+<td align="center"><code>int</code></td>
+<td align="center">Value: 1 or 0. enables/disables reading sensors</td>
+<td align="center">N/A</td>
+</tr>
+<tr>
+<td align="center">remote_device</td>
+<td align="center">&ndash;</td>
+<td align="center">see class description</td>
+<td align="center"><code>None</code></td>
+</tr>
+<tr>
+<td align="center"><img width=400/></td>
+<td align="center"><img width=250/></td>
+<td align="center"><img width=1000/></td>
+<td align="center"><img width=550/></td>
+</tr>
+</tbody>
+</table>
+<h2 id="returns">Returns</h2>
+<hr>
+<p><code>None</code></p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def set_read_sensors(self, state, remote_device = None):
+    &#39;&#39;&#39;
+    ## Description
+    ---
+    Enables/disables smarticle reading sensors
+
+    ## Arguments
+    ---
+
+    | Argument        | Type                                          | Description                                                              | Default Value  |
+    | :------:        | :--:                                          | :---------:                                                              | :-----------:  |
+    | state           | `int`                                        | Value: 1 or 0. enables/disables reading sensors                          | N/A            |
+    | remote_device   | -- | see class description | `None`         |
+    |&lt;img width=400/&gt;|&lt;img width=250/&gt;|&lt;img width=1000/&gt;|&lt;img width=550/&gt;|
+
+
+    ## Returns
+    ---
+    `None`
+    &#39;&#39;&#39;
+    msg_code = self.msg_code_dict[&#39;toggle_read_sensors&#39;]
+    if state != 1:
+        state = 0
+    msg = self.format_msg(bytearray([msg_code,self.ASCII_OFFSET+state]))
+    self.xb.command(msg, remote_device)</code></pre>
+</details>
+</dd>
+<dt id="pysmarticle.SmarticleSwarm.set_sensor_threshold"><code class="name flex">
+<span>def <span class="ident">set_sensor_threshold</span></span>(<span>self, thresh, remote_device=None)</span>
+</code></dt>
+<dd>
+<div class="desc"><h2 id="description">Description</h2>
+<hr>
+<p>Sets sensor threshold that triggers planking</p>
+<h2 id="arguments">Arguments</h2>
+<hr>
+<table>
+<thead>
+<tr>
+<th align="center">Argument</th>
+<th align="center">Type</th>
+<th align="center">Description</th>
+<th align="center">Default Value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="center">thresh</td>
+<td align="center"><code>list of int</code></td>
+<td align="center">Threshold values for PR_front, PR_back, PR_right, current sense</td>
+<td align="center">N/A</td>
+</tr>
+<tr>
+<td align="center">remote_device</td>
+<td align="center">&ndash;</td>
+<td align="center">see class description</td>
+<td align="center"><code>None</code></td>
+</tr>
+<tr>
+<td align="center"><img width=400/></td>
+<td align="center"><img width=250/></td>
+<td align="center"><img width=1000/></td>
+<td align="center"><img width=550/></td>
+</tr>
+</tbody>
+</table>
+<h2 id="returns">Returns</h2>
+<hr>
+<p><code>None</code></p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def set_sensor_threshold(self, thresh, remote_device = None):
+    &#39;&#39;&#39;
+    ## Description
+    ---
+    Sets sensor threshold that triggers planking
+
+    ## Arguments
+    ---
+
+    | Argument        | Type                                          | Description                                                              | Default Value  |
+    | :------:        | :--:                                          | :---------:                                                              | :-----------:  |
+    | thresh          | `list of int`                                 | Threshold values for PR_front, PR_back, PR_right, current sense          | N/A            |
+    | remote_device   | -- | see class description | `None`         |
+    |&lt;img width=400/&gt;|&lt;img width=250/&gt;|&lt;img width=1000/&gt;|&lt;img width=550/&gt;|
+
+
+    ## Returns
+    ---
+    `None`
+    &#39;&#39;&#39;
+    assert len(thresh)==4, &#39;Threshold list must be 4 elements&#39;
+    msg_code = self.msg_code_dict[&#39;set_light_plank_threshold&#39;]
+    val = bytearray()
+    for t in thresh:
+        val+= self.convert_to_2_chars(t)
+    msg = self.format_msg(bytearray([msg_code]+val))
+    self.xb.command(msg, remote_device)</code></pre>
+</details>
+</dd>
+<dt id="pysmarticle.SmarticleSwarm.set_servos"><code class="name flex">
+<span>def <span class="ident">set_servos</span></span>(<span>self, state, remote_device=None)</span>
+</code></dt>
+<dd>
+<div class="desc"><h2 id="description">Description</h2>
+<hr>
+<p>Enables/disables updating of servos. When enabled it also resets the gait interpolation sequence back to its first initial point
+When set_servos ==0, servos can still be controlled using set_pose()</p>
+<h2 id="arguments">Arguments</h2>
+<hr>
+<table>
+<thead>
+<tr>
+<th align="center">Argument</th>
+<th align="center">Type</th>
+<th align="center">Description</th>
+<th align="center">Default Value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="center">state</td>
+<td align="center"><code>int</code></td>
+<td align="center">Value: 1 or 0. enables/disables updating servos in timer interrupt</td>
+<td align="center">N/A</td>
+</tr>
+<tr>
+<td align="center">remote_device</td>
+<td align="center">&ndash;</td>
+<td align="center">see class description</td>
+<td align="center"><code>None</code></td>
+</tr>
+<tr>
+<td align="center"><img width=400/></td>
+<td align="center"><img width=250/></td>
+<td align="center"><img width=1000/></td>
+<td align="center"><img width=550/></td>
+</tr>
+</tbody>
+</table>
+<h2 id="returns">Returns</h2>
+<hr>
+<p><code>None</code></p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def set_servos(self, state, remote_device = None):
+    &#39;&#39;&#39;
+    ## Description
+    ---
+    Enables/disables updating of servos. When enabled it also resets the gait interpolation sequence back to its first initial point
+    When set_servos ==0, servos can still be controlled using set_pose()
+
+    ## Arguments
+    ---
+
+    | Argument        | Type                                          | Description                                                              | Default Value  |
+    | :------:        | :--:                                          | :---------:                                                              | :-----------:  |
+    | state           | `int`                                         | Value: 1 or 0. enables/disables updating servos in timer interrupt       | N/A            |
+    | remote_device   | -- | see class description | `None`         |
+    |&lt;img width=400/&gt;|&lt;img width=250/&gt;|&lt;img width=1000/&gt;|&lt;img width=550/&gt;|
+
+    ## Returns
+    ---
+    `None`
+    &#39;&#39;&#39;
+    msg_code = self.msg_code_dict[&#39;toggle_t4_interrupt&#39;]
+    if state != 1:
+        state = 0
+    msg = self.format_msg(bytearray([msg_code,self.ASCII_OFFSET+state]))
+    self.xb.command(msg, remote_device)</code></pre>
+</details>
+</dd>
+<dt id="pysmarticle.SmarticleSwarm.set_sync_noise"><code class="name flex">
+<span>def <span class="ident">set_sync_noise</span></span>(<span>self, max_val, remote_device=None)</span>
+</code></dt>
+<dd>
+<div class="desc"><h2 id="description">Description</h2>
+<hr>
+<p>Sets noise on synchronization time for gait interp mode</p>
+<h2 id="arguments">Arguments</h2>
+<hr>
+<table>
+<thead>
+<tr>
+<th align="center">Argument</th>
+<th align="center">Type</th>
+<th align="center">Description</th>
+<th align="center">Default Value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="center">max_val</td>
+<td align="center"><code>int</code></td>
+<td align="center">Maximum value of random delay</td>
+<td align="center">N/A</td>
+</tr>
+<tr>
+<td align="center">remote_device</td>
+<td align="center">&ndash;</td>
+<td align="center">see class description</td>
+<td align="center"><code>None</code></td>
+</tr>
+<tr>
+<td align="center"><img width=400/></td>
+<td align="center"><img width=250/></td>
+<td align="center"><img width=1000/></td>
+<td align="center"><img width=550/></td>
+</tr>
+</tbody>
+</table>
+<h2 id="returns">Returns</h2>
+<hr>
+<p><code>None</code></p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def set_sync_noise(self, max_val, remote_device = None):
+    &#39;&#39;&#39;
+    ## Description
+    ---
+    Sets noise on synchronization time for gait interp mode
+
+    ## Arguments
+    ---
+
+    | Argument        | Type                                          | Description                                                                | Default Value  |
+    | :------:        | :--:                                          | :---------:                                                                | :-----------:  |
+    | max_val         | `int`                                         | Maximum value of random delay                                              | N/A            |
+    | remote_device   | -- | see class description   | `None`         |
+    |&lt;img width=400/&gt;|&lt;img width=250/&gt;|&lt;img width=1000/&gt;|&lt;img width=550/&gt;|
+
+    ## Returns
+    ---
+    `None`
+    &#39;&#39;&#39;
+    timer_counts = self.convert_to_2_chars(int(max_val/0.128))
+    msg_code = self.msg_code_dict[&#39;set_sync_noise&#39;]
+    msg = self.format_msg(bytearray([msg_code]+timer_counts))
+    self.xb.command(msg, remote_device)</code></pre>
+</details>
+</dd>
+<dt id="pysmarticle.SmarticleSwarm.set_transmit"><code class="name flex">
+<span>def <span class="ident">set_transmit</span></span>(<span>self, state, remote_device=None)</span>
+</code></dt>
+<dd>
+<div class="desc"><h2 id="description">Description</h2>
+<hr>
+<p>Enables/disables smarticle transmitting data.
+Data sent in following format: '{int Photo_front}, {int photo_back}, {int photo_right} {int current_sense}'(values between 0-1023)</p>
+<h2 id="arguments">Arguments</h2>
+<hr>
+<table>
+<thead>
+<tr>
+<th align="center">Argument</th>
+<th align="center">Type</th>
+<th align="center">Description</th>
+<th align="center">Default Value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="center">state</td>
+<td align="center"><code>int</code></td>
+<td align="center">Value: 1 or 0. enables/disables transmitting Data</td>
+<td align="center">N/A</td>
+</tr>
+<tr>
+<td align="center">remote_device</td>
+<td align="center">&ndash;</td>
+<td align="center">see class description</td>
+<td align="center"><code>None</code></td>
+</tr>
+<tr>
+<td align="center"><img width=400/></td>
+<td align="center"><img width=250/></td>
+<td align="center"><img width=1000/></td>
+<td align="center"><img width=550/></td>
+</tr>
+</tbody>
+</table>
+<h2 id="returns">Returns</h2>
+<hr>
+<p><code>None</code></p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def set_transmit(self, state, remote_device = None):
+    &#39;&#39;&#39;
+    ## Description
+    ---
+    Enables/disables smarticle transmitting data.
+    Data sent in following format: &#39;{int Photo_front}, {int photo_back}, {int photo_right} {int current_sense}&#39;(values between 0-1023)
+
+    ## Arguments
+    ---
+
+    | Argument        | Type                                          | Description                                                              | Default Value  |
+    | :------:        | :--:                                          | :---------:                                                              | :-----------:  |
+    | state           | `int`                                         | Value: 1 or 0. enables/disables transmitting Data                        | N/A            |
+    | remote_device   | -- | see class description | `None`         |
+    |&lt;img width=400/&gt;|&lt;img width=250/&gt;|&lt;img width=1000/&gt;|&lt;img width=550/&gt;|
+
+    ## Returns
+    ---
+    `None`
+    &#39;&#39;&#39;
+    msg_code = self.msg_code_dict[&#39;toggle_transmit&#39;]
+    if state != 1:
+        state = 0
+    msg = self.format_msg(bytearray([msg_code,self.ASCII_OFFSET+state]))
+    self.xb.command(msg, remote_device)</code></pre>
+</details>
+</dd>
+<dt id="pysmarticle.SmarticleSwarm.set_transmit_period"><code class="name flex">
+<span>def <span class="ident">set_transmit_period</span></span>(<span>self, period_ms, remote_device=None)</span>
+</code></dt>
+<dd>
+<div class="desc"><h2 id="description">Description</h2>
+<hr>
+<p>Sets approximate data transmit period of smarticles</p>
+<h2 id="arguments">Arguments</h2>
+<hr>
+<table>
+<thead>
+<tr>
+<th align="center">Argument</th>
+<th align="center">Type</th>
+<th align="center">Description</th>
+<th align="center">Default Value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="center">period_ms</td>
+<td align="center"><code>int</code></td>
+<td align="center">transmit period in ms. Max value of 2000s</td>
+<td align="center">N/A</td>
+</tr>
+<tr>
+<td align="center">remote_device</td>
+<td align="center">&ndash;</td>
+<td align="center">see class description</td>
+<td align="center"><code>None</code></td>
+</tr>
+<tr>
+<td align="center"><img width=400/></td>
+<td align="center"><img width=250/></td>
+<td align="center"><img width=1000/></td>
+<td align="center"><img width=550/></td>
+</tr>
+</tbody>
+</table>
+<h2 id="returns">Returns</h2>
+<hr>
+<p><code>None</code></p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def set_transmit_period(self, period_ms, remote_device=None):
+    &#39;&#39;&#39;
+    ## Description
+    ---
+    Sets approximate data transmit period of smarticles
+
+    ## Arguments
+    ---
+
+    | Argument        | Type                                          | Description                                                              | Default Value  |
+    | :------:        | :--:                                          | :---------:                                                              | :-----------:  |
+    | period_ms       | `int`                                         |  transmit period in ms. Max value of 2000s                               | N/A            |
+    | remote_device   | --| see class description | `None`         |
+    |&lt;img width=400/&gt;|&lt;img width=250/&gt;|&lt;img width=1000/&gt;|&lt;img width=550/&gt;|
+
+
+    ## Returns
+    ---
+    `None`
+    &#39;&#39;&#39;
+    msg_code = self.msg_code_dict[&#39;set_transmit_counts&#39;]
+    counts = period_ms//self.SAMPLE_TIME_MS
+    counts = np.clip(counts, 1, 200)
+    msg = self.format_msg(bytearray([msg_code,self.ASCII_OFFSET+counts]))
+    self.xb.command(msg, remote_device)</code></pre>
+</details>
+</dd>
+<dt id="pysmarticle.SmarticleSwarm.start_sync"><code class="name flex">
+<span>def <span class="ident">start_sync</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"><h2 id="description">Description</h2>
+<hr>
+<p>starts gait sequence and sync thread</p>
+<h2 id="returns">Returns</h2>
+<hr>
+<p><code>None</code></p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def start_sync(self):
+    &#39;&#39;&#39;
+    ## Description
+    ---
+    starts gait sequence and sync thread
+
+    ## Returns
+    ---
+    `None`
+    &#39;&#39;&#39;
+    delay_t = self.delay_ms/3000
+    #starts gait sequence
+    self.set_servos(1)
+    #wait 1/3 of gait delay to begin sync sequene
+    time.sleep(delay_t)
+    #set sync flag so that it returns True and stops blocking
+    self.sync_flag.set()</code></pre>
+</details>
+</dd>
+<dt id="pysmarticle.SmarticleSwarm.stop_sync"><code class="name flex">
+<span>def <span class="ident">stop_sync</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"><h2 id="description">Description</h2>
+<hr>
+<p>stops gait sequence and pauses gait sync thread</p>
+<h2 id="returns">Returns</h2>
+<hr>
+<p><code>None</code></p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def stop_sync(self):
+    &#39;&#39;&#39;
+    ## Description
+    ---
+    stops gait sequence and pauses gait sync thread
+
+    ## Returns
+    ---
+    `None`
+    &#39;&#39;&#39;
+    #stop gait sequence
+    self.set_servos(0)
+    #cause sync_flag.wait() to block
+    self.sync_flag.clear()</code></pre>
+</details>
+</dd>
+<dt id="pysmarticle.SmarticleSwarm.stream_pose"><code class="name flex">
+<span>def <span class="ident">stream_pose</span></span>(<span>self, poses, remote_device=None)</span>
+</code></dt>
+<dd>
+<div class="desc"><h2 id="description">Description</h2>
+<hr>
+<p>Sets smarticle to specified servo positions. Differs from set_pose in
+that it sends angles over the streaming pipeline, which sends a batch message that can specify
+separate commands for each smarticle in the same message. Specify id as zero to broadcast servo command to whole swarm.</p>
+<h2 id="arguments">Arguments</h2>
+<hr>
+<table>
+<thead>
+<tr>
+<th align="center">Argument</th>
+<th align="center">Type</th>
+<th align="center">Description</th>
+<th align="center">Default Value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="center">poses</td>
+<td align="center"><code>np.array</code></td>
+<td align="center">Nx3 array of servo commands. Each row specifies [id, angL, angR]</td>
+<td align="center">N/A</td>
+</tr>
+<tr>
+<td align="center">remote_device</td>
+<td align="center">&ndash;</td>
+<td align="center">see class description</td>
+<td align="center"><code>None</code></td>
+</tr>
+<tr>
+<td align="center"><img width=400/></td>
+<td align="center"><img width=250/></td>
+<td align="center"><img width=1000/></td>
+<td align="center"><img width=550/></td>
+</tr>
+</tbody>
+</table>
+<h2 id="returns">Returns</h2>
+<hr>
+<p><code>None</code></p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def stream_pose(self, poses, remote_device=None):
+    &#39;&#39;&#39;
+    ## Description
+    ---
+    Sets smarticle to specified servo positions. Differs from set_pose in
+    that it sends angles over the streaming pipeline, which sends a batch message that can specify 
+    separate commands for each smarticle in the same message. Specify id as zero to broadcast servo command to whole swarm.
+
+    ## Arguments
+    ---
+
+    | Argument        | Type                                          | Description                                                                | Default Value  |
+    | :------:        | :--:                                          | :---------:                                                                | :-----------:  |
+    | poses            | `np.array`                                   | Nx3 array of servo commands. Each row specifies [id, angL, angR]     | N/A            |
+    | remote_device   | -- | see class description   | `None`         |
+    |&lt;img width=400/&gt;|&lt;img width=250/&gt;|&lt;img width=1000/&gt;|&lt;img width=550/&gt;|
+
+    ## Returns
+    ---
+    `None`
+    &#39;&#39;&#39;
+    msg_code = self.msg_code_dict[&#39;stream_pose&#39;]
+    l = len(poses)+self.ASCII_OFFSET
+    poses = list((poses+self.ASCII_OFFSET).flatten())
+    msg = self.format_msg(bytearray([msg_code,l]+poses))
+    self.xb.command(msg,remote_device)</code></pre>
+</details>
+</dd>
+<dt id="pysmarticle.SmarticleSwarm.sync_thread_target"><code class="name flex">
+<span>def <span class="ident">sync_thread_target</span></span>(<span>self, sync_period_s, keep_time)</span>
+</code></dt>
+<dd>
+<div class="desc"><h2 id="description">Description</h2>
+<hr>
+<p>Thread to keep gaits in sync. Not used directly by user but called in <code>init_sync_thread</code></p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def sync_thread_target(self,sync_period_s, keep_time):
+    &#39;&#39;&#39;
+    ## Description
+    ---
+    Thread to keep gaits in sync. Not used directly by user but called in `init_sync_thread`
+    
+    &#39;&#39;&#39;
+    time_adjust_s=sync_period_s-0.0357 #subtract 35ms based on results from timing experiments
+    msg = bytearray(b&#39;\x11&#39;)
+    #threading.event.wait() blocks until it is a) set and then returns True or b) the specified timeout elapses in which it retrusn nothing
+    while self.sync_flag.wait() and not self.timer_counts.wait(timeout=(time_adjust_s)):
+            self.xb.broadcast(msg)
+            if keep_time:
+                t = time.time()
+                with self.lock:
+                    self.sync_time_list.append(t)</code></pre>
+</details>
+</dd>
+</dl>
+</dd>
+<dt id="pysmarticle.XbeeComm"><code class="flex name class">
+<span>class <span class="ident">XbeeComm</span></span>
+<span>(</span><span>port='/dev/tty.usbserial-DN050I6Q', baud_rate=9600, debug=0)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>'</p>
+<h2 id="description">Description</h2>
+<hr>
+<p>Class for simplified XBee communication with remote Smarticles
+Built on top of Digi XBee python library:
+<a href="https://github.com/digidotcom/xbee-python">https://github.com/digidotcom/xbee-python</a>
+<br/></p>
+<p>The Constructor initalizes and opens local base xbee (connected via USB) with given port and baud rate and adds it to attribute <code>base</code></p>
+<h2 id="arguments">Arguments</h2>
+<hr>
+<table>
+<thead>
+<tr>
+<th align="center">Argument</th>
+<th align="center">Type</th>
+<th align="center">Description</th>
+<th align="center">Default Value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="center">port</td>
+<td align="center"><code>string</code></td>
+<td align="center">USB port to open for local XBee</td>
+<td align="center">set for your own convenience</td>
+</tr>
+<tr>
+<td align="center">baud_rate</td>
+<td align="center"><code>int</code></td>
+<td align="center">Baud rate to use for USB serial port</td>
+<td align="center">9600</td>
+</tr>
+<tr>
+<td align="center">debug</td>
+<td align="center"><code>int</code></td>
+<td align="center">Enables/disables print statements in class</td>
+<td align="center">0</td>
+</tr>
+<tr>
+<td align="center"><img width=400/></td>
+<td align="center"><img width=250/></td>
+<td align="center"><img width=1000/></td>
+<td align="center"><img width=550/></td>
+</tr>
+</tbody>
+</table></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class XbeeComm(object):
+    &#39;&#39;&#39;&#39;
+    ## Description
+    ---
+    Class for simplified XBee communication with remote Smarticles
+    Built on top of Digi XBee python library:
+        https://github.com/digidotcom/xbee-python
+        &lt;br/&gt;
+        
+    The Constructor initalizes and opens local base xbee (connected via USB) with given port and baud rate and adds it to attribute `base`&#39;&#39;&#39;
+
+
+    def __init__(self, port=&#39;/dev/tty.usbserial-DN050I6Q&#39;, baud_rate = 9600, debug = 0):
+        &#39;&#39;&#39;
+
+        ## Arguments
+        ---
+
+        | Argument  | Type     | Description                                | Default Value                       |
+        | :------:  | :--:     | :---------:                                | :-----------:                       |
+        | port      | `string` | USB port to open for local XBee            | set for your own convenience |
+        | baud_rate | `int`    | Baud rate to use for USB serial port       | 9600                                |
+        | debug     | `int`    | Enables/disables print statements in class | 0                                   |
+        |&lt;img width=400/&gt;|&lt;img width=250/&gt;|&lt;img width=1000/&gt;|&lt;img width=550/&gt;|
+
+        &#39;&#39;&#39;
+
+        self.base = Raw802Device(port, baud_rate)
+        self.debug = debug
+        self.open_base()
+        self.callbacks_added = False
+        self.ascii_offset = 32
+
+
+    def open_base(self):
+        &#39;&#39;&#39;
+        ## Description
+        ---
+        Opens local xbee defined by attribute &#39;base&#39; which is set in `__init__`
+
+        ## Arguments
+        ---
+
+        None
+
+        ## Returns
+        ---
+        This function returns a 1 if it successfully opens the local port and a 0 otherwise.
+        &#39;&#39;&#39;
+        success = 0
+        self.base.open()
+        if self.base is not None and self.base.is_open():
+            success = 1
+        elif self.debug:
+            print(&#34;Failed to open device&#34;)
+        return success
+
+    def close_base(self):
+        &#39;&#39;&#39;
+        ## Description
+        ---
+        Closes local xbee defined by attribute &#39;base&#39; which is set in `__init__`
+
+        ## Arguments
+        ---
+
+        None
+
+        ## Returns
+        ---
+        `None`
+        &#39;&#39;&#39;
+        if self.base is not None and self.base.is_open():
+            self.base.close()
+
+    def add_callbacks(self):
+        &#39;&#39;&#39;
+        ## Description
+        ---
+        adds callback functions for discovery processess
+        &#39;&#39;&#39;
+        # Callback for discovered devices.
+        def callback_device_discovered(remote):
+            print(&#34;Device discovered: %s&#34; % remote)
+            self.add_remote(remote)
+
+        # Callback for discovery finished.
+        def callback_discovery_finished(status):
+            if status == NetworkDiscoveryStatus.SUCCESS:
+                # print(&#34;Discovery process finished successfully.\nDevices: {}&#34;.format(self.devices))
+                print(&#34;Discovery cycle finished\n&#34;)
+            else:
+                print(&#34;There was an error discovering devices: %s&#34; % status.description)
+
+        self.network.add_device_discovered_callback(callback_device_discovered)
+
+        self.network.add_discovery_process_finished_callback(callback_discovery_finished)
+
+
+    def add_remote(self,remote_device):
+        &#39;&#39;&#39;
+        ## Description
+        ---
+        takes in RemoteXbee Object and creates an attribute for it based on its NodeID and adds it to the device dictionary
+
+        ## Arguments
+        ---
+
+        | Argument        | Type                      | Description                                                                   | Default Value |
+        | :------:        | :--:                      | :---------:                                                                   | :-----------: |
+        | remote_device   | `RemoteXbeeDevice` Object | Stores info such as ID and address; see Digi Xbee Documentation for more info | N/A           |
+        |&lt;img width=400/&gt;|&lt;img width=250/&gt;|&lt;img width=1000/&gt;|&lt;img width=550/&gt;|
+
+        ## Returns
+        ---
+        `None`
+
+        More info on RemoteXbeeDevice:
+        https://xbplib.readthedocs.io/en/stable/api/digi.xbee.devices.html#digi.xbee.devices.RemoteXBeeDevice
+        &#39;&#39;&#39;
+        smarticle_number = int(&#39;&#39;.join([s for s in remote_device.get_node_id() if s.isdigit()]))
+        setattr(self,remote_device.get_node_id(),remote_device)
+        self.devices[smarticle_number]=remote_device
+
+
+    def discover(self):
+        &#39;&#39;&#39;
+        ## Description
+        ---
+        Clears `devices` dictionary as well as all devices on network.
+        Discovers remote devices on network, initializes dictionary of all connected devices.
+        modified from Digi XBee example DiscoverDevicesSample.py
+
+        ## Arguments
+        ---
+
+        None
+
+        ## Returns
+        ---
+        `None`
+        &#39;&#39;&#39;
+        self.devices ={}
+        self.network = self.base.get_network()
+        self.network.clear()
+        self.network.set_discovery_timeout(15)  # 15 seconds.
+
+        if self.callbacks_added == False:
+            self.add_callbacks()
+            self.callbacks_added = True
+
+        self.network.start_discovery_process()
+        print(&#34;Discovering remote XBee devices...&#34;)
+
+        while self.network.is_discovery_running():
+            time.sleep(0.1)
+
+
+    def send(self, remote_device, msg, asynch = False):
+        &#39;&#39;&#39;
+        ## Description
+        ---
+        Sends message to remote xbee and receives acknowledgement on sucess.
+        modified from digi&#39;s example SendDataSample.py
+
+        ## Arguments
+        ---
+
+        | Argument        | Type                      | Description                                                                   | Default Value |
+        | :------:        | :--:                      | :---------:                                                                   | :-----------: |
+        | remote_device   | `RemoteXbeeDevice` Object | Stores info such as ID and address; see Digi Xbee Documentation for more info | N/A           |
+        | msg             | `string` or `bytearray`   | Message to send to XBee. Maximum of 108 bytes                                 | N/A           |
+        | asynch           | `bool`                    | Determines whether to send asynchronously (without ack) or not                | False         |
+        |&lt;img width=400/&gt;|&lt;img width=250/&gt;|&lt;img width=1000/&gt;|&lt;img width=550/&gt;|
+
+        ## Returns
+        ---
+        `None`
+
+        More info on RemoteXbeeDevice:
+        https://xbplib.readthedocs.io/en/stable/api/digi.xbee.devices.html#digi.xbee.devices.RemoteXBeeDevice
+        &#39;&#39;&#39;
+
+        if remote_device is None:
+            if self.debug():
+                print(&#34;Could not find the remote device&#34;)
+            exit(1)
+        if self.debug:
+            print(&#34;Sending data to {} &gt;&gt; {}...&#34;.format(remote_device.get_node_id(), msg))
+
+        if asynch is True:
+            self.base.send_data_async(remote_device, msg)
+        else:
+            self.base.send_data(remote_device, msg)
+
+            if self.debug:
+                print(&#34;Success&#34;)
+
+
+    def broadcast(self, msg):
+        &#39;&#39;&#39;
+        ## Description
+        ---
+        Broadcasts to all xbees on network. NOTE: there are no acknowledgements when using broadcast
+
+        ## Arguments
+        ---
+
+        | Argument        | Type                      | Description                                                                   | Default Value |
+        | :------:        | :--:                      | :---------:                                                                   | :-----------: |
+        | msg             | `string` or `bytearray`   | Message to send to XBee. Maximum of 108 bytes                                 | N/A           |
+        |&lt;img width=400/&gt;|&lt;img width=250/&gt;|&lt;img width=1000/&gt;|&lt;img width=550/&gt;|
+
+        ## Returns
+        ---
+        `None`
+        &#39;&#39;&#39;
+        self.base.send_data_broadcast(msg)
+
+
+    def ack_broadcast(self,msg):
+        &#39;&#39;&#39;
+        ## Description
+        ---
+        Broadcasts to all xbees on network by sending message individually to each remote xbee in `devices` dictionary.
+        This broadcast includes acknowledgements.
+
+        ## Arguments
+        ---
+
+        | Argument        | Type                      | Description                                                                   | Default Value |
+        | :------:        | :--:                      | :---------:                                                                   | :-----------: |
+        | msg             | `string` or `bytearray`   | Message to send to XBee. Maximum of 108 bytes                                 | N/A           |
+        |&lt;img width=400/&gt;|&lt;img width=250/&gt;|&lt;img width=1000/&gt;|&lt;img width=550/&gt;|
+
+        ## Returns
+        ---
+        `None`
+        &#39;&#39;&#39;
+
+        for remote_dev in list(self.devices.values()):
+            self.send(remote_dev,msg)
+
+
+    def command(self, msg, remote_device = None, asynch = False):
+        &#39;&#39;&#39;
+        ## Description
+        ---
+        Sends message to remote Xbee in one of three ways depending on the `remote_device` argument. see `SmarticleSwarm` class description
+
+        ## Arguments
+        ---
+
+        | Argument        | Type                                          | Description                                                              | Default Value    |
+        | :------:        | :--:                                          | :---------:                                                              | :-----------:    |
+        | msg             | `string` or `bytearray`                       | Message to send to XBee. Maximum of 108 bytes                            | N/A              |
+        | remote_device   | -- | see class description | `None`           |
+        | asynch           | `bool`                                        | Determines whether to send asynchronously (without ack) or not           | False            |
+        |&lt;img width=400/&gt;|&lt;img width=250/&gt;|&lt;img width=1000/&gt;|&lt;img width=550/&gt;|
+
+        ## Returns
+        ---
+        `None`
+        &#39;&#39;&#39;
+
+        if remote_device == None:
+            self.broadcast(msg)
+        elif (isinstance(remote_device,bool) and remote_device==True):
+            self.ack_broadcast(msg)
+        else:
+            assert remote_device in self.devices.values(),&#34;Remote Device not found in active devices&#34;
+            self.send(remote_device,msg, asynch)
+
+    def add_rx_callback(self, callback_fun):
+        &#39;&#39;&#39;
+        ## Description
+        ---
+        Adds a data received callback function that is called everytime a message is received
+
+        ## Arguments
+        ---
+
+        | Argument        | Type                                          | Description                                                              | Default Value    |
+        | :------:        | :--:                                          | :---------:                                                              | :-----------:    |
+        | callback_fun    | function                                      | Function that takes &#39;XbeeMessage&#39; as input                               | N/A              |`
+        |&lt;img width=400/&gt;|&lt;img width=250/&gt;|&lt;img width=1000/&gt;|&lt;img width=550/&gt;|
+
+        ## Returns
+        ---
+        `None`
+        &#39;&#39;&#39;
+        self.base.add_data_received_callback(callback_fun)</code></pre>
+</details>
+<h3>Methods</h3>
+<dl>
+<dt id="pysmarticle.XbeeComm.ack_broadcast"><code class="name flex">
+<span>def <span class="ident">ack_broadcast</span></span>(<span>self, msg)</span>
+</code></dt>
+<dd>
+<div class="desc"><h2 id="description">Description</h2>
+<hr>
+<p>Broadcasts to all xbees on network by sending message individually to each remote xbee in <code>devices</code> dictionary.
+This broadcast includes acknowledgements.</p>
+<h2 id="arguments">Arguments</h2>
+<hr>
+<table>
+<thead>
+<tr>
+<th align="center">Argument</th>
+<th align="center">Type</th>
+<th align="center">Description</th>
+<th align="center">Default Value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="center">msg</td>
+<td align="center"><code>string</code> or <code>bytearray</code></td>
+<td align="center">Message to send to XBee. Maximum of 108 bytes</td>
+<td align="center">N/A</td>
+</tr>
+<tr>
+<td align="center"><img width=400/></td>
+<td align="center"><img width=250/></td>
+<td align="center"><img width=1000/></td>
+<td align="center"><img width=550/></td>
+</tr>
+</tbody>
+</table>
+<h2 id="returns">Returns</h2>
+<hr>
+<p><code>None</code></p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def ack_broadcast(self,msg):
+    &#39;&#39;&#39;
+    ## Description
+    ---
+    Broadcasts to all xbees on network by sending message individually to each remote xbee in `devices` dictionary.
+    This broadcast includes acknowledgements.
+
+    ## Arguments
+    ---
+
+    | Argument        | Type                      | Description                                                                   | Default Value |
+    | :------:        | :--:                      | :---------:                                                                   | :-----------: |
+    | msg             | `string` or `bytearray`   | Message to send to XBee. Maximum of 108 bytes                                 | N/A           |
+    |&lt;img width=400/&gt;|&lt;img width=250/&gt;|&lt;img width=1000/&gt;|&lt;img width=550/&gt;|
+
+    ## Returns
+    ---
+    `None`
+    &#39;&#39;&#39;
+
+    for remote_dev in list(self.devices.values()):
+        self.send(remote_dev,msg)</code></pre>
+</details>
+</dd>
+<dt id="pysmarticle.XbeeComm.add_callbacks"><code class="name flex">
+<span>def <span class="ident">add_callbacks</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"><h2 id="description">Description</h2>
+<hr>
+<p>adds callback functions for discovery processess</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def add_callbacks(self):
+    &#39;&#39;&#39;
+    ## Description
+    ---
+    adds callback functions for discovery processess
+    &#39;&#39;&#39;
+    # Callback for discovered devices.
+    def callback_device_discovered(remote):
+        print(&#34;Device discovered: %s&#34; % remote)
+        self.add_remote(remote)
+
+    # Callback for discovery finished.
+    def callback_discovery_finished(status):
+        if status == NetworkDiscoveryStatus.SUCCESS:
+            # print(&#34;Discovery process finished successfully.\nDevices: {}&#34;.format(self.devices))
+            print(&#34;Discovery cycle finished\n&#34;)
+        else:
+            print(&#34;There was an error discovering devices: %s&#34; % status.description)
+
+    self.network.add_device_discovered_callback(callback_device_discovered)
+
+    self.network.add_discovery_process_finished_callback(callback_discovery_finished)</code></pre>
+</details>
+</dd>
+<dt id="pysmarticle.XbeeComm.add_remote"><code class="name flex">
+<span>def <span class="ident">add_remote</span></span>(<span>self, remote_device)</span>
+</code></dt>
+<dd>
+<div class="desc"><h2 id="description">Description</h2>
+<hr>
+<p>takes in RemoteXbee Object and creates an attribute for it based on its NodeID and adds it to the device dictionary</p>
+<h2 id="arguments">Arguments</h2>
+<hr>
+<table>
+<thead>
+<tr>
+<th align="center">Argument</th>
+<th align="center">Type</th>
+<th align="center">Description</th>
+<th align="center">Default Value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="center">remote_device</td>
+<td align="center"><code>RemoteXbeeDevice</code> Object</td>
+<td align="center">Stores info such as ID and address; see Digi Xbee Documentation for more info</td>
+<td align="center">N/A</td>
+</tr>
+<tr>
+<td align="center"><img width=400/></td>
+<td align="center"><img width=250/></td>
+<td align="center"><img width=1000/></td>
+<td align="center"><img width=550/></td>
+</tr>
+</tbody>
+</table>
+<h2 id="returns">Returns</h2>
+<hr>
+<p><code>None</code></p>
+<p>More info on RemoteXbeeDevice:
+<a href="https://xbplib.readthedocs.io/en/stable/api/digi.xbee.devices.html#digi.xbee.devices.RemoteXBeeDevice">https://xbplib.readthedocs.io/en/stable/api/digi.xbee.devices.html#digi.xbee.devices.RemoteXBeeDevice</a></p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def add_remote(self,remote_device):
+    &#39;&#39;&#39;
+    ## Description
+    ---
+    takes in RemoteXbee Object and creates an attribute for it based on its NodeID and adds it to the device dictionary
+
+    ## Arguments
+    ---
+
+    | Argument        | Type                      | Description                                                                   | Default Value |
+    | :------:        | :--:                      | :---------:                                                                   | :-----------: |
+    | remote_device   | `RemoteXbeeDevice` Object | Stores info such as ID and address; see Digi Xbee Documentation for more info | N/A           |
+    |&lt;img width=400/&gt;|&lt;img width=250/&gt;|&lt;img width=1000/&gt;|&lt;img width=550/&gt;|
+
+    ## Returns
+    ---
+    `None`
+
+    More info on RemoteXbeeDevice:
+    https://xbplib.readthedocs.io/en/stable/api/digi.xbee.devices.html#digi.xbee.devices.RemoteXBeeDevice
+    &#39;&#39;&#39;
+    smarticle_number = int(&#39;&#39;.join([s for s in remote_device.get_node_id() if s.isdigit()]))
+    setattr(self,remote_device.get_node_id(),remote_device)
+    self.devices[smarticle_number]=remote_device</code></pre>
+</details>
+</dd>
+<dt id="pysmarticle.XbeeComm.add_rx_callback"><code class="name flex">
+<span>def <span class="ident">add_rx_callback</span></span>(<span>self, callback_fun)</span>
+</code></dt>
+<dd>
+<div class="desc"><h2 id="description">Description</h2>
+<hr>
+<p>Adds a data received callback function that is called everytime a message is received</p>
+<h2 id="arguments">Arguments</h2>
+<hr>
+<table>
+<thead>
+<tr>
+<th align="center">Argument</th>
+<th align="center">Type</th>
+<th align="center">Description</th>
+<th align="center">Default Value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="center">callback_fun</td>
+<td align="center">function</td>
+<td align="center">Function that takes 'XbeeMessage' as input</td>
+<td align="center">N/A</td>
+</tr>
+<tr>
+<td align="center"><img width=400/></td>
+<td align="center"><img width=250/></td>
+<td align="center"><img width=1000/></td>
+<td align="center"><img width=550/></td>
+</tr>
+</tbody>
+</table>
+<h2 id="returns">Returns</h2>
+<hr>
+<p><code>None</code></p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def add_rx_callback(self, callback_fun):
+    &#39;&#39;&#39;
+    ## Description
+    ---
+    Adds a data received callback function that is called everytime a message is received
+
+    ## Arguments
+    ---
+
+    | Argument        | Type                                          | Description                                                              | Default Value    |
+    | :------:        | :--:                                          | :---------:                                                              | :-----------:    |
+    | callback_fun    | function                                      | Function that takes &#39;XbeeMessage&#39; as input                               | N/A              |`
+    |&lt;img width=400/&gt;|&lt;img width=250/&gt;|&lt;img width=1000/&gt;|&lt;img width=550/&gt;|
+
+    ## Returns
+    ---
+    `None`
+    &#39;&#39;&#39;
+    self.base.add_data_received_callback(callback_fun)</code></pre>
+</details>
+</dd>
+<dt id="pysmarticle.XbeeComm.broadcast"><code class="name flex">
+<span>def <span class="ident">broadcast</span></span>(<span>self, msg)</span>
+</code></dt>
+<dd>
+<div class="desc"><h2 id="description">Description</h2>
+<hr>
+<p>Broadcasts to all xbees on network. NOTE: there are no acknowledgements when using broadcast</p>
+<h2 id="arguments">Arguments</h2>
+<hr>
+<table>
+<thead>
+<tr>
+<th align="center">Argument</th>
+<th align="center">Type</th>
+<th align="center">Description</th>
+<th align="center">Default Value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="center">msg</td>
+<td align="center"><code>string</code> or <code>bytearray</code></td>
+<td align="center">Message to send to XBee. Maximum of 108 bytes</td>
+<td align="center">N/A</td>
+</tr>
+<tr>
+<td align="center"><img width=400/></td>
+<td align="center"><img width=250/></td>
+<td align="center"><img width=1000/></td>
+<td align="center"><img width=550/></td>
+</tr>
+</tbody>
+</table>
+<h2 id="returns">Returns</h2>
+<hr>
+<p><code>None</code></p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def broadcast(self, msg):
+    &#39;&#39;&#39;
+    ## Description
+    ---
+    Broadcasts to all xbees on network. NOTE: there are no acknowledgements when using broadcast
+
+    ## Arguments
+    ---
+
+    | Argument        | Type                      | Description                                                                   | Default Value |
+    | :------:        | :--:                      | :---------:                                                                   | :-----------: |
+    | msg             | `string` or `bytearray`   | Message to send to XBee. Maximum of 108 bytes                                 | N/A           |
+    |&lt;img width=400/&gt;|&lt;img width=250/&gt;|&lt;img width=1000/&gt;|&lt;img width=550/&gt;|
+
+    ## Returns
+    ---
+    `None`
+    &#39;&#39;&#39;
+    self.base.send_data_broadcast(msg)</code></pre>
+</details>
+</dd>
+<dt id="pysmarticle.XbeeComm.close_base"><code class="name flex">
+<span>def <span class="ident">close_base</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"><h2 id="description">Description</h2>
+<hr>
+<p>Closes local xbee defined by attribute 'base' which is set in <code>__init__</code></p>
+<h2 id="arguments">Arguments</h2>
+<hr>
+<p>None</p>
+<h2 id="returns">Returns</h2>
+<hr>
+<p><code>None</code></p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def close_base(self):
+    &#39;&#39;&#39;
+    ## Description
+    ---
+    Closes local xbee defined by attribute &#39;base&#39; which is set in `__init__`
+
+    ## Arguments
+    ---
+
+    None
+
+    ## Returns
+    ---
+    `None`
+    &#39;&#39;&#39;
+    if self.base is not None and self.base.is_open():
+        self.base.close()</code></pre>
+</details>
+</dd>
+<dt id="pysmarticle.XbeeComm.command"><code class="name flex">
+<span>def <span class="ident">command</span></span>(<span>self, msg, remote_device=None, asynch=False)</span>
+</code></dt>
+<dd>
+<div class="desc"><h2 id="description">Description</h2>
+<hr>
+<p>Sends message to remote Xbee in one of three ways depending on the <code>remote_device</code> argument. see <code><a title="pysmarticle.SmarticleSwarm" href="#pysmarticle.SmarticleSwarm">SmarticleSwarm</a></code> class description</p>
+<h2 id="arguments">Arguments</h2>
+<hr>
+<table>
+<thead>
+<tr>
+<th align="center">Argument</th>
+<th align="center">Type</th>
+<th align="center">Description</th>
+<th align="center">Default Value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="center">msg</td>
+<td align="center"><code>string</code> or <code>bytearray</code></td>
+<td align="center">Message to send to XBee. Maximum of 108 bytes</td>
+<td align="center">N/A</td>
+</tr>
+<tr>
+<td align="center">remote_device</td>
+<td align="center">&ndash;</td>
+<td align="center">see class description</td>
+<td align="center"><code>None</code></td>
+</tr>
+<tr>
+<td align="center">asynch</td>
+<td align="center"><code>bool</code></td>
+<td align="center">Determines whether to send asynchronously (without ack) or not</td>
+<td align="center">False</td>
+</tr>
+<tr>
+<td align="center"><img width=400/></td>
+<td align="center"><img width=250/></td>
+<td align="center"><img width=1000/></td>
+<td align="center"><img width=550/></td>
+</tr>
+</tbody>
+</table>
+<h2 id="returns">Returns</h2>
+<hr>
+<p><code>None</code></p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def command(self, msg, remote_device = None, asynch = False):
+    &#39;&#39;&#39;
+    ## Description
+    ---
+    Sends message to remote Xbee in one of three ways depending on the `remote_device` argument. see `SmarticleSwarm` class description
+
+    ## Arguments
+    ---
+
+    | Argument        | Type                                          | Description                                                              | Default Value    |
+    | :------:        | :--:                                          | :---------:                                                              | :-----------:    |
+    | msg             | `string` or `bytearray`                       | Message to send to XBee. Maximum of 108 bytes                            | N/A              |
+    | remote_device   | -- | see class description | `None`           |
+    | asynch           | `bool`                                        | Determines whether to send asynchronously (without ack) or not           | False            |
+    |&lt;img width=400/&gt;|&lt;img width=250/&gt;|&lt;img width=1000/&gt;|&lt;img width=550/&gt;|
+
+    ## Returns
+    ---
+    `None`
+    &#39;&#39;&#39;
+
+    if remote_device == None:
+        self.broadcast(msg)
+    elif (isinstance(remote_device,bool) and remote_device==True):
+        self.ack_broadcast(msg)
+    else:
+        assert remote_device in self.devices.values(),&#34;Remote Device not found in active devices&#34;
+        self.send(remote_device,msg, asynch)</code></pre>
+</details>
+</dd>
+<dt id="pysmarticle.XbeeComm.discover"><code class="name flex">
+<span>def <span class="ident">discover</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"><h2 id="description">Description</h2>
+<hr>
+<p>Clears <code>devices</code> dictionary as well as all devices on network.
+Discovers remote devices on network, initializes dictionary of all connected devices.
+modified from Digi XBee example DiscoverDevicesSample.py</p>
+<h2 id="arguments">Arguments</h2>
+<hr>
+<p>None</p>
+<h2 id="returns">Returns</h2>
+<hr>
+<p><code>None</code></p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def discover(self):
+    &#39;&#39;&#39;
+    ## Description
+    ---
+    Clears `devices` dictionary as well as all devices on network.
+    Discovers remote devices on network, initializes dictionary of all connected devices.
+    modified from Digi XBee example DiscoverDevicesSample.py
+
+    ## Arguments
+    ---
+
+    None
+
+    ## Returns
+    ---
+    `None`
+    &#39;&#39;&#39;
+    self.devices ={}
+    self.network = self.base.get_network()
+    self.network.clear()
+    self.network.set_discovery_timeout(15)  # 15 seconds.
+
+    if self.callbacks_added == False:
+        self.add_callbacks()
+        self.callbacks_added = True
+
+    self.network.start_discovery_process()
+    print(&#34;Discovering remote XBee devices...&#34;)
+
+    while self.network.is_discovery_running():
+        time.sleep(0.1)</code></pre>
+</details>
+</dd>
+<dt id="pysmarticle.XbeeComm.open_base"><code class="name flex">
+<span>def <span class="ident">open_base</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"><h2 id="description">Description</h2>
+<hr>
+<p>Opens local xbee defined by attribute 'base' which is set in <code>__init__</code></p>
+<h2 id="arguments">Arguments</h2>
+<hr>
+<p>None</p>
+<h2 id="returns">Returns</h2>
+<hr>
+<p>This function returns a 1 if it successfully opens the local port and a 0 otherwise.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def open_base(self):
+    &#39;&#39;&#39;
+    ## Description
+    ---
+    Opens local xbee defined by attribute &#39;base&#39; which is set in `__init__`
+
+    ## Arguments
+    ---
+
+    None
+
+    ## Returns
+    ---
+    This function returns a 1 if it successfully opens the local port and a 0 otherwise.
+    &#39;&#39;&#39;
+    success = 0
+    self.base.open()
+    if self.base is not None and self.base.is_open():
+        success = 1
+    elif self.debug:
+        print(&#34;Failed to open device&#34;)
+    return success</code></pre>
+</details>
+</dd>
+<dt id="pysmarticle.XbeeComm.send"><code class="name flex">
+<span>def <span class="ident">send</span></span>(<span>self, remote_device, msg, asynch=False)</span>
+</code></dt>
+<dd>
+<div class="desc"><h2 id="description">Description</h2>
+<hr>
+<p>Sends message to remote xbee and receives acknowledgement on sucess.
+modified from digi's example SendDataSample.py</p>
+<h2 id="arguments">Arguments</h2>
+<hr>
+<table>
+<thead>
+<tr>
+<th align="center">Argument</th>
+<th align="center">Type</th>
+<th align="center">Description</th>
+<th align="center">Default Value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="center">remote_device</td>
+<td align="center"><code>RemoteXbeeDevice</code> Object</td>
+<td align="center">Stores info such as ID and address; see Digi Xbee Documentation for more info</td>
+<td align="center">N/A</td>
+</tr>
+<tr>
+<td align="center">msg</td>
+<td align="center"><code>string</code> or <code>bytearray</code></td>
+<td align="center">Message to send to XBee. Maximum of 108 bytes</td>
+<td align="center">N/A</td>
+</tr>
+<tr>
+<td align="center">asynch</td>
+<td align="center"><code>bool</code></td>
+<td align="center">Determines whether to send asynchronously (without ack) or not</td>
+<td align="center">False</td>
+</tr>
+<tr>
+<td align="center"><img width=400/></td>
+<td align="center"><img width=250/></td>
+<td align="center"><img width=1000/></td>
+<td align="center"><img width=550/></td>
+</tr>
+</tbody>
+</table>
+<h2 id="returns">Returns</h2>
+<hr>
+<p><code>None</code></p>
+<p>More info on RemoteXbeeDevice:
+<a href="https://xbplib.readthedocs.io/en/stable/api/digi.xbee.devices.html#digi.xbee.devices.RemoteXBeeDevice">https://xbplib.readthedocs.io/en/stable/api/digi.xbee.devices.html#digi.xbee.devices.RemoteXBeeDevice</a></p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def send(self, remote_device, msg, asynch = False):
+    &#39;&#39;&#39;
+    ## Description
+    ---
+    Sends message to remote xbee and receives acknowledgement on sucess.
+    modified from digi&#39;s example SendDataSample.py
+
+    ## Arguments
+    ---
+
+    | Argument        | Type                      | Description                                                                   | Default Value |
+    | :------:        | :--:                      | :---------:                                                                   | :-----------: |
+    | remote_device   | `RemoteXbeeDevice` Object | Stores info such as ID and address; see Digi Xbee Documentation for more info | N/A           |
+    | msg             | `string` or `bytearray`   | Message to send to XBee. Maximum of 108 bytes                                 | N/A           |
+    | asynch           | `bool`                    | Determines whether to send asynchronously (without ack) or not                | False         |
+    |&lt;img width=400/&gt;|&lt;img width=250/&gt;|&lt;img width=1000/&gt;|&lt;img width=550/&gt;|
+
+    ## Returns
+    ---
+    `None`
+
+    More info on RemoteXbeeDevice:
+    https://xbplib.readthedocs.io/en/stable/api/digi.xbee.devices.html#digi.xbee.devices.RemoteXBeeDevice
+    &#39;&#39;&#39;
+
+    if remote_device is None:
+        if self.debug():
+            print(&#34;Could not find the remote device&#34;)
+        exit(1)
+    if self.debug:
+        print(&#34;Sending data to {} &gt;&gt; {}...&#34;.format(remote_device.get_node_id(), msg))
+
+    if asynch is True:
+        self.base.send_data_async(remote_device, msg)
+    else:
+        self.base.send_data(remote_device, msg)
+
+        if self.debug:
+            print(&#34;Success&#34;)</code></pre>
+</details>
+</dd>
+</dl>
+</dd>
+</dl>
+</section>
+</article>
+<nav id="sidebar">
+<h1>Index</h1>
+<div class="toc">
+<ul></ul>
+</div>
+<ul id="index">
+<li><h3><a href="#header-classes">Classes</a></h3>
+<ul>
+<li>
+<h4><code><a title="pysmarticle.SmarticleSwarm" href="#pysmarticle.SmarticleSwarm">SmarticleSwarm</a></code></h4>
+<ul class="">
+<li><code><a title="pysmarticle.SmarticleSwarm.build_network" href="#pysmarticle.SmarticleSwarm.build_network">build_network</a></code></li>
+<li><code><a title="pysmarticle.SmarticleSwarm.close" href="#pysmarticle.SmarticleSwarm.close">close</a></code></li>
+<li><code><a title="pysmarticle.SmarticleSwarm.gait_init" href="#pysmarticle.SmarticleSwarm.gait_init">gait_init</a></code></li>
+<li><code><a title="pysmarticle.SmarticleSwarm.init_sync_thread" href="#pysmarticle.SmarticleSwarm.init_sync_thread">init_sync_thread</a></code></li>
+<li><code><a title="pysmarticle.SmarticleSwarm.select_gait" href="#pysmarticle.SmarticleSwarm.select_gait">select_gait</a></code></li>
+<li><code><a title="pysmarticle.SmarticleSwarm.send_ids" href="#pysmarticle.SmarticleSwarm.send_ids">send_ids</a></code></li>
+<li><code><a title="pysmarticle.SmarticleSwarm.set_debug" href="#pysmarticle.SmarticleSwarm.set_debug">set_debug</a></code></li>
+<li><code><a title="pysmarticle.SmarticleSwarm.set_delay" href="#pysmarticle.SmarticleSwarm.set_delay">set_delay</a></code></li>
+<li><code><a title="pysmarticle.SmarticleSwarm.set_light_plank" href="#pysmarticle.SmarticleSwarm.set_light_plank">set_light_plank</a></code></li>
+<li><code><a title="pysmarticle.SmarticleSwarm.set_mode" href="#pysmarticle.SmarticleSwarm.set_mode">set_mode</a></code></li>
+<li><code><a title="pysmarticle.SmarticleSwarm.set_plank" href="#pysmarticle.SmarticleSwarm.set_plank">set_plank</a></code></li>
+<li><code><a title="pysmarticle.SmarticleSwarm.set_pose" href="#pysmarticle.SmarticleSwarm.set_pose">set_pose</a></code></li>
+<li><code><a title="pysmarticle.SmarticleSwarm.set_pose_epsilon" href="#pysmarticle.SmarticleSwarm.set_pose_epsilon">set_pose_epsilon</a></code></li>
+<li><code><a title="pysmarticle.SmarticleSwarm.set_pose_noise" href="#pysmarticle.SmarticleSwarm.set_pose_noise">set_pose_noise</a></code></li>
+<li><code><a title="pysmarticle.SmarticleSwarm.set_read_sensors" href="#pysmarticle.SmarticleSwarm.set_read_sensors">set_read_sensors</a></code></li>
+<li><code><a title="pysmarticle.SmarticleSwarm.set_sensor_threshold" href="#pysmarticle.SmarticleSwarm.set_sensor_threshold">set_sensor_threshold</a></code></li>
+<li><code><a title="pysmarticle.SmarticleSwarm.set_servos" href="#pysmarticle.SmarticleSwarm.set_servos">set_servos</a></code></li>
+<li><code><a title="pysmarticle.SmarticleSwarm.set_sync_noise" href="#pysmarticle.SmarticleSwarm.set_sync_noise">set_sync_noise</a></code></li>
+<li><code><a title="pysmarticle.SmarticleSwarm.set_transmit" href="#pysmarticle.SmarticleSwarm.set_transmit">set_transmit</a></code></li>
+<li><code><a title="pysmarticle.SmarticleSwarm.set_transmit_period" href="#pysmarticle.SmarticleSwarm.set_transmit_period">set_transmit_period</a></code></li>
+<li><code><a title="pysmarticle.SmarticleSwarm.start_sync" href="#pysmarticle.SmarticleSwarm.start_sync">start_sync</a></code></li>
+<li><code><a title="pysmarticle.SmarticleSwarm.stop_sync" href="#pysmarticle.SmarticleSwarm.stop_sync">stop_sync</a></code></li>
+<li><code><a title="pysmarticle.SmarticleSwarm.stream_pose" href="#pysmarticle.SmarticleSwarm.stream_pose">stream_pose</a></code></li>
+<li><code><a title="pysmarticle.SmarticleSwarm.sync_thread_target" href="#pysmarticle.SmarticleSwarm.sync_thread_target">sync_thread_target</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="pysmarticle.XbeeComm" href="#pysmarticle.XbeeComm">XbeeComm</a></code></h4>
+<ul class="two-column">
+<li><code><a title="pysmarticle.XbeeComm.ack_broadcast" href="#pysmarticle.XbeeComm.ack_broadcast">ack_broadcast</a></code></li>
+<li><code><a title="pysmarticle.XbeeComm.add_callbacks" href="#pysmarticle.XbeeComm.add_callbacks">add_callbacks</a></code></li>
+<li><code><a title="pysmarticle.XbeeComm.add_remote" href="#pysmarticle.XbeeComm.add_remote">add_remote</a></code></li>
+<li><code><a title="pysmarticle.XbeeComm.add_rx_callback" href="#pysmarticle.XbeeComm.add_rx_callback">add_rx_callback</a></code></li>
+<li><code><a title="pysmarticle.XbeeComm.broadcast" href="#pysmarticle.XbeeComm.broadcast">broadcast</a></code></li>
+<li><code><a title="pysmarticle.XbeeComm.close_base" href="#pysmarticle.XbeeComm.close_base">close_base</a></code></li>
+<li><code><a title="pysmarticle.XbeeComm.command" href="#pysmarticle.XbeeComm.command">command</a></code></li>
+<li><code><a title="pysmarticle.XbeeComm.discover" href="#pysmarticle.XbeeComm.discover">discover</a></code></li>
+<li><code><a title="pysmarticle.XbeeComm.open_base" href="#pysmarticle.XbeeComm.open_base">open_base</a></code></li>
+<li><code><a title="pysmarticle.XbeeComm.send" href="#pysmarticle.XbeeComm.send">send</a></code></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc"><cite>pdoc</cite> 0.8.1</a>.</p>
+</footer>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+<script>hljs.initHighlightingOnLoad()</script>
+</body>
+</html>

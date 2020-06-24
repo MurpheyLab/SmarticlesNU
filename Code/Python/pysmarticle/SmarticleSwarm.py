@@ -16,6 +16,8 @@ class SmarticleSwarm(object):
     ---
     Class that Utilizies XbeeComm class for performing smarticle operations
     coordinated with Smarticle.h and Smarticle.cpp used on the Smarticle microcontrollers
+
+    Constructor initalizes and opens local base xbee (connected via USB) with given port and baud rate and adds it to attribute `base`
     '''
     msg_code_dict = {'toggle_led': 0x20, 'set_mode': 0x21, 'toggle_t4_interrupt': 0x22,\
         'set_transmit_counts': 0x23, 'select_gait': 0x24, 'toggle_read_sensors': 0x25,\
@@ -31,31 +33,37 @@ class SmarticleSwarm(object):
 
     def __init__(self, port='/dev/tty.usbserial-DN050I6Q', baud_rate = 9600, debug = 0):
         '''
-        ## Description
+        ## Remote Device
         ---
-        Initalizes and opens local base xbee (connected via USB) with given port and baud rate and adds it to attribute `base`
+        Many methods take in a `remote_device` argument.The XBee sends message to the remote Xbee(s) in one of three ways depending on the `remote_device` argument<br/>
+            &emsp; <b>1.</b> remote_device == `None`:<br/>
+                &emsp; &emsp; broadcasts message without acks using `broadcast()`<br/>
+            &emsp; <b>2.</b> remote_device == `True`:<br/>
+                &emsp; &emsp; broadcasts message with acks using `ack_broadcast()`<br/>
+            &emsp; <b>3.</b> remote_device == element of `self.xb.devices.values()`:<br/>
+                &emsp; &emsp; send message to single Xbee using `send()`<br/>
 
-        **Arguments**
+        ## Arguments
+        ---
+
 
         | Argument            | Type       | Description                                | Default Value                       |
         | :------             | :--        | :---------                                 | :-----------                        |
         | port                | `string`   | USB port to open for local XBee            | set for your own convenience        |
         | baud_rate           | `int`      | Baud rate to use for USB serial port       | 9600                                |
         | debug               | `int`      | Enables/disables print statements in class | 0                                   |
-        |<img width=250/>|<img width=250/>|<img width=1000/>|<img width=700/>|
+        |<img width=400/>|<img width=250/>|<img width=1000/>|<img width=550/>|
 
-        **Returns**
-        `None`
         '''
         self.xb = XbeeComm(port,baud_rate,debug)
         self.lock = threading.Lock()
 
     @classmethod
-    def format_msg(self, msg):
+    def _format_msg(self, msg):
         return self.msg_prefix+msg+self.msg_end
 
     @classmethod
-    def convert_to_2_chars(self, val):
+    def _convert_to_2_chars(self, val):
         val = val&0x3ffff
         c1 = (val>>7)+self.ASCII_OFFSET
         c2 = (val&0x7f)+self.ASCII_OFFSET
@@ -77,8 +85,10 @@ class SmarticleSwarm(object):
         | Argument                        | Type     | Description                                | Default Value    |
         | :------:                        | :--:     | :---------:                                | :-----------:    |
         | exp_n_smarticles               | `int`    | Expected number of smarticles to discover  | None             |
+        |<img width=400/>|<img width=250/>|<img width=1000/>|<img width=550/>|
 
-        *Returns*
+        ## Returns
+        ---
         `None`
         '''
         self.xb.discover()
@@ -113,17 +123,21 @@ class SmarticleSwarm(object):
         ---
         Sends IDs to smarticles
 
-        *Arguments*
+        ## Arguments
+        ---
+
         | Argument        | Type                      | Description                                                                   | Default Value |
         | :------:        | :--:                      | :---------:                                                                   | :-----------: |
-        | asynch           | `bool`                    | Determines whether to send asynchronously (without ack) or not                | False         |
+        | asynch           | `bool`                    | Determines whether to send asynchronously (without ack)  | False         |
+        |<img width=400/>|<img width=250/>|<img width=1000/>|<img width=550/>|
 
-        *Returns*
-        void
+        ## Returns
+        ---
+        `None`
         '''
         msg_code = self.msg_code_dict['set_id']
         for id in self.xb.devices.keys():
-            msg = self.format_msg(bytearray([msg_code,self.ASCII_OFFSET+id]))
+            msg = self._format_msg(bytearray([msg_code,self.ASCII_OFFSET+id]))
             self.xb.send(self.xb.devices[id],msg,asynch=False)
 
 
@@ -132,6 +146,10 @@ class SmarticleSwarm(object):
         ## Description
         ---
         closes serial connection to XBee
+
+        ## Returns
+        ---
+        `None`
         '''
         self.xb.close_base()
 
@@ -145,19 +163,23 @@ class SmarticleSwarm(object):
         Enables/disables updating of servos. When enabled it also resets the gait interpolation sequence back to its first initial point
         When set_servos ==0, servos can still be controlled using set_pose()
 
-        *Arguments*
+        ## Arguments
+        ---
+
         | Argument        | Type                                          | Description                                                              | Default Value  |
         | :------:        | :--:                                          | :---------:                                                              | :-----------:  |
         | state           | `int`                                         | Value: 1 or 0. enables/disables updating servos in timer interrupt       | N/A            |
-        | remote_device   | `RemoteXbeeDevice` Object or `None` or `bool` | Argument value and type determines communication mode as described above | `None`         |
+        | remote_device   | -- | see class description | `None`         |
+        |<img width=400/>|<img width=250/>|<img width=1000/>|<img width=550/>|
 
-        *Returns*
+        ## Returns
+        ---
         `None`
         '''
         msg_code = self.msg_code_dict['toggle_t4_interrupt']
         if state != 1:
             state = 0
-        msg = self.format_msg(bytearray([msg_code,self.ASCII_OFFSET+state]))
+        msg = self._format_msg(bytearray([msg_code,self.ASCII_OFFSET+state]))
         self.xb.command(msg, remote_device)
 
 
@@ -168,28 +190,23 @@ class SmarticleSwarm(object):
         Enables/disables smarticle transmitting data.
         Data sent in following format: '{int Photo_front}, {int photo_back}, {int photo_right} {int current_sense}'(values between 0-1023)
 
-        *Arguments*
+        ## Arguments
+        ---
+
         | Argument        | Type                                          | Description                                                              | Default Value  |
         | :------:        | :--:                                          | :---------:                                                              | :-----------:  |
         | state           | `int`                                         | Value: 1 or 0. enables/disables transmitting Data                        | N/A            |
-        | remote_device   | `RemoteXbeeDevice` Object or `None` or `bool` | Argument value and type determines communication mode as described above | `None`         |
+        | remote_device   | -- | see class description | `None`         |
+        |<img width=400/>|<img width=250/>|<img width=1000/>|<img width=550/>|
 
-        *remote_device*
-        Sends message to remote Xbee in one of three ways depending on the `remote_device` argument
-            1. remote_device == `None`:
-                broadcasts message without acks using `broadcast()`
-            2. remote_device == `True`:
-                broadcasts message with acks using `ack_broadcast()`
-            3. remote_device in values of devices dictionary:
-                send message to single Xbee using `send()`
-
-        *Returns*
+        ## Returns
+        ---
         `None`
         '''
         msg_code = self.msg_code_dict['toggle_transmit']
         if state != 1:
             state = 0
-        msg = self.format_msg(bytearray([msg_code,self.ASCII_OFFSET+state]))
+        msg = self._format_msg(bytearray([msg_code,self.ASCII_OFFSET+state]))
         self.xb.command(msg, remote_device)
 
     def set_light_plank(self, state, remote_device = None):
@@ -198,29 +215,24 @@ class SmarticleSwarm(object):
         ---
         Enables/Disables light plank (i.e. smarticles planking when light sensors are above set threshold)
 
-        *Arguments*
+        ## Arguments
+        ---
+
         | Argument        | Type                                          | Description                                                              | Default Value  |
         | :------:        | :--:                                          | :---------:                                                              | :-----------:  |
         | state           | `bool`                                         | Value: 1 or 0. enables/disables light planking                          | N/A            |
-        | remote_device   | `RemoteXbeeDevice` Object or `None` or `bool` | Argument value and type determines communication mode as described above | `None`         |
+        | remote_device   | -- | see class description | `None`         |
+        |<img width=400/>|<img width=250/>|<img width=1000/>|<img width=550/>|
 
-        *remote_device*
-        Sends message to remote Xbee in one of three ways depending on the `remote_device` argument
-            1. remote_device == `None`:
-                broadcasts message without acks using `broadcast()`
-            2. remote_device == `True`:
-                broadcasts message with acks using `ack_broadcast()`
-            3. remote_device in values of devices dictionary:
-                send message to single Xbee using `send()`
-
-        *Returns*
+        ## Returns
+        ---
         `None`
         '''
 
         msg_code = self.msg_code_dict['toggle_light_plank']
         if state != 1:
             state = 0
-        msg = self.format_msg(bytearray([msg_code,self.ASCII_OFFSET+state]))
+        msg = self._format_msg(bytearray([msg_code,self.ASCII_OFFSET+state]))
         self.xb.command(msg, remote_device)
 
     def set_sensor_threshold(self, thresh, remote_device = None):
@@ -229,30 +241,26 @@ class SmarticleSwarm(object):
         ---
         Sets sensor threshold that triggers planking
 
-        *Arguments*
+        ## Arguments
+        ---
+
         | Argument        | Type                                          | Description                                                              | Default Value  |
         | :------:        | :--:                                          | :---------:                                                              | :-----------:  |
         | thresh          | `list of int`                                 | Threshold values for PR_front, PR_back, PR_right, current sense          | N/A            |
-        | remote_device   | `RemoteXbeeDevice` Object or `None` or `bool` | Argument value and type determines communication mode as described above | `None`         |
+        | remote_device   | -- | see class description | `None`         |
+        |<img width=400/>|<img width=250/>|<img width=1000/>|<img width=550/>|
 
-        *remote_device*
-        Sends message to remote Xbee in one of three ways depending on the `remote_device` argument
-            1. remote_device == `None`:
-                broadcasts message without acks using `broadcast()`
-            2. remote_device == `True`:
-                broadcasts message with acks using `ack_broadcast()`
-            3. remote_device in values of devices dictionary:
-                send message to single Xbee using `send()`
 
-        *Returns*
+        ## Returns
+        ---
         `None`
         '''
         assert len(thresh)==4, 'Threshold list must be 4 elements'
         msg_code = self.msg_code_dict['set_light_plank_threshold']
         val = bytearray()
         for t in thresh:
-            val+= self.convert_to_2_chars(t)
-        msg = self.format_msg(bytearray([msg_code]+val))
+            val+= self._convert_to_2_chars(t)
+        msg = self._format_msg(bytearray([msg_code]+val))
         self.xb.command(msg, remote_device)
 
 
@@ -263,28 +271,24 @@ class SmarticleSwarm(object):
         ---
         Enables/disables smarticle reading sensors
 
-        *Arguments*
+        ## Arguments
+        ---
+
         | Argument        | Type                                          | Description                                                              | Default Value  |
         | :------:        | :--:                                          | :---------:                                                              | :-----------:  |
         | state           | `int`                                        | Value: 1 or 0. enables/disables reading sensors                          | N/A            |
-        | remote_device   | `RemoteXbeeDevice` Object or `None` or `bool` | Argument value and type determines communication mode as described above | `None`         |
+        | remote_device   | -- | see class description | `None`         |
+        |<img width=400/>|<img width=250/>|<img width=1000/>|<img width=550/>|
 
-        *remote_device*
-        Sends message to remote Xbee in one of three ways depending on the `remote_device` argument
-            1. remote_device == `None`:
-                broadcasts message without acks using `broadcast()`
-            2. remote_device == `True`:
-                broadcasts message with acks using `ack_broadcast()`
-            3. remote_device in values of devices dictionary:
-                send message to single Xbee using `send()`
 
-        *Returns*
+        ## Returns
+        ---
         `None`
         '''
         msg_code = self.msg_code_dict['toggle_read_sensors']
         if state != 1:
             state = 0
-        msg = self.format_msg(bytearray([msg_code,self.ASCII_OFFSET+state]))
+        msg = self._format_msg(bytearray([msg_code,self.ASCII_OFFSET+state]))
         self.xb.command(msg, remote_device)
 
     def set_transmit_period(self, period_ms, remote_device=None):
@@ -293,28 +297,24 @@ class SmarticleSwarm(object):
         ---
         Sets approximate data transmit period of smarticles
 
-        *Arguments*
+        ## Arguments
+        ---
+
         | Argument        | Type                                          | Description                                                              | Default Value  |
         | :------:        | :--:                                          | :---------:                                                              | :-----------:  |
         | period_ms       | `int`                                         |  transmit period in ms. Max value of 2000s                               | N/A            |
-        | remote_device   | `RemoteXbeeDevice` Object or `None` or `bool` | Argument value and type determines communication mode as described above | `None`         |
+        | remote_device   | --| see class description | `None`         |
+        |<img width=400/>|<img width=250/>|<img width=1000/>|<img width=550/>|
 
-        *remote_device*
-        Sends message to remote Xbee in one of three ways depending on the `remote_device` argument
-            1. remote_device == `None`:
-                broadcasts message without acks using `broadcast()`
-            2. remote_device == `True`:
-                broadcasts message with acks using `ack_broadcast()`
-            3. remote_device in values of devices dictionary:
-                send message to single Xbee using `send()`
 
-        *Returns*
+        ## Returns
+        ---
         `None`
         '''
         msg_code = self.msg_code_dict['set_transmit_counts']
         counts = period_ms//self.SAMPLE_TIME_MS
         counts = np.clip(counts, 1, 200)
-        msg = self.format_msg(bytearray([msg_code,self.ASCII_OFFSET+counts]))
+        msg = self._format_msg(bytearray([msg_code,self.ASCII_OFFSET+counts]))
         self.xb.command(msg, remote_device)
 
 
@@ -325,28 +325,25 @@ class SmarticleSwarm(object):
         ---
         Sets debug level of smarticle
 
-        *Arguments*
+        ## Arguments
+        ---
+
         | Argument        | Type                                          | Description                                                              | Default Value  |
         | :------:        | :--:                                          | :---------:                                                              | :-----------:  |
         | debug          | `int`                                        | Value: 0,1,2. Sets level of debug output. 0 is no output, 1 is limited output, 2 is full output | N/A            |
-        | remote_device   | `RemoteXbeeDevice` Object or `None` or `bool` | Argument value and type determines communication mode as described above | `None`         |
+        | remote_device   | -- | see class description | `None`         |
+        |<img width=400/>|<img width=250/>|<img width=1000/>|<img width=550/>|
 
-        *remote_device*
-        Sends message to remote Xbee in one of three ways depending on the `remote_device` argument
-            1. remote_device == `None`:
-                broadcasts message without acks using `broadcast()`
-            2. remote_device == `True`:
-                broadcasts message with acks using `ack_broadcast()`
-            3. remote_device in values of devices dictionary:
-                send message to single Xbee using `send()`
 
-        *Returns*
+
+        ## Returns
+        ---
         `None`
         '''
         msg_code = self.msg_code_dict['set_debug']
         if state not in [0,1,2]:
             state = 0
-        msg = self.format_msg(bytearray([msg_code,self.ASCII_OFFSET+state]))
+        msg = self._format_msg(bytearray([msg_code,self.ASCII_OFFSET+state]))
         self.xb.command(msg, remote_device)
 
 
@@ -359,22 +356,18 @@ class SmarticleSwarm(object):
         randomly propoportional to epsilon (0-1). For example, if epsilon is 0.1,
         the smarticle will move its arm to a random angle 10% of the time
 
-        *Arguments*
+        ## Arguments
+        ---
+
         | Argument        | Type                                          | Description                                                              | Default Value  |
         | :------:        | :--:                                          | :---------:                                                              | :-----------:  |
         | eps             | 'float'                                       | Value: 0-1, determines proportion of random arm movements                | N/A            |
-        | remote_device   | `RemoteXbeeDevice` Object or `None` or `bool` | Argument value and type determines communication mode as described above | `None`         |
+        | remote_device   | -- | see class description | `None`         |
+        |<img width=400/>|<img width=250/>|<img width=1000/>|<img width=550/>|
 
-        *remote_device*
-        Sends message to remote Xbee in one of three ways depending on the `remote_device` argument
-            1. remote_device == `None`:
-                broadcasts message without acks using `broadcast()`
-            2. remote_device == `True`:
-                broadcasts message with acks using `ack_broadcast()`
-            3. remote_device in values of devices dictionary:
-                send message to single Xbee using `send()`
 
-        *Returns*
+        ## Returns
+        ---
         `None`
         '''
         # ensure eps is between 0 and 1
@@ -382,7 +375,7 @@ class SmarticleSwarm(object):
         msg_code = self.msg_code_dict['toggle_light_plank']
         if state != 1:
             state = 0
-        msg = self.format_msg(bytearray([msg_code,self.ASCII_OFFSET+eps]))
+        msg = self._format_msg(bytearray([msg_code,self.ASCII_OFFSET+eps]))
         self.xb.command(msg, remote_device)
 
     def set_mode(self, state, remote_device = None):
@@ -391,34 +384,33 @@ class SmarticleSwarm(object):
         ---
         Changes operating mode of smarticle(s)
 
-        *States*
+        ## Values
+        ---
+
         | Value | Mode             | Description                                                      |
         | :---: | :--:             | :---------:                                                      |
         | 0     | Idle             | Smarticle does nothing. Servos detach and no data is transmitted |
         | 1     | Stream servos    | Servo points streamed (still in development)                     |
         | 2     | Gait interpolate | Iterate through interpolated points sent to smarticle            |
+        |<img width=250/>|<img width=400/>|<img width=1000/>|
 
-        *remote_device*
-        Sends message to remote Xbee in one of three ways depending on the `remote_device` argument
-            1. remote_device == `None`:
-                broadcasts message without acks using `broadcast()`
-            2. remote_device == `True`:
-                broadcasts message with acks using `ack_broadcast()`
-            3. remote_device in values of devices dictionary:
-                send message to single Xbee using `send()`
 
-        *Arguments*
+        ## Arguments
+        ---
+
         | Argument        | Type                                          | Description                                                                | Default Value  |
         | :------:        | :--:                                          | :---------:                                                                | :-----------:  |
         | state           | `int`                                         | Values: 0-2. 0: inactive, 1: stream servo (unfinished), 2:gait interpolate | N/A            |
-        | remote_device   | `RemoteXbeeDevice` Object or `None` or `bool` | Argument value and type determines communication mode as described above   | `None`         |
+        | remote_device   | -- | see class description   | `None`         |
+        |<img width=400/>|<img width=250/>|<img width=1000/>|<img width=550/>|
 
-        *Returns*
+        ## Returns
+        ---
         `None`
         '''
         assert (state>=0 and state<=2),"Mode must between 0-2"
         msg_code = self.msg_code_dict['set_mode']
-        msg = self.format_msg(bytearray([msg_code,self.ASCII_OFFSET+state]))
+        msg = self._format_msg(bytearray([msg_code,self.ASCII_OFFSET+state]))
         self.xb.command(msg, remote_device)
 
     def set_plank(self, state_arr, remote_device = None):
@@ -427,28 +419,23 @@ class SmarticleSwarm(object):
         ---
         Sets smarticle to plank or deplank Note: only active when set_servos  == 1
 
-        *remote_device*
-        Sends message to remote Xbee in one of three ways depending on the `remote_device` argument
-            1. remote_device == `None`:
-                broadcasts message without acks using `broadcast()`
-            2. remote_device == `True`:
-                broadcasts message with acks using `ack_broadcast()`
-            3. remote_device in values of devices dictionary:
-                send message to single Xbee using `send()`
+        ## Arguments
+        ---
 
-        *Arguments*
         | Argument        | Type                                          | Description                                                                | Default Value  |
         | :------:        | :--:                                          | :---------:                                                                | :-----------:  |
         | state           | `bool`                                         | Values: 0,1. 0: deplank 1: plank                                           | N/A            |
-        | remote_device   | `RemoteXbeeDevice` Object or `None` or `bool` | Argument value and type determines communication mode as described above   | `None`         |
+        | remote_device   | -- | see class description   | `None`         |
+        |<img width=400/>|<img width=250/>|<img width=1000/>|<img width=550/>|
 
-        *Returns*
+        ## Returns
+        ---
         `None`
         '''
         msg_code = self.msg_code_dict['set_plank']
         l = len(state_arr)+self.ASCII_OFFSET
         state_arr = list((state_arr+self.ASCII_OFFSET).flatten())
-        msg = self.format_msg(bytearray([msg_code,l]+state_arr))
+        msg = self._format_msg(bytearray([msg_code,l]+state_arr))
         self.xb.command(msg, remote_device)
 
     def set_pose(self, posL, posR, remote_device = None):
@@ -457,27 +444,22 @@ class SmarticleSwarm(object):
         ---
         Sets smarticle to specified servo positions
 
-        *remote_device*
-        Sends message to remote Xbee in one of three ways depending on the `remote_device` argument
-            1. remote_device == `None`:
-                broadcasts message without acks using `broadcast()`
-            2. remote_device == `True`:
-                broadcasts message with acks using `ack_broadcast()`
-            3. remote_device in values of devices dictionary:
-                send message to single Xbee using `send()`
+        ## Arguments
+        ---
 
-        *Arguments*
         | Argument        | Type                                          | Description                                                                | Default Value  |
         | :------:        | :--:                                          | :---------:                                                                | :-----------:  |
         | posL            | `int`                                         | Left servo angle: 0-180 deg                                                | N/A            |
         | posR            | `int`                                         | Right servo angle: 0-180 deg                                               | N/A            |
-        | remote_device   | `RemoteXbeeDevice` Object or `None` or `bool` | Argument value and type determines communication mode as described above   | `None`         |
+        | remote_device   | -- | see class description   | `None`         |
+        |<img width=400/>|<img width=250/>|<img width=1000/>|<img width=550/>|
 
-        *Returns*
+        ## Returns
+        ---
         `None`
         '''
         msg_code = self.msg_code_dict['set_pose']
-        msg = self.format_msg(bytearray([msg_code,self.ASCII_OFFSET+posL,self.ASCII_OFFSET+posR]))
+        msg = self._format_msg(bytearray([msg_code,self.ASCII_OFFSET+posL,self.ASCII_OFFSET+posR]))
         self.xb.command(msg, remote_device)
 
     def stream_pose(self, poses, remote_device=None):
@@ -488,28 +470,23 @@ class SmarticleSwarm(object):
         that it sends angles over the streaming pipeline, which sends a batch message that can specify 
         separate commands for each smarticle in the same message. Specify id as zero to broadcast servo command to whole swarm.
 
-        *remote_device*
-        Sends message to remote Xbee in one of three ways depending on the `remote_device` argument
-            1. remote_device == `None`:
-                broadcasts message without acks using `broadcast()`
-            2. remote_device == `True`:
-                broadcasts message with acks using `ack_broadcast()`
-            3. remote_device in values of devices dictionary:
-                send message to single Xbee using `send()`
+        ## Arguments
+        ---
 
-
-        *Arguments*
         | Argument        | Type                                          | Description                                                                | Default Value  |
         | :------:        | :--:                                          | :---------:                                                                | :-----------:  |
         | poses            | `np.array`                                   | Nx3 array of servo commands. Each row specifies [id, angL, angR]     | N/A            |
+        | remote_device   | -- | see class description   | `None`         |
+        |<img width=400/>|<img width=250/>|<img width=1000/>|<img width=550/>|
 
-        *Returns*
+        ## Returns
+        ---
         `None`
         '''
         msg_code = self.msg_code_dict['stream_pose']
         l = len(poses)+self.ASCII_OFFSET
         poses = list((poses+self.ASCII_OFFSET).flatten())
-        msg = self.format_msg(bytearray([msg_code,l]+poses))
+        msg = self._format_msg(bytearray([msg_code,l]+poses))
         self.xb.command(msg,remote_device)
 
 
@@ -520,23 +497,18 @@ class SmarticleSwarm(object):
         Enables/disables random delay in stream servo mode for smarticles.
         Writing  value of negative  one (-1) leaves that  field as is on the smarticle
 
-        *remote_device*
-        Sends message to remote Xbee in one of three ways depending on the `remote_device` argument
-            1. remote_device == `None`:
-                broadcasts message without acks using `broadcast()`
-            2. remote_device == `True`:
-                broadcasts message with acks using `ack_broadcast()`
-            3. remote_device in values of devices dictionary:
-                send message to single Xbee using `send()`
+        ## Arguments
+        ---
 
-        *Arguments*
         | Argument        | Type                                          | Description                                                                | Default Value  |
         | :------:        | :--:                                          | :---------:                                                                | :-----------:  |
         | state           | `int`                                         | Values: 0,1 see note about negative values above                           | -1             |
         | max_val         | `int`                                         | Maximum value of random delay                                              | -1             |
-        | remote_device   | `RemoteXbeeDevice` Object or `None` or `bool` | Argument value and type determines communication mode as described above   | `None`         |
+        | remote_device   | -- | see class description   | `None`         |
+        |<img width=400/>|<img width=250/>|<img width=1000/>|<img width=550/>|
 
-        *Returns*
+        ## Returns
+        ---
         `None`
         '''
         msg=':SD:{},{}\n'.format(int(state),int(max_val))
@@ -549,28 +521,23 @@ class SmarticleSwarm(object):
         ---
         Sets noise on servo positions (noisy arm angles)
 
-        *remote_device*
-        Sends message to remote Xbee in one of three ways depending on the `remote_device` argument
-            1. remote_device == `None`:
-                broadcasts message without acks using `broadcast()`
-            2. remote_device == `True`:
-                broadcasts message with acks using `ack_broadcast()`
-            3. remote_device in values of devices dictionary:
-                send message to single Xbee using `send()`
+        ## Arguments
+        ---
 
-        *Arguments*
         | Argument        | Type                                          | Description                                                                | Default Value  |
         | :------:        | :--:                                          | :---------:                                                                | :-----------:  |
         | max_val         | `int`                                         | Maximum value of random noise                                              | N/A            |
-        | remote_device   | `RemoteXbeeDevice` Object or `None` or `bool` | Argument value and type determines communication mode as described above   | `None`         |
+        | remote_device   | -- | see class description   | `None`         |
+        |<img width=400/>|<img width=250/>|<img width=1000/>|<img width=550/>|
 
-        *Returns*
+        ## Returns
+        ---
         `None`
         '''
         assert max_val < 100, 'value must be less than 100'
         val=int(2*max_val)
         msg_code = self.msg_code_dict['set_pose_noise']
-        msg = self.format_msg(bytearray([msg_code,self.ASCII_OFFSET+val]))
+        msg = self._format_msg(bytearray([msg_code,self.ASCII_OFFSET+val]))
         self.xb.command(msg, remote_device)
 
 
@@ -580,27 +547,22 @@ class SmarticleSwarm(object):
         ---
         Sets noise on synchronization time for gait interp mode
 
-        *remote_device*
-        Sends message to remote Xbee in one of three ways depending on the `remote_device` argument
-            1. remote_device == `None`:
-                broadcasts message without acks using `broadcast()`
-            2. remote_device == `True`:
-                broadcasts message with acks using `ack_broadcast()`
-            3. remote_device in values of devices dictionary:
-                send message to single Xbee using `send()`
+        ## Arguments
+        ---
 
-        *Arguments*
         | Argument        | Type                                          | Description                                                                | Default Value  |
         | :------:        | :--:                                          | :---------:                                                                | :-----------:  |
         | max_val         | `int`                                         | Maximum value of random delay                                              | N/A            |
-        | remote_device   | `RemoteXbeeDevice` Object or `None` or `bool` | Argument value and type determines communication mode as described above   | `None`         |
+        | remote_device   | -- | see class description   | `None`         |
+        |<img width=400/>|<img width=250/>|<img width=1000/>|<img width=550/>|
 
-        *Returns*
+        ## Returns
+        ---
         `None`
         '''
-        timer_counts = self.convert_to_2_chars(int(max_val/0.128))
+        timer_counts = self._convert_to_2_chars(int(max_val/0.128))
         msg_code = self.msg_code_dict['set_sync_noise']
-        msg = self.format_msg(bytearray([msg_code]+timer_counts))
+        msg = self._format_msg(bytearray([msg_code]+timer_counts))
         self.xb.command(msg, remote_device)
 
 
@@ -613,26 +575,22 @@ class SmarticleSwarm(object):
             2. data length
             3. period between interpolation points
 
-        *gait*
+        ## Gait
+        ---
         Lists of two lists: gaitLpoints and gaitRpoints. These lists must be equal in length and contain at most 15 points
 
-        *remote_device*
-        Sends message to remote Xbee in one of three ways depending on the `remote_device` argument
-            1. remote_device == `None`:
-                broadcasts message without acks using `broadcast()`
-            2. remote_device == `True`:
-                broadcasts message with acks using `ack_broadcast()`
-            3. remote_device in values of devices dictionary:
-                send message to single Xbee using `send()`
+        ## Arguments
+        ---
 
-        *Arguments*
         | Argument        | Type                                          | Description                                                                | Default Value  |
         | :------:        | :--:                                          | :---------:                                                                | :-----------:  |
         | gait            | list of lists of int                          | [gaitLpoints, gaitRpoints]                                                 | N/A            |
         | period_ms       | `int`                                         | period (ms) between gait points                                            | N/A            |
-        | remote_device   | `RemoteXbeeDevice` Object or `None` or `bool` | Argument value and type determines communication mode as described above   | `None`         |
+        | remote_device   | -- | see class description   | `None`         |
+        |<img width=400/>|<img width=250/>|<img width=1000/>|<img width=550/>|
 
-        *Returns*
+        ## Returns
+        ---
         `None`
         '''
         msg_code = bytearray([self.msg_code_dict['init_gait']])
@@ -646,17 +604,32 @@ class SmarticleSwarm(object):
         assert len(gaitL)==len(gaitR),'Gait lists must be same length'
         gait_points = self.gait_len+self.ASCII_OFFSET
         n = gait_num +self.ASCII_OFFSET
-        delay = self.convert_to_2_chars(timer_counts)
-        msg=  self.format_msg(msg_code+bytearray([n, gait_points]+delay+gaitL+gaitR))
+        delay = self._convert_to_2_chars(timer_counts)
+        msg=  self._format_msg(msg_code+bytearray([n, gait_points]+delay+gaitL+gaitR))
         self.xb.command(msg, remote_device)
         time.sleep(0.1) #ensure messages are not dropped as buffer isn't implemented yet
 
     def select_gait(self, n, remote_device = None):
         '''
-        DOC
+        ## Description
+        ---
+        Selects gait number of smarticle to execute
+
+        ## Arguments
+        ---
+
+        | Argument        | Type                                          | Description                                                                | Default Value  |
+        | :------:        | :--:                                          | :---------:                                                                | :-----------:  |
+        | n       | `int`                                         | gait number for smarticle to execute                                           | N/A            |
+        | remote_device   | -- | see class description   | `None`         |
+        |<img width=400/>|<img width=250/>|<img width=1000/>|<img width=550/>|
+
+        ## Returns
+        ---
+        `None`
         '''
         msg_code = self.msg_code_dict['select_gait']
-        msg = self.format_msg(bytearray([msg_code,self.ASCII_OFFSET+n]))
+        msg = self._format_msg(bytearray([msg_code,self.ASCII_OFFSET+n]))
         self.xb.command(msg, remote_device)
 
 
@@ -664,7 +637,8 @@ class SmarticleSwarm(object):
         '''
         ## Description
         ---
-        Thread to keep gaits in sync
+        Thread to keep gaits in sync. Not used directly by user but called in `init_sync_thread`
+        
         '''
         time_adjust_s=sync_period_s-0.0357 #subtract 35ms based on results from timing experiments
         msg = bytearray(b'\x11')
@@ -699,6 +673,10 @@ class SmarticleSwarm(object):
         ## Description
         ---
         starts gait sequence and sync thread
+
+        ## Returns
+        ---
+        `None`
         '''
         delay_t = self.delay_ms/3000
         #starts gait sequence
@@ -713,6 +691,10 @@ class SmarticleSwarm(object):
         ## Description
         ---
         stops gait sequence and pauses gait sync thread
+
+        ## Returns
+        ---
+        `None`
         '''
         #stop gait sequence
         self.set_servos(0)
