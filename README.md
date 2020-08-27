@@ -35,7 +35,7 @@ The Settings for the base Xbee are the default settings for 802.15.4 firmware wi
         **1.** Change mode (AP) to API Enabled  
         **2.** Change Pan ID (ID) to 1984  
         **3.** Ensure address (MY) is 0  
-        **4.** Change Destination Low Address (DL) to FFFF (broadcast)  
+        **4.** Change Destination Low Address (DL) to 0xFFFF (broadcast)  
         
 You can also modify these settings in a simple serial console by entering command mode. See this [guide](https://cdn.sparkfun.com/learn/materials/29/22AT%20Commands.pdf) for more information.
     
