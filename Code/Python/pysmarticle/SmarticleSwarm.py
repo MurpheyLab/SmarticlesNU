@@ -4,8 +4,8 @@
 # Module for communicating with smarticle swarm over Xbee3s
 
 import time
-from .XbeeComm import XbeeComm
-from .StreamThread import StreamThread
+from XbeeComm import XbeeComm
+from StreamThread import StreamThread
 import threading
 import numpy as np
 
