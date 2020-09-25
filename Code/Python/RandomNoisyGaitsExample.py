@@ -1,6 +1,6 @@
 # SmarticleSyncExample.py
 import sys
-sys.path.append('modules')
+sys.path.append('pysmarticle')
 
 from SmarticleSwarm import *
 from random import randint
@@ -66,7 +66,7 @@ swarm.init_sync_thread()
 
 # initialize streaming settings
 # turns on random delay of max 100ms
-swarm.set_delay(1,100);
+swarm.set_delay(1,100)
 gaitf = lambda t: [190,190] #[190,190] signifies unique random corners
 stream = StreamThread(swarm.xb,gaitf,450)
 stream.run_flag.clear()
