@@ -10,6 +10,11 @@ from digi.xbee.devices import Raw802Device
 
 default_port = '/dev/tty.usbserial-DN050I6Q'
 
+class RemoteObj(object):
+
+    def __init__(self, id):
+        self.id= id
+
 class XbeeComm(object):
     ''''
     ## Description
@@ -36,10 +41,11 @@ class XbeeComm(object):
         |<img width=400/>|<img width=250/>|<img width=1000/>|<img width=550/>|
 
         '''
-
-        self.base = Raw802Device(port, baud_rate)
+        # TEST:
+        # self.base = Raw802Device(port, baud_rate)
         self.debug = debug
-        self.open_base()
+        # TEST:
+        # self.open_base()
         self.callbacks_added = False
         self.ascii_offset = 32
 
@@ -60,11 +66,13 @@ class XbeeComm(object):
         This function returns a 1 if it successfully opens the local port and a 0 otherwise.
         '''
         success = 0
-        self.base.open()
-        if self.base is not None and self.base.is_open():
-            success = 1
-        elif self.debug:
-            print("Failed to open device")
+        # TEST:
+        # self.base.open()
+        # if self.base is not None and self.base.is_open():
+        #     success = 1
+        # elif self.debug:
+        #     print("Failed to open device")
+        success = 1; print("base opened")
         return success
 
     def close_base(self):
@@ -82,8 +90,10 @@ class XbeeComm(object):
         ---
         `None`
         '''
-        if self.base is not None and self.base.is_open():
-            self.base.close()
+        # TEST:
+        # if self.base is not None and self.base.is_open():
+        #     self.base.close()
+        print("close base")
 
     def add_callbacks(self):
         '''
@@ -134,6 +144,12 @@ class XbeeComm(object):
         setattr(self,remote_device.get_node_id(),remote_device)
         self.devices[smarticle_number]=remote_device
 
+    def add_remote_test(self, remote_device):
+        smarticle_number = int(''.join([s for s in remote_device.id if s.isdigit()]))
+        setattr(self,remote_device.id,remote_device)
+        self.devices[smarticle_number]=remote_device
+
+
 
     def discover(self):
         '''
@@ -153,19 +169,26 @@ class XbeeComm(object):
         `None`
         '''
         self.devices ={}
-        self.network = self.base.get_network()
-        self.network.clear()
-        self.network.set_discovery_timeout(15)  # 15 seconds.
+        # TEST:
+        # self.network = self.base.get_network()
+        # self.network.clear()
+        # self.network.set_discovery_timeout(15)  # 15 seconds.
 
-        if self.callbacks_added == False:
-            self.add_callbacks()
-            self.callbacks_added = True
+        # if self.callbacks_added == False:
+        #     self.add_callbacks()
+        #     self.callbacks_added = True
 
-        self.network.start_discovery_process()
+        # self.network.start_discovery_process()
         print("Discovering remote XBee devices...")
+        smart1 = RemoteObj('1')
+        smart2 = RemoteObj('2')
+        smart3 = RemoteObj('3')
+        self.add_remote_test(smart1)
+        self.add_remote_test(smart2)
+        self.add_remote_test(smart3)
 
-        while self.network.is_discovery_running():
-            time.sleep(0.1)
+        # while self.network.is_discovery_running():
+        #     time.sleep(0.1)
 
 
     def send(self, remote_device, msg, asynch = False):
@@ -198,12 +221,15 @@ class XbeeComm(object):
                 print("Could not find the remote device")
             exit(1)
         if self.debug:
-            print("Sending data to {} >> {}...".format(remote_device.get_node_id(), msg))
+            # TEST:print("Sending data to {} >> {}...".format(remote_device.get_node_id(), msg))
+            print("Sending data to {} >> {}...".format(remote_device.id, msg))
 
         if asynch is True:
-            self.base.send_data_async(remote_device, msg)
+            # TEST:self.base.send_data_async(remote_device, msg)
+            print("sent asynch")
         else:
-            self.base.send_data(remote_device, msg)
+            # TEST:self.base.send_data(remote_device, msg)
+            print("sent")
 
             if self.debug:
                 print("Success")
@@ -227,7 +253,8 @@ class XbeeComm(object):
         ---
         `None`
         '''
-        self.base.send_data_broadcast(msg)
+        # TEST: self.base.send_data_broadcast(msg)
+        print("broadcast: {}".format(msg))
 
 
     def ack_broadcast(self,msg):
