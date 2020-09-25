@@ -48,7 +48,7 @@ def go_to_gi():
 # instantiate SmarticleSwarm object with default args
 # change/specify USB port!!
 swarm = SmarticleSwarm(port=PORT_NAME)
-swarm.xb.add_rx_callback(rx_callback)
+# TEST: swarm.xb.add_rx_callback(rx_callback)
 # discover smarticles on network; by default has 15s timeout
 swarm.build_network(8)
 
