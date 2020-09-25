@@ -373,8 +373,6 @@ class SmarticleSwarm(object):
         # ensure eps is between 0 and 1
         eps = 100*round(np.clip(eps,0,1),2)
         msg_code = self.msg_code_dict['toggle_light_plank']
-        if state != 1:
-            state = 0
         msg = self._format_msg(bytearray([msg_code,self.ASCII_OFFSET+eps]))
         self.xb.command(msg, remote_device)
 
